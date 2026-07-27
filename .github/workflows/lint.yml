@@ -1,0 +1,33 @@
+name: Lint
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Run on Ubuntu
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - .
+          - ironcore-operator
+    steps:
+      - name: Clone the code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ${{ matrix.module }}/go.mod
+
+      - name: Run linter
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.4.0
+          working-directory: ${{ matrix.module }}
