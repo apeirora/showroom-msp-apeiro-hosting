@@ -379,9 +379,9 @@ spec:
 apiVersion: apis.kcp.io/v1alpha1
 kind: APIResourceSchema
 metadata:
-  name: {{ .Values.vmSchemaRevision }}.ironcorevms.ironcore.apeirora.eu
+  name: {{ .Values.vmSchemaRevision }}.ironcorevms.sap.eu
 spec:
-  group: ironcore.apeirora.eu
+  group: sap.eu
   names:
     kind: IronCoreVM
     listKind: IronCoreVMList

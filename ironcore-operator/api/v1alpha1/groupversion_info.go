@@ -8,9 +8,9 @@ You may obtain a copy of the License at
     http://www.apache.org/licenses/LICENSE-2.0
 */
 
-// Package v1alpha1 contains API Schema definitions for the ironcore.apeirora.eu v1alpha1 API group.
+// Package v1alpha1 contains API Schema definitions for the sap.eu v1alpha1 API group.
 // +kubebuilder:object:generate=true
-// +groupName=ironcore.apeirora.eu
+// +groupName=sap.eu
 package v1alpha1
 
 import (
@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	GroupVersion  = schema.GroupVersion{Group: "ironcore.apeirora.eu", Version: "v1alpha1"}
+	GroupVersion  = schema.GroupVersion{Group: "sap.eu", Version: "v1alpha1"}
 	SchemeBuilder = &scheme.Builder{GroupVersion: GroupVersion}
 	AddToScheme   = SchemeBuilder.AddToScheme
 )

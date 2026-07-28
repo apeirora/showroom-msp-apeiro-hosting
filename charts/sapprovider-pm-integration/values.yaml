@@ -11,7 +11,7 @@ PUBLIC_SCHEME: "http"
 schemaRevision: "v1alpha1-r3"
 
 # Name prefix of the IronCoreVM APIResourceSchema (full name:
-# <vmSchemaRevision>.ironcorevms.ironcore.apeirora.eu). Separate from
+# <vmSchemaRevision>.ironcorevms.sap.eu). Separate from
 # schemaRevision so the namespaced VM schema and the cluster-scoped shoot
 # schemas rotate independently. KCP APIResourceSchemas are immutable — whenever
 # the generated IronCoreVM schema content in templates/api-resource-schemas.yaml

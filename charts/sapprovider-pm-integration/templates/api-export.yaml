@@ -20,9 +20,9 @@ spec:
         crd: {}
     # IronCoreVM: namespaced VM API served by simple-cluster-operator-ironcore,
     # synced by sapprovider-sync-agent. Rotates via vmSchemaRevision.
-    - group: ironcore.apeirora.eu
+    - group: sap.eu
       name: ironcorevms
-      schema: {{ .Values.vmSchemaRevision }}.ironcorevms.ironcore.apeirora.eu
+      schema: {{ .Values.vmSchemaRevision }}.ironcorevms.sap.eu
       storage:
         crd: {}
   permissionClaims:

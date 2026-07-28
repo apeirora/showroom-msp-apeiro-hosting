@@ -24,7 +24,7 @@ rules:
       - delete
   # IronCoreVM CRs served by ironcore-operator.
   - apiGroups:
-      - ironcore.apeirora.eu
+      - sap.eu
     resources:
       - ironcorevms
       - ironcorevms/status

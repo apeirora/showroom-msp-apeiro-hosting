@@ -1,6 +1,6 @@
 # showroom-msp-sap-provider
 
-SAP Integration provider for simple-cluster, packaging the OpenStack and IronCore
+SAP Hosting provider for simple-cluster, packaging the OpenStack and IronCore
 Gardener flavors into one provider stack.
 
 ## Description
@@ -23,12 +23,12 @@ provider bundle at the repo root and `ironcore-operator/` (the IronCore VM opera
 |---|---|---|---|
 | OpenStackShoot | `Shoot` (`core.gardener.cloud`) | bundle operator (`sap.eu`) | this repo (root) |
 | IronCoreShoot | `Shoot` (`core.gardener.cloud`, IronCore infra) | bundle operator (`sap.eu`) | this repo (root) |
-| IronCore VM | `IronCoreVM` (`ironcore.apeirora.eu`) | `ironcore-operator` | this repo (`ironcore-operator/`) |
+| IronCore VM | `IronCoreVM` (`sap.eu`) | `ironcore-operator` | this repo (`ironcore-operator/`) |
 
 All three integrations live in this repository — it is self-contained. The two
 Gardener flavors talk directly to Gardener. The **IronCore VM** integration provides
 both the operator (`ironcore-operator/`, image + chart `ironcore-operator`) and its
-Platform Mesh surface: the `ironcorevms.ironcore.apeirora.eu` APIResourceSchema
+Platform Mesh surface: the `ironcorevms.sap.eu` APIResourceSchema
 projected namespaced into the KCP workspace, the `publish-ironcore-ironcorevms`
 PublishedResource in the sync-agent, and the VM CRUD UI in `ui/src/lib/vm.ts` +
 `ui/src/components/Vm*`.
