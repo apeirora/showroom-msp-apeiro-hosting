@@ -37,8 +37,8 @@ const (
 	CredentialsKubeconfigKey = "kubeconfig"
 	IgnitionSecretKey        = "ignition.yaml"
 
-	LabelVMNamespace = "ironcore.apeirora.eu/vm-namespace"
-	LabelVMName      = "ironcore.apeirora.eu/vm-name"
+	LabelVMNamespace = "sap.eu/vm-namespace"
+	LabelVMName      = "sap.eu/vm-name"
 )
 
 // +kubebuilder:validation:Enum=Init;Provisioning;Ready;Failed;Deleting

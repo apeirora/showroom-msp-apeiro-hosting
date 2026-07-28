@@ -1,5 +1,5 @@
 - apiGroups:
-    - sap.gardener
+    - sap.eu
   resources:
     - openstackshoots
     - ironcoreshoots
@@ -12,14 +12,14 @@
     - patch
     - delete
 - apiGroups:
-    - sap.gardener
+    - sap.eu
   resources:
     - openstackshoots/finalizers
     - ironcoreshoots/finalizers
   verbs:
     - update
 - apiGroups:
-    - sap.gardener
+    - sap.eu
   resources:
     - openstackshoots/status
     - ironcoreshoots/status

@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/component: portal-integration
 rules:
   - apiGroups:
-      - sap.gardener
+      - sap.eu
     resources:
       - openstackshoots
       - openstackshoots/status
@@ -24,7 +24,7 @@ rules:
       - delete
   # IronCoreVM CRs served by ironcore-operator.
   - apiGroups:
-      - ironcore.apeirora.eu
+      - sap.eu
     resources:
       - ironcorevms
       - ironcorevms/status

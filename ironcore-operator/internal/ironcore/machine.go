@@ -41,8 +41,8 @@ const (
 // it owns, keyed by the management-cluster VM namespace and name.
 func VMLabels(namespace, name string) map[string]string {
 	return map[string]string{
-		"ironcore.apeirora.eu/vm-namespace": namespace,
-		"ironcore.apeirora.eu/vm-name":      name,
+		"sap.eu/vm-namespace": namespace,
+		"sap.eu/vm-name":      name,
 	}
 }
 

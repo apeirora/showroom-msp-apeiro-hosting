@@ -10,9 +10,9 @@ metadata:
     "helm.sh/resource-policy": keep
     {{- end }}
     controller-gen.kubebuilder.io/version: v0.19.0
-  name: ironcorevms.ironcore.apeirora.eu
+  name: ironcorevms.sap.eu
 spec:
-  group: ironcore.apeirora.eu
+  group: sap.eu
   names:
     kind: IronCoreVM
     listKind: IronCoreVMList

@@ -49,7 +49,7 @@ const (
 	// managedByLabelKey / managedByNamespaceBind stamp the SCPCs so the
 	// NamespaceReconciler can unambiguously identify and clean up the objects
 	// it owns.
-	managedByLabelKey      = "sap.gardener/managed-by"
+	managedByLabelKey      = "sap.eu/managed-by"
 	managedByNamespaceBind = "namespace-bind"
 )
 

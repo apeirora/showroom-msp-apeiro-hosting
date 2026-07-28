@@ -5,9 +5,9 @@
 apiVersion: apis.kcp.io/v1alpha1
 kind: APIResourceSchema
 metadata:
-  name: {{ .Values.schemaRevision }}.openstackshoots.sap.gardener
+  name: {{ .Values.schemaRevision }}.openstackshoots.sap.eu
 spec:
-  group: sap.gardener
+  group: sap.eu
   names:
     kind: OpenStackShoot
     listKind: OpenStackShootList
@@ -190,9 +190,9 @@ spec:
 apiVersion: apis.kcp.io/v1alpha1
 kind: APIResourceSchema
 metadata:
-  name: {{ .Values.schemaRevision }}.ironcoreshoots.sap.gardener
+  name: {{ .Values.schemaRevision }}.ironcoreshoots.sap.eu
 spec:
-  group: sap.gardener
+  group: sap.eu
   names:
     kind: IronCoreShoot
     listKind: IronCoreShootList
@@ -379,9 +379,9 @@ spec:
 apiVersion: apis.kcp.io/v1alpha1
 kind: APIResourceSchema
 metadata:
-  name: {{ .Values.vmSchemaRevision }}.ironcorevms.ironcore.apeirora.eu
+  name: {{ .Values.vmSchemaRevision }}.ironcorevms.sap.eu
 spec:
-  group: ironcore.apeirora.eu
+  group: sap.eu
   names:
     kind: IronCoreVM
     listKind: IronCoreVMList

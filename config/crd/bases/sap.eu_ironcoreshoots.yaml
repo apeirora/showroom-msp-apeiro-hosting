@@ -4,9 +4,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.19.0
-  name: ironcoreshoots.sap.gardener
+  name: ironcoreshoots.sap.eu
 spec:
-  group: sap.gardener
+  group: sap.eu
   names:
     kind: IronCoreShoot
     listKind: IronCoreShootList

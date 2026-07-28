@@ -1,11 +1,11 @@
 # showroom-msp-sap-provider
 
-SAP Integration provider for simple-cluster, packaging the OpenStack and IronCore
+SAP Hosting provider for simple-cluster, packaging the OpenStack and IronCore
 Gardener flavors into one provider stack.
 
 ## Description
 
-Exposes two namespaced CRs in group `sap.gardener` — `OpenStackShoot` and
+Exposes two namespaced CRs in group `sap.eu` — `OpenStackShoot` and
 `IronCoreShoot` — via a single APIExport, sync-agent and operator. When a KCP
 account workspace binds this provider (alongside simple-cluster), the operator's
 NamespaceReconciler materialises both `sap-gardener-openstack` and
@@ -21,14 +21,14 @@ provider bundle at the repo root and `ironcore-operator/` (the IronCore VM opera
 
 | Integration | Resource (Kind) | Operator + CRD | Location |
 |---|---|---|---|
-| OpenStackShoot | `Shoot` (`core.gardener.cloud`) | bundle operator (`sap.gardener`) | this repo (root) |
-| IronCoreShoot | `Shoot` (`core.gardener.cloud`, IronCore infra) | bundle operator (`sap.gardener`) | this repo (root) |
-| IronCore VM | `IronCoreVM` (`ironcore.apeirora.eu`) | `ironcore-operator` | this repo (`ironcore-operator/`) |
+| OpenStackShoot | `Shoot` (`core.gardener.cloud`) | bundle operator (`sap.eu`) | this repo (root) |
+| IronCoreShoot | `Shoot` (`core.gardener.cloud`, IronCore infra) | bundle operator (`sap.eu`) | this repo (root) |
+| IronCore VM | `IronCoreVM` (`sap.eu`) | `ironcore-operator` | this repo (`ironcore-operator/`) |
 
 All three integrations live in this repository — it is self-contained. The two
 Gardener flavors talk directly to Gardener. The **IronCore VM** integration provides
 both the operator (`ironcore-operator/`, image + chart `ironcore-operator`) and its
-Platform Mesh surface: the `ironcorevms.ironcore.apeirora.eu` APIResourceSchema
+Platform Mesh surface: the `ironcorevms.sap.eu` APIResourceSchema
 projected namespaced into the KCP workspace, the `publish-ironcore-ironcorevms`
 PublishedResource in the sync-agent, and the VM CRUD UI in `ui/src/lib/vm.ts` +
 `ui/src/components/Vm*`.
@@ -150,7 +150,10 @@ previously added to 'dist/chart/values.yaml' or 'dist/chart/manager/manager.yaml
 is manually re-applied afterwards.
 
 ## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
+Contributions go via pull requests with Conventional-Commit titles (release-please
+derives the changelog and version bump from them). Before opening a PR, run
+`make test` and `make lint`, and regenerate manifests with `make manifests generate`
+if you changed API types.
 
 **NOTE:** Run `make help` for more information on all potential `make` targets
 

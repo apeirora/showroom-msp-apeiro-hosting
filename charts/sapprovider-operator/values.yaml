@@ -17,7 +17,7 @@ namespaceScpc:
   # annotation shows both APIExports below are bound to the account.
   enabled: true
   simpleClusterExportName: simpleclusters.showroom.apeirora.eu
-  sapExportName: sap.gardener
+  sapExportName: sap.eu
 
 scpc:
   kubeconfig:

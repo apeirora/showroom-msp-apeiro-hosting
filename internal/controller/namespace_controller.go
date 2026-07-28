@@ -43,7 +43,7 @@ const (
 	// names whose joint presence in the annotation signals that the SAP
 	// Gardener SCPCs must exist in the account namespace.
 	DefaultSimpleClusterExportName = "simpleclusters.showroom.apeirora.eu"
-	DefaultSapExportName           = "sap.gardener"
+	DefaultSapExportName           = "sap.eu"
 )
 
 // NamespaceReconciler is the sole creator of the SAP Integration

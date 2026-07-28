@@ -1,7 +1,7 @@
 # This rule is not used by the project showroom-msp-sap-provider itself.
 # It is provided to allow the cluster admin to help manage permissions for users.
 #
-# Grants read-only access to sap.gardener resources.
+# Grants read-only access to sap.eu resources.
 # This role is intended for users who need visibility into these resources
 # without permissions to modify them. It is ideal for monitoring purposes and limited-access viewing.
 
@@ -14,7 +14,7 @@ metadata:
   name: shoot-viewer-role
 rules:
 - apiGroups:
-  - sap.gardener
+  - sap.eu
   resources:
   - openstackshoots
   - ironcoreshoots
@@ -23,7 +23,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - sap.gardener
+  - sap.eu
   resources:
   - openstackshoots/status
   - ironcoreshoots/status

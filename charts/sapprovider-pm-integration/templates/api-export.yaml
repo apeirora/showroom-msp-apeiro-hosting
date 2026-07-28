@@ -1,28 +1,28 @@
 apiVersion: apis.kcp.io/v1alpha2
 kind: APIExport
 metadata:
-  name: sap.gardener
+  name: sap.eu
   labels:
     # Marketplace/ContentConfigurations virtual-workspace filters on content-for
-    # = APIExport name. Must match `sap.gardener` verbatim.
-    ui.platform-mesh.io/content-for: sap.gardener
+    # = APIExport name. Must match `sap.eu` verbatim.
+    ui.platform-mesh.io/content-for: sap.eu
 spec:
   resources:
-    - group: sap.gardener
+    - group: sap.eu
       name: openstackshoots
-      schema: {{ .Values.schemaRevision }}.openstackshoots.sap.gardener
+      schema: {{ .Values.schemaRevision }}.openstackshoots.sap.eu
       storage:
         crd: {}
-    - group: sap.gardener
+    - group: sap.eu
       name: ironcoreshoots
-      schema: {{ .Values.schemaRevision }}.ironcoreshoots.sap.gardener
+      schema: {{ .Values.schemaRevision }}.ironcoreshoots.sap.eu
       storage:
         crd: {}
     # IronCoreVM: namespaced VM API served by simple-cluster-operator-ironcore,
     # synced by sapprovider-sync-agent. Rotates via vmSchemaRevision.
-    - group: ironcore.apeirora.eu
+    - group: sap.eu
       name: ironcorevms
-      schema: {{ .Values.vmSchemaRevision }}.ironcorevms.ironcore.apeirora.eu
+      schema: {{ .Values.vmSchemaRevision }}.ironcorevms.sap.eu
       storage:
         crd: {}
   permissionClaims:
