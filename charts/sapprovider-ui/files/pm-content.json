@@ -8,8 +8,8 @@
         "data": {
             "nodes": [
                 {
-                    "pathSegment": "sap_gardener",
-                    "navigationContext": "sap_gardener",
+                    "pathSegment": "sap_eu",
+                    "navigationContext": "sap_eu",
                     "label": "SAP Shoots",
                     "icon": "data:image/svg+xml;base64,{{ $logo }}",
                     "category": {

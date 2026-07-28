@@ -3,7 +3,7 @@
 # and allow the plugins properly work.
 # More info: https://book.kubebuilder.io/reference/project-config.html
 cliVersion: 4.9.0
-domain: gardener
+domain: eu
 layout:
 - go.kubebuilder.io/v4
 projectName: showroom-msp-sap-provider
@@ -13,7 +13,7 @@ resources:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: gardener
+  domain: eu
   group: sap
   kind: OpenStackShoot
   path: github.com/apeirora/showroom-msp-sap-hosting/api/v1alpha1
@@ -22,7 +22,7 @@ resources:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: gardener
+  domain: eu
   group: sap
   kind: IronCoreShoot
   path: github.com/apeirora/showroom-msp-sap-hosting/api/v1alpha1

@@ -1,6 +1,6 @@
 /*
  * CRUD + subscriptions for SAP Integration provider Shoot resources.
- * GraphQL group: sap_gardener.v1alpha1
+ * GraphQL group: sap_eu.v1alpha1
  * Two Kinds share the same shape and surface:
  *   - OpenStackShoot (list field OpenStackShoots)
  *   - IronCoreShoot  (list field IronCoreShoots)
@@ -13,8 +13,8 @@
  * The whole GraphQL surface is intentionally confined to this file and built by
  * a single factory (makeShootApi): if the live gateway schema differs, this is
  * the single place to adjust. Field/type names (create<Kind>/delete<Kind>, the
- * <Kind>s list field, the sap_gardener_v1alpha1_<kind>s subscription and the
- * SapGardenerV1alpha1<Kind>_Input create input type) follow the gateway's own
+ * <Kind>s list field, the sap_eu_v1alpha1_<kind>s subscription and the
+ * SapEuV1alpha1<Kind>_Input create input type) follow the gateway's own
  * schema-generation rules (github.com/platform-mesh/kubernetes-graphql-gateway,
  * pinned at v1.12.0 for this deployment). Still unexercised against a live
  * gateway.
@@ -45,20 +45,20 @@ interface ShootApiConfig {
   kind: string;
   // Plural GraphQL list field, e.g. "OpenStackShoots".
   listField: string;
-  // Create input type, e.g. "SapGardenerV1alpha1OpenStackShoot_Input".
+  // Create input type, e.g. "SapEuV1alpha1OpenStackShoot_Input".
   inputType: string;
-  // Subscription root field, e.g. "sap_gardener_v1alpha1_openstackshoots".
+  // Subscription root field, e.g. "sap_eu_v1alpha1_openstackshoots".
   subscription: string;
 }
 
 interface ShootListResponse {
-  sap_gardener?: { v1alpha1?: Record<string, { items: ProviderShoot[] }> };
+  sap_eu?: { v1alpha1?: Record<string, { items: ProviderShoot[] }> };
 }
 
 const makeShootApi = (cfg: ShootApiConfig): ShootApi => {
   const listQuery = `
     query List {
-      sap_gardener {
+      sap_eu {
         v1alpha1 {
           ${cfg.listField} {
             items {
@@ -78,7 +78,7 @@ const makeShootApi = (cfg: ShootApiConfig): ShootApi => {
 
   const createMutation = `
     mutation Create($object: ${cfg.inputType}!) {
-      sap_gardener {
+      sap_eu {
         v1alpha1 {
           create${cfg.kind}(object: $object) {
             metadata { name }
@@ -90,7 +90,7 @@ const makeShootApi = (cfg: ShootApiConfig): ShootApi => {
 
   const deleteMutation = `
     mutation Delete($name: String!) {
-      sap_gardener {
+      sap_eu {
         v1alpha1 {
           delete${cfg.kind}(name: $name)
         }
@@ -111,7 +111,7 @@ const makeShootApi = (cfg: ShootApiConfig): ShootApi => {
     list: async (opts) => {
       if (fixturesEnabled()) return fixtureShoots(cfg.flavor);
       const data = await graphqlFetch<ShootListResponse>(opts, { query: listQuery });
-      return data.sap_gardener?.v1alpha1?.[cfg.listField]?.items ?? [];
+      return data.sap_eu?.v1alpha1?.[cfg.listField]?.items ?? [];
     },
     create: async (opts, input) => {
       if (fixturesEnabled()) {
@@ -141,14 +141,14 @@ export const openstackShootApi = makeShootApi({
   flavor: 'openstack',
   kind: 'OpenStackShoot',
   listField: 'OpenStackShoots',
-  inputType: 'SapGardenerV1alpha1OpenStackShoot_Input',
-  subscription: 'sap_gardener_v1alpha1_openstackshoots'
+  inputType: 'SapEuV1alpha1OpenStackShoot_Input',
+  subscription: 'sap_eu_v1alpha1_openstackshoots'
 });
 
 export const ironcoreShootApi = makeShootApi({
   flavor: 'ironcore',
   kind: 'IronCoreShoot',
   listField: 'IronCoreShoots',
-  inputType: 'SapGardenerV1alpha1IronCoreShoot_Input',
-  subscription: 'sap_gardener_v1alpha1_ironcoreshoots'
+  inputType: 'SapEuV1alpha1IronCoreShoot_Input',
+  subscription: 'sap_eu_v1alpha1_ironcoreshoots'
 });

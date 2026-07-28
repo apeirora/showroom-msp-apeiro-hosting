@@ -5,7 +5,7 @@ Gardener flavors into one provider stack.
 
 ## Description
 
-Exposes two namespaced CRs in group `sap.gardener` — `OpenStackShoot` and
+Exposes two namespaced CRs in group `sap.eu` — `OpenStackShoot` and
 `IronCoreShoot` — via a single APIExport, sync-agent and operator. When a KCP
 account workspace binds this provider (alongside simple-cluster), the operator's
 NamespaceReconciler materialises both `sap-gardener-openstack` and
@@ -21,8 +21,8 @@ provider bundle at the repo root and `ironcore-operator/` (the IronCore VM opera
 
 | Integration | Resource (Kind) | Operator + CRD | Location |
 |---|---|---|---|
-| OpenStackShoot | `Shoot` (`core.gardener.cloud`) | bundle operator (`sap.gardener`) | this repo (root) |
-| IronCoreShoot | `Shoot` (`core.gardener.cloud`, IronCore infra) | bundle operator (`sap.gardener`) | this repo (root) |
+| OpenStackShoot | `Shoot` (`core.gardener.cloud`) | bundle operator (`sap.eu`) | this repo (root) |
+| IronCoreShoot | `Shoot` (`core.gardener.cloud`, IronCore infra) | bundle operator (`sap.eu`) | this repo (root) |
 | IronCore VM | `IronCoreVM` (`ironcore.apeirora.eu`) | `ironcore-operator` | this repo (`ironcore-operator/`) |
 
 All three integrations live in this repository — it is self-contained. The two

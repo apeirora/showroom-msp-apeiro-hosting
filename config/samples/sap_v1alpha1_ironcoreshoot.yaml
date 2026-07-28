@@ -1,4 +1,4 @@
-apiVersion: sap.gardener/v1alpha1
+apiVersion: sap.eu/v1alpha1
 kind: IronCoreShoot
 metadata:
   name: sap-ironcore

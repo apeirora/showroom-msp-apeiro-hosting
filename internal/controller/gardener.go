@@ -64,7 +64,7 @@ var shootGVR = schema.GroupVersionResource{
 const (
 	shootDeletionConfirmation = "confirmation.gardener.cloud/deletion"
 	// shootOwnerAnnotation back-links a provider-owned Shoot to its CR.
-	shootOwnerAnnotation = "sap.gardener/owner"
+	shootOwnerAnnotation = "sap.eu/owner"
 
 	// kubeconfigValidity / kubeconfigRenewalBefore mirror the SCPC settings:
 	// Gardener caps AdminKubeconfigRequest expiration at ~24h.

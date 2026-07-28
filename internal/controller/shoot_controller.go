@@ -38,7 +38,7 @@ import (
 )
 
 const (
-	shootFinalizer = "sap.gardener/provider"
+	shootFinalizer = "sap.eu/provider"
 
 	conditionReady = "Ready"
 
@@ -99,9 +99,9 @@ type ShootReconciler struct {
 	defaults *flavorDefaults
 }
 
-// +kubebuilder:rbac:groups=sap.gardener,resources=openstackshoots;ironcoreshoots,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=sap.gardener,resources=openstackshoots/status;ironcoreshoots/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=sap.gardener,resources=openstackshoots/finalizers;ironcoreshoots/finalizers,verbs=update
+// +kubebuilder:rbac:groups=sap.eu,resources=openstackshoots;ironcoreshoots,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=sap.eu,resources=openstackshoots/status;ironcoreshoots/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=sap.eu,resources=openstackshoots/finalizers;ironcoreshoots/finalizers,verbs=update
 // +kubebuilder:rbac:groups=showroom.apeirora.eu,resources=simpleclusterproviderconfigs,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=showroom.apeirora.eu,resources=simpleclusters,verbs=get;list;watch
 // +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete

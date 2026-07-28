@@ -1,6 +1,6 @@
 syncAgentOperator:
   enabled: true
-  apiExportName: sap.gardener
+  apiExportName: sap.eu
   agentName: sap-provider-agent
   kcpKubeconfig: pm-kubeconfig
   # Scope this agent to its own PublishedResources so foreign PublishedResources

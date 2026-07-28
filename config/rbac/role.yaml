@@ -31,7 +31,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - sap.gardener
+  - sap.eu
   resources:
   - ironcoreshoots
   - openstackshoots
@@ -44,14 +44,14 @@ rules:
   - update
   - watch
 - apiGroups:
-  - sap.gardener
+  - sap.eu
   resources:
   - ironcoreshoots/finalizers
   - openstackshoots/finalizers
   verbs:
   - update
 - apiGroups:
-  - sap.gardener
+  - sap.eu
   resources:
   - ironcoreshoots/status
   - openstackshoots/status

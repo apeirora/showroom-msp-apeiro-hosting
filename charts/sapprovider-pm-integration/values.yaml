@@ -4,7 +4,7 @@
 PUBLIC_HOST: "localhost"
 PUBLIC_SCHEME: "http"
 
-# Name prefix of the APIResourceSchemas (full name: <schemaRevision>.<plural>.sap.gardener).
+# Name prefix of the APIResourceSchemas (full name: <schemaRevision>.<plural>.sap.eu).
 # KCP APIResourceSchemas are immutable — whenever the generated schema content in
 # templates/api-resource-schemas.yaml changes, bump this revision so a NEW schema
 # is created and the APIExport is repointed at it; patching in place is rejected.

@@ -3,8 +3,8 @@
 apiVersion: ui.platform-mesh.io/v1alpha1
 kind: ProviderMetadata
 metadata:
-  # Must match the sap.gardener APIExport's metadata.name verbatim.
-  name: sap.gardener
+  # Must match the sap.eu APIExport's metadata.name verbatim.
+  name: sap.eu
 spec:
   displayName: {{ $marketplaceTitle | quote }}
   description: |
