@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.31.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.30.0...v0.31.0) (2026-07-29)
+
+
+### Features
+
+* add imagePullSecrets to ironcore-operator chart ([#4](https://github.com/apeirora/showroom-msp-sap-hosting/issues/4)) ([ae701f7](https://github.com/apeirora/showroom-msp-sap-hosting/commit/ae701f785f8b8274eeccfaac214cfb42fc44a1c9))
+
+
+### Bug Fixes
+
+* **ci:** release-please tags via apeirora-showroom-bot app token ([#5](https://github.com/apeirora/showroom-msp-sap-hosting/issues/5)) ([c7dfd11](https://github.com/apeirora/showroom-msp-sap-hosting/commit/c7dfd11a902656e84ff1224e408648ef2c6bf75f))
+* rename API group to sap.eu (incl. IronCoreVM) ([#6](https://github.com/apeirora/showroom-msp-sap-hosting/issues/6)) ([abba79d](https://github.com/apeirora/showroom-msp-sap-hosting/commit/abba79d549716f94caf193cb9cbebcd0c18c1b25))
+
 ## [0.30.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.29.0...v0.30.0) (2026-07-27)
 
 
