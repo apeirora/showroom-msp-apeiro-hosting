@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.1](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.31.0...v0.31.1) (2026-07-29)
+
+
+### Bug Fixes
+
+* **ui:** simplify sidebar resource labels ([#8](https://github.com/apeirora/showroom-msp-sap-hosting/issues/8)) ([d79a4b1](https://github.com/apeirora/showroom-msp-sap-hosting/commit/d79a4b15a45447149cb7a5a58a180a46940115b2))
+
 ## [0.31.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.30.0...v0.31.0) (2026-07-29)
 
 
