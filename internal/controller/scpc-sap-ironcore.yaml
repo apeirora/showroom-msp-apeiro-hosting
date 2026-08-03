@@ -24,64 +24,64 @@ spec:
   profiles:
     - { name: memory-intel1-1cpu, cpu: "1", memory: 8Gi }
     - { name: memory-intel1-2cpu, cpu: "2", memory: 16Gi }
+  # The SimpleCluster materialises a local IronCoreShoot on the service cluster
+  # (this provider's own CR); the sap-provider operator turns it into a real
+  # Gardener Shoot on the garden and maintains the admin-kubeconfig Secret next
+  # to it, which the kubeconfigSource below hands back to the SimpleCluster. The
+  # IronCoreShoot.spec is the plain Gardener Shoot manifest, rendered here with
+  # the SimpleCluster's inputs. spec.target.namespace above is the garden
+  # project namespace the operator places the Shoot in (read from this skeleton,
+  # not applied by the SimpleCluster); the operator rewrites the ensured SCPC's
+  # target to the account namespace so the IronCoreShoot lands locally.
   resources:
     - name: shoot
-      apiVersion: core.gardener.cloud/v1beta1
-      kind: Shoot
+      apiVersion: sap.eu/v1alpha1
+      kind: IronCoreShoot
       nameTemplate: '{{- printf "%s/%s" .SC.namespace .SC.name | sha256sum | trunc 8 | printf "sc-%s" }}'
-      deletionAnnotations:
-        confirmation.gardener.cloud/deletion: "true"
       readiness:
-        phasePath: status.lastOperation.state
-        phaseReadyValue: Succeeded
+        phasePath: status.phase
+        phaseReadyValue: Ready
         phaseFailedValues:
           - Failed
-          - Error
-        lastOperationPath: status.lastOperation.description
-        lastErrorPath: status.lastErrors[0].description
       template: |
-        apiVersion: core.gardener.cloud/v1beta1
-        kind: Shoot
-        spec:
-          cloudProfile:
-            name: {{ .Inputs.cloudProfile }}
-            kind: CloudProfile
-          credentialsBindingName: my-ironcore-secret
-          region: {{ .Inputs.region }}
-          kubernetes:
-            version: "{{ .Inputs.k8sVersion }}"
-          addons:
-            nginxIngress:
-              enabled: true
-              loadBalancerSourceRanges:
-                - 0.0.0.0/0
-          provider:
-            type: ironcore
-            workers:
-              - name: worker-main
-                minimum: {{ .SC.workers.min }}
-                maximum: {{ .SC.workers.max }}
-                machine:
-                  type: {{ .Inputs.machineType }}
-                  image:
-                    name: {{ .Inputs.machineImage }}
-                zones:
-                  - {{ .Inputs.zone }}
-          networking:
-            type: calico
-            nodes: 10.250.0.0/16
-            pods: 100.64.0.0/12
-            services: 100.104.0.0/13
+        apiVersion: sap.eu/v1alpha1
+        kind: IronCoreShoot
+        spec: |
+          apiVersion: core.gardener.cloud/v1beta1
+          kind: Shoot
+          spec:
+            cloudProfile:
+              name: {{ .Inputs.cloudProfile }}
+              kind: CloudProfile
+            credentialsBindingName: my-ironcore-secret
+            region: {{ .Inputs.region }}
+            kubernetes:
+              version: "{{ .Inputs.k8sVersion }}"
+            addons:
+              nginxIngress:
+                enabled: true
+                loadBalancerSourceRanges:
+                  - 0.0.0.0/0
+            provider:
+              type: ironcore
+              workers:
+                - name: worker-main
+                  minimum: {{ .SC.workers.min }}
+                  maximum: {{ .SC.workers.max }}
+                  machine:
+                    type: {{ .Inputs.machineType }}
+                    image:
+                      name: {{ .Inputs.machineImage }}
+                  zones:
+                    - {{ .Inputs.zone }}
+            networking:
+              type: calico
+              nodes: 10.250.0.0/16
+              pods: 100.64.0.0/12
+              services: 100.104.0.0/13
+  # The IronCoreShoot operator mints the admin kubeconfig into a Secret named
+  # <shoot>-ironcoreshoot-kubeconfig next to the CR; hand that back verbatim.
   kubeconfigSource:
     resourceName: shoot
-    subResource:
-      apiVersion: authentication.gardener.cloud/v1alpha1
-      kind: AdminKubeconfigRequest
-      subResource: adminkubeconfig
-      kubeconfigPath: status.kubeconfig
-      expirationPath: status.expirationTimestamp
-    # Gardener caps AdminKubeconfigRequest expiration at ~24h; requesting a
-    # longer validity with renewalBefore above the cap causes a perpetual
-    # re-mint loop in the simple-cluster operator.
-    validity: 24h
-    renewalBefore: 4h
+    secretRef:
+      name: '{{ .Target.name }}-ironcoreshoot-kubeconfig'

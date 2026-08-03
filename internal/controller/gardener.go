@@ -266,6 +266,10 @@ func smallestProfile(scpc *unstructured.Unstructured) string {
 // template with the synthetic context a standalone provider Shoot gets: the
 // SCPC input defaults and a single-node worker pool. It is used only when the
 // CR spec is empty (backward compatibility for CRs created without a spec).
+//
+// The skeleton's resource template renders the flavor's own CR
+// (OpenStackShoot/IronCoreShoot) whose spec is the plain Gardener Shoot
+// manifest; the Shoot manifest is that inner spec.
 func renderDefaultShootManifest(defaults *flavorDefaults, namespace, name string) (*unstructured.Unstructured, error) {
 	tmpl, err := template.New("shoot").Option("missingkey=error").Parse(defaults.template)
 	if err != nil {
@@ -283,7 +287,16 @@ func renderDefaultShootManifest(defaults *flavorDefaults, namespace, name string
 	if err := tmpl.Execute(&buf, ctxData); err != nil {
 		return nil, fmt.Errorf("render default shoot template: %w", err)
 	}
-	return decodeShootManifest(buf.Bytes())
+
+	var wrapper map[string]interface{}
+	if err := yaml.Unmarshal(buf.Bytes(), &wrapper); err != nil {
+		return nil, fmt.Errorf("unmarshal default provider CR: %w", err)
+	}
+	shootText, _, _ := unstructured.NestedString(wrapper, "spec")
+	if strings.TrimSpace(shootText) == "" {
+		return nil, fmt.Errorf("default provider CR template has no spec (shoot manifest)")
+	}
+	return decodeShootManifest([]byte(shootText))
 }
 
 // parseShootManifest parses a plain Gardener Shoot manifest — the CR spec text,

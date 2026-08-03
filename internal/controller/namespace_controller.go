@@ -94,14 +94,8 @@ func (r *NamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return ctrl.Result{}, r.ensureSCPCsAbsent(ctx, ns.Name)
 	}
 
-	ref, err := resolveKubeconfigSecretRef(r.KubeconfigSource, ns.Name,
-		r.GlobalKubeconfigSecretName, r.GlobalKubeconfigSecretNamespace, r.ClientKubeconfigSecretName)
-	if err != nil {
-		return ctrl.Result{}, err
-	}
-
 	for _, f := range flavors {
-		scpc, err := renderSCPC(f, ns.Name, ref)
+		scpc, err := renderSCPC(f, ns.Name)
 		if err != nil {
 			return ctrl.Result{RequeueAfter: providerRequeue}, err
 		}
