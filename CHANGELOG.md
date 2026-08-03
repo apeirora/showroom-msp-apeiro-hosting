@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.33.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.32.0...v0.33.0) (2026-08-03)
+
+
+### Features
+
+* Label provider CR with owner-cluster for KCP up-sync ([#12](https://github.com/apeirora/showroom-msp-sap-hosting/issues/12)) ([32e2a3e](https://github.com/apeirora/showroom-msp-sap-hosting/commit/32e2a3e8e969c8ef76cbff3f15adc8ff8820c96f))
+
 ## [0.32.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.31.1...v0.32.0) (2026-08-03)
 
 
