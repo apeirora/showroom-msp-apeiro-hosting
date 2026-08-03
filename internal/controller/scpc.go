@@ -127,8 +127,13 @@ func resolveKubeconfigSecretRef(
 }
 
 // renderSCPC materialises one flavor's SCPC for an account namespace: it sets
-// the name/namespace, the kubeconfigSecretRef target and the managed-by label.
-func renderSCPC(f flavor, namespace string, ref corev1.SecretReference) (*unstructured.Unstructured, error) {
+// the name/namespace, the managed-by label and points the SimpleCluster at the
+// account namespace so the flavor's provider CR (OpenStackShoot/IronCoreShoot)
+// is created locally on the service cluster. The garden project namespace kept
+// in the skeleton's spec.target.namespace is consumed only by the Shoot
+// reconciler (parseFlavorDefaults); the operator reaches the garden itself, so
+// the ensured SCPC needs no kubeconfigSecretRef.
+func renderSCPC(f flavor, namespace string) (*unstructured.Unstructured, error) {
 	var obj map[string]interface{}
 	if err := yaml.Unmarshal(f.manifest, &obj); err != nil {
 		return nil, fmt.Errorf("unmarshal embedded SCPC manifest for %q: %w", f.scpcName, err)
@@ -144,12 +149,10 @@ func renderSCPC(f flavor, namespace string, ref corev1.SecretReference) (*unstru
 	labels[managedByLabelKey] = managedByNamespaceBind
 	scpc.SetLabels(labels)
 
-	if err := unstructured.SetNestedMap(scpc.Object, map[string]interface{}{
-		"name":      ref.Name,
-		"namespace": ref.Namespace,
-	}, "spec", "target", "kubeconfigSecretRef"); err != nil {
+	if err := unstructured.SetNestedField(scpc.Object, "{{ .SC.namespace }}", "spec", "target", "namespace"); err != nil {
 		return nil, err
 	}
+	unstructured.RemoveNestedField(scpc.Object, "spec", "target", "kubeconfigSecretRef")
 
 	return scpc, nil
 }

@@ -111,12 +111,17 @@ var _ = Describe("Namespace Controller", func() {
 			Expect(owners[0].Kind).To(Equal("Namespace"))
 			Expect(owners[0].Name).To(Equal(name))
 
-			refName, _, _ := unstructured.NestedString(scpc.Object, "spec", "target", "kubeconfigSecretRef", "name")
-			refNS, _, _ := unstructured.NestedString(scpc.Object, "spec", "target", "kubeconfigSecretRef", "namespace")
-			Expect(refName).To(Equal(globalSecretName))
-			Expect(refNS).To(Equal(globalSecretNamespace))
+			// The flavor's provider CR is applied locally into the account
+			// namespace; the operator reaches the garden itself, so the ensured
+			// SCPC carries no garden kubeconfig ref.
+			targetNS, _, _ := unstructured.NestedString(scpc.Object, "spec", "target", "namespace")
+			Expect(targetNS).To(Equal("{{ .SC.namespace }}"))
+			_, hasRef, _ := unstructured.NestedMap(scpc.Object, "spec", "target", "kubeconfigSecretRef")
+			Expect(hasRef).To(BeFalse())
 
-			// Empty override keeps the built-in default Shoot template.
+			// The local provider CR (OpenStackShoot/IronCoreShoot) carries the
+			// plain Gardener Shoot manifest in its spec.
+			Expect(scpcShootTemplate(scpc)).To(ContainSubstring("sap.eu/v1alpha1"))
 			Expect(scpcShootTemplate(scpc)).To(ContainSubstring("core.gardener.cloud/v1beta1"))
 		}
 	})
