@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.32.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.31.1...v0.32.0) (2026-08-03)
+
+
+### Features
+
+* simplecluster local provider cr ([#10](https://github.com/apeirora/showroom-msp-sap-hosting/issues/10)) ([855750c](https://github.com/apeirora/showroom-msp-sap-hosting/commit/855750c9ed778eb03873536f47ba986962ff9fa7))
+
 ## [0.31.1](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.31.0...v0.31.1) (2026-07-29)
 
 
