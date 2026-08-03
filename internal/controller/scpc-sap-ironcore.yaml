@@ -46,6 +46,10 @@ spec:
       template: |
         apiVersion: sap.eu/v1alpha1
         kind: IronCoreShoot
+        metadata:
+          labels:
+            # Routes the up-sync to the owning KCP workspace (logical-cluster id).
+            sync.apeirora.eu/owner-cluster: '{{ .SC.namespace }}'
         spec: |
           apiVersion: core.gardener.cloud/v1beta1
           kind: Shoot
