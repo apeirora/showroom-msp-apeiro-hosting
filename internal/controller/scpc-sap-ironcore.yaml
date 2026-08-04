@@ -19,7 +19,7 @@ spec:
     - { name: k8sVersion,   type: string,   default: "1.34.5",                    description: "Kubernetes version" }
     - { name: machineType,  from: profile,                                        description: "Worker machine type; auto-picked as the smallest profile fitting the SC's requested cpu/memory" }
     - { name: machineImage, type: string,   default: gardenlinux,                 description: "Worker OS image name" }
-    - { name: zone,         type: string,   default: wdf4a,                       description: "Availability zone for the worker pool" }
+    - { name: zone,         type: string,   default: wdf4b,                       description: "Availability zone for the worker pool" }
   # Machine types from the ironcore CloudProfile.
   profiles:
     - { name: memory-intel1-1cpu, cpu: "1", memory: 8Gi }
