@@ -58,6 +58,16 @@ export interface CreateInput {
   machineClassId: string;
 }
 
+// Children created by a SimpleCluster carry this label (stamped by the
+// simple-cluster-operator). Their lifecycle is owned by the SimpleCluster, so the
+// portal must not offer to delete them directly.
+export const SIMPLE_CLUSTER_LABEL = 'showroom.apeirora.eu/simple-cluster';
+
+// simpleClusterOwner returns the owning SimpleCluster name, or undefined for a
+// directly-created (user-owned) resource.
+export const simpleClusterOwner = (obj: IronCoreVM): string | undefined =>
+  obj.metadata.labels?.[SIMPLE_CLUSTER_LABEL];
+
 const buildObject = (namespace: string, input: CreateInput): Record<string, unknown> => {
   const cls = MACHINE_CLASSES.find((c) => c.id === input.machineClassId) ?? MACHINE_CLASSES[0];
   return {
@@ -82,7 +92,7 @@ const listQuery = `
       v1alpha1 {
         IronCoreVMs(namespace: $ns) {
           items {
-            metadata { name namespace creationTimestamp uid resourceVersion }
+            metadata { name namespace creationTimestamp uid resourceVersion labels }
             status {
               phase
               machineState
