@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.33.1...v0.34.0) (2026-08-04)
+
+
+### Features
+
+* disable delete for SimpleCluster-managed shoots and VMs ([#16](https://github.com/apeirora/showroom-msp-sap-hosting/issues/16)) ([9423987](https://github.com/apeirora/showroom-msp-sap-hosting/commit/94239875a990af61a90d9ad6c7007ef3449acb4a))
+
 ## [0.33.1](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.33.0...v0.33.1) (2026-08-04)
 
 
