@@ -11,6 +11,7 @@ import {
 } from '@ui5/webcomponents-react';
 import '@ui5/webcomponents-fiori/dist/illustrations/NoData.js';
 import type { Condition, ProviderShoot } from '../types';
+import { simpleClusterOwner } from '../lib/shoot';
 
 export type ShootAction = 'view' | 'delete';
 
@@ -79,6 +80,7 @@ export const ShootList = ({ shoots, loading, onCreate, onAction }: ShootListProp
       readyStateValue: ready.state,
       template: s.spec?.trim() ? 'Custom' : 'Built-in',
       age: ageOf(s.metadata.creationTimestamp),
+      _managedBy: simpleClusterOwner(s),
       _shoot: s
     };
   });
@@ -117,8 +119,14 @@ export const ShootList = ({ shoots, loading, onCreate, onAction }: ShootListProp
             <Button
               design="Negative"
               icon="delete"
+              disabled={!!r._managedBy}
               onClick={() => onAction('delete', r._shoot)}
               aria-label={`Delete ${r.name}`}
+              tooltip={
+                r._managedBy
+                  ? `Managed by SimpleCluster "${r._managedBy}" — delete the SimpleCluster instead`
+                  : undefined
+              }
             >
               Delete
             </Button>

@@ -26,6 +26,7 @@ export interface ProviderShoot {
     creationTimestamp?: string;
     resourceVersion?: string;
     uid?: string;
+    labels?: Record<string, string>;
   };
   spec?: string;
   status?: ShootStatus;
@@ -63,6 +64,7 @@ export interface IronCoreVM {
     creationTimestamp?: string;
     resourceVersion?: string;
     uid?: string;
+    labels?: Record<string, string>;
   };
   status?: IronCoreVMStatus;
 }

@@ -31,6 +31,16 @@ export interface CreateShootInput {
   spec?: string;
 }
 
+// Children created by a SimpleCluster carry this label (stamped by the
+// simple-cluster-operator). Their lifecycle is owned by the SimpleCluster, so the
+// portal must not offer to delete them directly.
+export const SIMPLE_CLUSTER_LABEL = 'showroom.apeirora.eu/simple-cluster';
+
+// simpleClusterOwner returns the owning SimpleCluster name, or undefined for a
+// directly-created (user-owned) resource.
+export const simpleClusterOwner = (obj: ProviderShoot): string | undefined =>
+  obj.metadata.labels?.[SIMPLE_CLUSTER_LABEL];
+
 export interface ShootApi {
   list: (opts: GraphqlClientOptions) => Promise<ProviderShoot[]>;
   create: (opts: GraphqlClientOptions, input: CreateShootInput) => Promise<void>;
@@ -62,7 +72,7 @@ const makeShootApi = (cfg: ShootApiConfig): ShootApi => {
         v1alpha1 {
           ${cfg.listField} {
             items {
-              metadata { name creationTimestamp uid resourceVersion }
+              metadata { name creationTimestamp uid resourceVersion labels }
               spec
               status {
                 providerConfigs

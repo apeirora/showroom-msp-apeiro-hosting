@@ -11,6 +11,7 @@ import {
 } from '@ui5/webcomponents-react';
 import '@ui5/webcomponents-fiori/dist/illustrations/NoData.js';
 import type { IronCoreVM } from '../types';
+import { simpleClusterOwner } from '../lib/vm';
 
 const ageOf = (ts?: string): string => {
   if (!ts) return '—';
@@ -86,6 +87,7 @@ export const VmList = ({ vms, loading, onCreate, onRefresh, onDelete, onDownload
       internal: st.internalAddress || '—',
       external: st.externalAddress || '—',
       age: ageOf(vm.metadata.creationTimestamp),
+      _managedBy: simpleClusterOwner(vm),
       _vm: vm
     };
   });
@@ -125,8 +127,14 @@ export const VmList = ({ vms, loading, onCreate, onRefresh, onDelete, onDownload
           <Button
             design="Negative"
             icon="delete"
+            disabled={!!row.original._managedBy}
             onClick={() => onDelete(row.original._vm)}
             aria-label={`Delete ${row.original.name}`}
+            tooltip={
+              row.original._managedBy
+                ? `Managed by SimpleCluster "${row.original._managedBy}" — delete the SimpleCluster instead`
+                : undefined
+            }
           >
             Delete
           </Button>
