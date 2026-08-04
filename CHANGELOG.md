@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.33.1](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.33.0...v0.33.1) (2026-08-04)
+
+
+### Bug Fixes
+
+* default worker zone wdf4b in the embedded ironcore SCPC — wdf4a is decommissioned ([#14](https://github.com/apeirora/showroom-msp-sap-hosting/issues/14)) ([a430173](https://github.com/apeirora/showroom-msp-sap-hosting/commit/a430173101b5da4cb4a76fbd8a77ef2f11d81a22))
+
 ## [0.33.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.32.0...v0.33.0) (2026-08-03)
 
 
