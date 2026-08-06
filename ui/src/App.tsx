@@ -98,15 +98,13 @@ spec:
   cloudProfile:
     name: ironcore
     kind: CloudProfile
-  credentialsBindingName: my-ironcore-secret
+  credentialsBindingName: wdf4-ora-dev
   region: wdf4
   kubernetes:
     version: "1.34.5"
   addons:
     nginxIngress:
-      enabled: true
-      loadBalancerSourceRanges:
-        - 0.0.0.0/0
+      enabled: false
   provider:
     type: ironcore
     workers:
@@ -117,10 +115,22 @@ spec:
           type: memory-intel1-1cpu
           image:
             name: gardenlinux
+        volume:
+          type: general-purpose
+          size: 10Gi
         zones:
-          - wdf4a
+          - wdf4b
   networking:
     type: calico
+    providerConfig:
+      apiVersion: calico.networking.extensions.gardener.cloud/v1alpha1
+      kind: NetworkConfig
+      overlay:
+        enabled: false
+      typha:
+        enabled: false
+      vxlan:
+        enabled: true
     nodes: 10.250.0.0/16
     pods: 100.64.0.0/12
     services: 100.104.0.0/13
