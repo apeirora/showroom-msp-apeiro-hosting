@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.1](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.34.0...v0.34.1) (2026-08-06)
+
+
+### Bug Fixes
+
+* align ironcore shoot template with working shoots ([#18](https://github.com/apeirora/showroom-msp-sap-hosting/issues/18)) ([ba597dc](https://github.com/apeirora/showroom-msp-sap-hosting/commit/ba597dc8bdf1c48f98f27f6e07640a0231e24747))
+
 ## [0.34.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.33.1...v0.34.0) (2026-08-04)
 
 
