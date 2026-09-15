@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.35.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.34.1...v0.35.0) (2026-09-15)
+
+
+### Features
+
+* iron-core machine-type added `memory-intel1-4cpu` ([#20](https://github.com/apeirora/showroom-msp-sap-hosting/issues/20)) ([5b9d96f](https://github.com/apeirora/showroom-msp-sap-hosting/commit/5b9d96ff84cde858fe471094c88a58ffc23fa4b6))
+
 ## [0.34.1](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.34.0...v0.34.1) (2026-08-06)
 
 
