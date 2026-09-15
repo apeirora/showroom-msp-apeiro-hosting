@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.35.1](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.35.0...v0.35.1) (2026-09-15)
+
+
+### Bug Fixes
+
+* update SAP OpenStack Kubernetes version ([#22](https://github.com/apeirora/showroom-msp-sap-hosting/issues/22)) ([29a1bfb](https://github.com/apeirora/showroom-msp-sap-hosting/commit/29a1bfbf1a5cde0c6591fe0ddc7eff48cdbe2d29))
+
 ## [0.35.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.34.1...v0.35.0) (2026-09-15)
 
 
