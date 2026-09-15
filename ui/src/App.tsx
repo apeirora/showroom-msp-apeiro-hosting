@@ -54,7 +54,7 @@ spec:
   cloudProfile:
     name: converged-cloud-ora-fp
     kind: CloudProfile
-  secretBindingName: cc-eu-de-1
+  credentialsBindingName: cc-eu-de-1
   region: eu-de-1
   kubernetes:
     version: "1.34.3"

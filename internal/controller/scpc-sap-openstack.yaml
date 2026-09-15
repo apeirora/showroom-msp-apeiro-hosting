@@ -67,7 +67,7 @@ spec:
             cloudProfile:
               name: {{ .Inputs.cloudProfile }}
               kind: CloudProfile
-            secretBindingName: cc-eu-de-1
+            credentialsBindingName: cc-eu-de-1
             region: {{ .Inputs.region }}
             kubernetes:
               version: "{{ .Inputs.k8sVersion }}"
