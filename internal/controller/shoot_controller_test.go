@@ -173,6 +173,8 @@ var _ = Describe("Shoot Controller", func() {
 		Expect(created.GetAnnotations()).To(HaveKeyWithValue(shootOwnerAnnotation, ns+"/"+shName))
 		providerType, _, _ := unstructured.NestedString(created.Object, "spec", "provider", "type")
 		Expect(providerType).To(Equal("openstack"))
+		kubernetesVersion, _, _ := unstructured.NestedString(created.Object, "spec", "kubernetes", "version")
+		Expect(kubernetesVersion).To(Equal("1.34.3"))
 		workers, _, _ := unstructured.NestedSlice(created.Object, "spec", "provider", "workers")
 		Expect(workers).To(HaveLen(1))
 		machineType, _, _ := unstructured.NestedString(workers[0].(map[string]interface{}), "machine", "type")

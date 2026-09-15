@@ -57,7 +57,7 @@ spec:
   secretBindingName: cc-eu-de-1
   region: eu-de-1
   kubernetes:
-    version: "1.33.9"
+    version: "1.34.3"
   addons:
     nginxIngress:
       enabled: true
