@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.35.2](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.35.1...v0.35.2) (2026-09-15)
+
+
+### Bug Fixes
+
+* use SAP OpenStack credentials binding ([#24](https://github.com/apeirora/showroom-msp-sap-hosting/issues/24)) ([329145e](https://github.com/apeirora/showroom-msp-sap-hosting/commit/329145eb3815a9b8ae17b4ea0fd68226290e18c5))
+
 ## [0.35.1](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.35.0...v0.35.1) (2026-09-15)
 
 
