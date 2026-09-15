@@ -24,6 +24,7 @@ spec:
   profiles:
     - { name: memory-intel1-1cpu, cpu: "1", memory: 8Gi }
     - { name: memory-intel1-2cpu, cpu: "2", memory: 16Gi }
+    - { name: memory-intel1-4cpu, cpu: "4", memory: 32Gi }
   # The SimpleCluster materialises a local IronCoreShoot on the service cluster
   # (this provider's own CR); the sap-provider operator turns it into a real
   # Gardener Shoot on the garden and maintains the admin-kubeconfig Secret next
