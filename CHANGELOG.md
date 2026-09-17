@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.35.3](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.35.2...v0.35.3) (2026-09-17)
+
+
+### Bug Fixes
+
+* **ui:** read namespace from Luigi path params ([#26](https://github.com/apeirora/showroom-msp-sap-hosting/issues/26)) ([eb24220](https://github.com/apeirora/showroom-msp-sap-hosting/commit/eb24220d25f70f60d52b104e9bcd3b3f3e2002e5))
+
 ## [0.35.2](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.35.1...v0.35.2) (2026-09-15)
 
 
