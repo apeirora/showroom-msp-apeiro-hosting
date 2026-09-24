@@ -1,0 +1,43 @@
+# Security Policy
+
+## About this project
+
+This repository contains a **demo stack** built for the
+[ApeiroRA](https://apeirora.eu) architecture. It exists to showcase Platform Mesh
+capabilities and is **not designed for production use**.
+
+## Reporting vulnerabilities
+
+If you discover a security issue, open a GitHub issue or contact the maintainers
+directly. Please read the rest of this page first.
+
+## No guarantee of security fixes
+
+This project is provided on a best-effort basis. **No security fixes are
+guaranteed.** Because this is a demonstration stack, vulnerabilities may not be
+triaged, patched, or released on any particular timeline — or at all.
+
+Use this software at your own risk and do not deploy it in environments where
+security is a concern.
+
+## What this software handles
+
+Two things are worth knowing before you run it anywhere real:
+
+- **Gardener project credentials.** The operator provisions Gardener Shoots with
+  a project kubeconfig it reads from a Secret you supply, and hands the
+  kubeconfigs of the clusters it provisions back through Secrets in the
+  requesting namespace. The Secret is the only place those credentials live, so
+  **access to a provisioned cluster is gated by `get` on that Secret**.
+- **Provider configs are privileged.** The SimpleClusterProviderConfigs this
+  operator materialises can create arbitrary resource types on the target
+  cluster. They are administrator-facing configuration and should be treated as
+  privileged; users are constrained to the closed input set a config declares.
+
+## What is scanned
+
+Every pull request runs a secret scan (gitleaks), a vulnerability scan
+(`govulncheck` for each Go module, `npm audit` for the UI), a REUSE licence check
+and a dependency-licence gate. The dependency inventory is committed under
+[`sbom/`](sbom) and audited in
+[`docs/third-party-licenses.md`](docs/third-party-licenses.md).
