@@ -6,7 +6,7 @@ cliVersion: 4.9.0
 domain: eu
 layout:
 - go.kubebuilder.io/v4
-projectName: showroom-msp-sap-provider
+projectName: showroom-msp-sap-hosting
 repo: github.com/apeirora/showroom-msp-sap-hosting
 resources:
 - api:
