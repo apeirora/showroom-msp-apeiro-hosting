@@ -7,6 +7,13 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
   - namespaces
   verbs:
   - get
@@ -34,6 +41,7 @@ rules:
   - sap.eu
   resources:
   - ironcoreshoots
+  - ironcorevms
   - openstackshoots
   verbs:
   - create
@@ -47,6 +55,7 @@ rules:
   - sap.eu
   resources:
   - ironcoreshoots/finalizers
+  - ironcorevms/finalizers
   - openstackshoots/finalizers
   verbs:
   - update
@@ -54,6 +63,7 @@ rules:
   - sap.eu
   resources:
   - ironcoreshoots/status
+  - ironcorevms/status
   - openstackshoots/status
   verbs:
   - get
@@ -75,6 +85,14 @@ rules:
   - showroom.apeirora.eu
   resources:
   - simpleclusters
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - sshkeys.apeirora.eu
+  resources:
+  - sshkeys
   verbs:
   - get
   - list

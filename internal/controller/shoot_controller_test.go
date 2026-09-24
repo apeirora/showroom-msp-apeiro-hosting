@@ -169,7 +169,7 @@ var _ = Describe("Shoot Controller", func() {
 
 		created := gardener.shoots[shootName]
 		Expect(created).NotTo(BeNil())
-		Expect(created.GetNamespace()).To(Equal("garden-pm-cc-d2"))
+		Expect(created.GetNamespace()).To(Equal("garden-<your-gardener-project>"))
 		Expect(created.GetAnnotations()).To(HaveKeyWithValue(shootOwnerAnnotation, ns+"/"+shName))
 		providerType, _, _ := unstructured.NestedString(created.Object, "spec", "provider", "type")
 		Expect(providerType).To(Equal("openstack"))

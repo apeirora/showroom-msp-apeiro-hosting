@@ -8,7 +8,9 @@ metadata:
 spec:
   autoscaling: true
   target:
-    namespace: garden-pm-cc-d2
+    # Garden project namespace — deployment-specific. Set the
+    # GARDEN_PROJECT_NAMESPACE env var on the operator to override.
+    namespace: garden-<your-gardener-project>
     # kubeconfigSecretRef is overwritten by the operator (global/kcp source).
     kubeconfigSecretRef:
       name: sap-gardener-kubeconfig
