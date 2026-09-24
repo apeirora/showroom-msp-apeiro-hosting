@@ -1,0 +1,71 @@
+# OCM component for the SAP hosting provider stack.
+#
+# Every image and chart is referenced at the same ${VERSION} — the one the
+# publish workflow stamps into all of them — so a component version always
+# resolves to a self-consistent set of artefacts.
+#
+# Rendered by .github/workflows/publish.yml; ${VERSION} and
+# ${GITHUB_REPOSITORY_OWNER} are substituted by the OCM CLI.
+name: showroom.apeirora.eu/sap-hosting
+version: ${VERSION}
+provider:
+  name: ${GITHUB_REPOSITORY_OWNER}
+
+resources:
+  # ---------------------------------------------------------------- images
+  - name: sap-provider-operator-image
+    type: ociImage
+    version: "${VERSION}"
+    access:
+      type: ociArtifact
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/sap-provider-operator:${VERSION}
+
+  - name: sapprovider-ui-image
+    type: ociImage
+    version: "${VERSION}"
+    access:
+      type: ociArtifact
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/sapprovider-ui:${VERSION}
+
+  - name: ironcore-operator-image
+    type: ociImage
+    version: "${VERSION}"
+    access:
+      type: ociArtifact
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/ironcore-operator:${VERSION}
+
+  # ----------------------------------------------------------- helm charts
+  - name: sapprovider-operator-chart
+    type: helmChart
+    version: "${VERSION}"
+    access:
+      type: ociArtifact
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/sapprovider-operator:${VERSION}
+
+  - name: sapprovider-pm-integration-chart
+    type: helmChart
+    version: "${VERSION}"
+    access:
+      type: ociArtifact
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/sapprovider-pm-integration:${VERSION}
+
+  - name: sapprovider-sync-agent-chart
+    type: helmChart
+    version: "${VERSION}"
+    access:
+      type: ociArtifact
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/sapprovider-sync-agent:${VERSION}
+
+  - name: sapprovider-ui-chart
+    type: helmChart
+    version: "${VERSION}"
+    access:
+      type: ociArtifact
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/sapprovider-ui:${VERSION}
+
+  - name: ironcore-operator-chart
+    type: helmChart
+    version: "${VERSION}"
+    access:
+      type: ociArtifact
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/ironcore-operator:${VERSION}
