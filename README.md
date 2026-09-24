@@ -175,3 +175,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+---
+
+<p align="center">
+  <sub>Built with care by <a href="https://apeirora.eu/">ApeiroRA</a></sub>
+</p>
+
+<p align="center">
+  <a href="https://apeirora.eu/">
+    <img src="docs/assets/eu-funded.svg" alt="Funded by the European Union -- NextGenerationEU. Supported by the Federal Ministry for Economic Affairs and Energy on the basis of a decision by the German Bundestag." width="400" />
+  </a>
+</p>
