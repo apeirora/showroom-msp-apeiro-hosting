@@ -1,4 +1,4 @@
-# showroom-msp-sap-provider
+# showroom-msp-sap-hosting
 
 SAP Hosting provider for simple-cluster, packaging the OpenStack and IronCore
 Gardener flavors into one provider stack.
@@ -55,7 +55,7 @@ PublishedResource in the sync-agent, and the VM CRUD UI in `ui/src/lib/vm.ts` +
 **Build and push your image to the location specified by `IMG`:**
 
 ```sh
-make docker-build docker-push IMG=<some-registry>/showroom-msp-sap-provider:tag
+make docker-build docker-push IMG=<some-registry>/showroom-msp-sap-hosting:tag
 ```
 
 **NOTE:** This image ought to be published in the personal registry you specified.
@@ -71,7 +71,7 @@ make install
 **Deploy the Manager to the cluster with the image specified by `IMG`:**
 
 ```sh
-make deploy IMG=<some-registry>/showroom-msp-sap-provider:tag
+make deploy IMG=<some-registry>/showroom-msp-sap-hosting:tag
 ```
 
 > **NOTE**: If you encounter RBAC errors, you may need to grant yourself cluster-admin
@@ -114,7 +114,7 @@ Following the options to release and provide this solution to the users.
 1. Build the installer for the image built and published in the registry:
 
 ```sh
-make build-installer IMG=<some-registry>/showroom-msp-sap-provider:tag
+make build-installer IMG=<some-registry>/showroom-msp-sap-hosting:tag
 ```
 
 **NOTE:** The makefile target mentioned above generates an 'install.yaml'
@@ -128,7 +128,7 @@ Users can just run 'kubectl apply -f <URL for YAML BUNDLE>' to install
 the project, i.e.:
 
 ```sh
-kubectl apply -f https://raw.githubusercontent.com/<org>/showroom-msp-sap-provider/<tag or branch>/dist/install.yaml
+kubectl apply -f https://raw.githubusercontent.com/<org>/showroom-msp-sap-hosting/<tag or branch>/dist/install.yaml
 ```
 
 ### By providing a Helm Chart
