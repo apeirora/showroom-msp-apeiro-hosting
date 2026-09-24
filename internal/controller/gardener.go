@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"text/template"
 	"time"
@@ -204,6 +205,11 @@ func parseFlavorDefaults(manifest []byte) (*flavorDefaults, error) {
 	scpc := &unstructured.Unstructured{Object: obj}
 
 	targetNS, _, _ := unstructured.NestedString(scpc.Object, "spec", "target", "namespace")
+	// The garden project namespace is deployment-specific; the value in the
+	// embedded skeleton is only a placeholder.
+	if env := os.Getenv("GARDEN_PROJECT_NAMESPACE"); env != "" {
+		targetNS = env
+	}
 	if targetNS == "" {
 		return nil, fmt.Errorf("embedded SCPC manifest has no spec.target.namespace")
 	}
