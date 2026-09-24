@@ -1,179 +1,165 @@
-# showroom-msp-sap-hosting
+<p align="center">
+  <img src="charts/sapprovider-ui/files/icon.svg" alt="SAP Hosting" width="96" />
+</p>
 
-SAP Hosting provider for simple-cluster, packaging the OpenStack and IronCore
-Gardener flavors into one provider stack.
+<h1 align="center">SAP Hosting Provider</h1>
 
-## Description
+<p align="center">
+  <strong>Gardener clusters and IronCore VMs on SAP infrastructure, delivered as a Platform Mesh provider.</strong>
+</p>
 
-Exposes two namespaced CRs in group `sap.eu` — `OpenStackShoot` and
-`IronCoreShoot` — via a single APIExport, sync-agent and operator. When a KCP
-account workspace binds this provider (alongside simple-cluster), the operator's
-NamespaceReconciler materialises both `sap-gardener-openstack` and
-`sap-gardener-ironcore` SimpleClusterProviderConfigs (namespaced, owned by the
-account namespace) so users can create SimpleClusters against either flavor. A
-flavor CR's free-text `spec` (a Gardener Shoot manifest) overrides that flavor's
-SCPC shoot template; an empty spec uses the operator's built-in default.
+<p align="center">
+  <a href="https://github.com/apeirora/showroom-msp-sap-hosting/releases"><img src="https://img.shields.io/github/v/release/apeirora/showroom-msp-sap-hosting?style=flat-square&color=blue" alt="Release"></a>
+  <a href="go.mod"><img src="https://img.shields.io/github/go-mod/go-version/apeirora/showroom-msp-sap-hosting?style=flat-square" alt="Go Version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License"></a>
+  <a href="https://github.com/apeirora/showroom-msp-sap-hosting/actions"><img src="https://img.shields.io/github/actions/workflow/status/apeirora/showroom-msp-sap-hosting/test.yml?style=flat-square&label=CI" alt="CI"></a>
+  <a href="https://api.reuse.software/info/github.com/apeirora/showroom-msp-sap-hosting"><img src="https://api.reuse.software/badge/github.com/apeirora/showroom-msp-sap-hosting" alt="REUSE"></a>
+</p>
 
-## Integrations & repository layout
+<p align="center">
+  Part of the <a href="https://apeirora.eu/">ApeiroRA</a> Platform Mesh ecosystem
+</p>
 
-This provider ships **three** integrations and contains **two** Go modules — the
-provider bundle at the repo root and `ironcore-operator/` (the IronCore VM operator):
+---
 
-| Integration | Resource (Kind) | Operator + CRD | Location |
-|---|---|---|---|
-| OpenStackShoot | `Shoot` (`core.gardener.cloud`) | bundle operator (`sap.eu`) | this repo (root) |
-| IronCoreShoot | `Shoot` (`core.gardener.cloud`, IronCore infra) | bundle operator (`sap.eu`) | this repo (root) |
-| IronCore VM | `IronCoreVM` (`sap.eu`) | `ironcore-operator` | this repo (`ironcore-operator/`) |
+## What is the SAP Hosting provider?
 
-All three integrations live in this repository — it is self-contained. The two
-Gardener flavors talk directly to Gardener. The **IronCore VM** integration provides
-both the operator (`ironcore-operator/`, image + chart `ironcore-operator`) and its
-Platform Mesh surface: the `ironcorevms.sap.eu` APIResourceSchema
-projected namespaced into the KCP workspace, the `publish-ironcore-ironcorevms`
-PublishedResource in the sync-agent, and the VM CRUD UI in `ui/src/lib/vm.ts` +
-`ui/src/components/Vm*`.
+This repository is the SAP hosting provider for the Showroom MSP: it lets a
+Platform Mesh account order **Gardener Kubernetes
+clusters** (OpenStack or IronCore flavor) and **IronCore virtual machines** on
+SAP infrastructure, and hands the resulting cluster's admin kubeconfig back as
+a Secret next to the request.
 
-> The IronCore VM operator reconciles `IronCoreVM` CRs and resolves `SSHKey`
-> references (`sshkeys.apeirora.eu`) via the CRD contract — the shared
-> `sshkey-operator` (in the simple-cluster monorepo) must be deployed in the cluster
-> at runtime.
+It plugs into the
+[simple-cluster](https://github.com/apeirora/showroom-msp-simple-cluster) stack:
+when an account binds this provider, the operator materialises ready-to-use
+`SimpleClusterProviderConfig`s in the account's namespace, so a plain
+`SimpleCluster` request can be fulfilled on SAP infrastructure. Independently of
+that, the account can create the provider's own CRs directly for a standalone
+Gardener cluster or a single VM.
+
+## The resources
+
+All user-facing CRs are namespaced, in API group `sap.eu`:
+
+| Kind | What it provisions | Reconciled by |
+|---|---|---|
+| `OpenStackShoot` (`osshoot`) | A Gardener `Shoot` on OpenStack | bundle operator (repo root) |
+| `IronCoreShoot` (`icshoot`) | A Gardener `Shoot` on IronCore | bundle operator (repo root) |
+| `IronCoreVM` | A single IronCore `Machine` (VM) | `ironcore-operator/` |
+
+A flavor CR's free-text `spec` is a plain Gardener Shoot manifest used
+verbatim; an empty `spec` uses the operator's built-in default template for
+that flavor:
+
+```yaml
+apiVersion: sap.eu/v1alpha1
+kind: OpenStackShoot
+metadata:
+  name: demo
+```
+
+The operator creates the Shoot in the configured Gardener project, tracks its
+lifecycle in `status.phase` (`Provisioning` → `Ready`), and maintains an admin
+kubeconfig in the Secret named by `status.kubeconfigSecretRef` — minted via the
+`adminkubeconfig` subresource and renewed automatically before expiry.
+
+An `IronCoreVM` describes one machine on a target IronCore cluster (reached
+through a kubeconfig Secret): the operator ensures the `Network` and IP
+`Prefix` exist, picks a `MachineClass` either by name (`cloudProfile`) or as
+the smallest one satisfying `resources`, boots the given image and can attach
+a public `VirtualIP`. SSH access is wired through `SSHKey` references
+(`sshkeys.apeirora.eu`), served at runtime by the shared `sshkey-operator`
+from the simple-cluster stack.
+
+## How an account gets the provider
+
+```
+ Platform Mesh (KCP)                        MSP cluster                        Gardener / IronCore
+┌──────────────────────┐   bind   ┌───────────────────────────────┐   ┌───────────────────────────┐
+│ account workspace    │─────────►│ bind-watcher annotates the    │   │                           │
+│ binds sap.eu (+      │          │ account namespace             │   │  ┌─────────────────────┐  │
+│ simple-cluster)      │          │        │                      │   │  │ Shoot / Machine     │  │
+└──────────┬───────────┘          │        ▼                      │   │  └──────────▲──────────┘  │
+           │                      │ NamespaceReconciler creates   │   │             │             │
+           │  sync-agent mirrors  │ sap-gardener-openstack and    │   │             │             │
+           ├─────────────────────►│ sap-gardener-ironcore SCPCs   │   │             │             │
+           │  sap.eu resources    │        │                      │   │             │             │
+           │                      │        ▼                      │   │             │             │
+           │                      │ SimpleCluster or *Shoot CR ───┼───┼─────────────┘             │
+           │                      │ … kubeconfig Secret written   │   │                           │
+           └──────────────────────┤ back next to the request      │   └───────────────────────────┘
+                                  └───────────────────────────────┘
+```
+
+The `NamespaceReconciler` is the sole creator of the SCPCs: it waits until the
+account namespace is annotated with **both** the simple-cluster and the sap.eu
+APIExport names, then materialises both flavors and wires in the Gardener
+kubeconfig — either one shared admin-managed Secret (`global` mode, the
+default) or a per-client kubeconfig delivered from the account's KCP workspace
+(`kcp` mode).
+
+## Repository layout
+
+Two Go modules, one UI, five Helm charts:
+
+| Path | What it is |
+|---|---|
+| `/` (root module) | The provider bundle operator: both Shoot reconcilers + the `NamespaceReconciler` |
+| `ironcore-operator/` | The IronCore VM operator (`IronCoreVM` → IronCore `Machine`) |
+| `ui/` | "SAP Shoots" portal micro-frontend (Luigi + UI5): CRUD for both Shoot flavors and VMs through the GraphQL gateway |
+| `charts/sapprovider-operator` | Deploys the bundle operator |
+| `charts/ironcore-operator` | Deploys the IronCore VM operator |
+| `charts/sapprovider-ui` | Deploys the portal micro-frontend |
+| `charts/sapprovider-pm-integration` | Registers the provider in Platform Mesh: APIExport, APIResourceSchemas, marketplace tile and portal content |
+| `charts/sapprovider-sync-agent` | Mirrors `sap.eu` resources between the KCP workspace and the MSP cluster |
 
 > **Schema note:** `charts/sapprovider-pm-integration` carries the `IronCoreVM`
 > APIResourceSchema used for the KCP projection; it is generated from
-> `ironcore-operator/config/crd/bases`. Bump `vmSchemaRevision` and refresh it when
-> that CRD changes.
+> `ironcore-operator/config/crd/bases`. Bump `vmSchemaRevision` and refresh it
+> when that CRD changes.
 
-## Getting Started
+## Installation
 
-### Prerequisites
-- go version v1.24.0+
-- docker version 17.03+.
-- kubectl version v1.11.3+.
-- Access to a Kubernetes v1.11.3+ cluster.
-
-### To Deploy on the cluster
-**Build and push your image to the location specified by `IMG`:**
+Images and charts are published to GHCR at one common version — a chart
+`X.Y.Z` always pulls images `X.Y.Z`:
 
 ```sh
-make docker-build docker-push IMG=<some-registry>/showroom-msp-sap-hosting:tag
+helm install sap-provider oci://ghcr.io/apeirora/charts/sapprovider-operator --version <X.Y.Z>
 ```
 
-**NOTE:** This image ought to be published in the personal registry you specified.
-And it is required to have access to pull the image from the working environment.
-Make sure you have the proper permission to the registry if the above commands don’t work.
+Every release also publishes an [OCM](https://ocm.software/) component
+(`showroom.apeirora.eu/sap-hosting`) at `ghcr.io/apeirora/ocm`, referencing all
+images and charts of that version.
 
-**Install the CRDs into the cluster:**
+Deployment-specific configuration worth knowing:
+
+- **`GARDEN_PROJECT_NAMESPACE`** (env, via the chart's `extraEnv`) — the
+  Gardener project namespace standalone Shoots are created in. The embedded
+  defaults carry a placeholder; every deployment must set this.
+- **`--kubeconfig-source`** — `global` (one shared Gardener kubeconfig Secret,
+  see `scpc.kubeconfig.global.*` chart values) or `kcp` (per-client Secret in
+  the account namespace).
+- The pm-integration and sync-agent charts need the KCP workspace kubeconfig;
+  see `charts/sapprovider-pm-integration/values.yaml`.
+
+## Development
 
 ```sh
-make install
+make build vet test          # root module (envtest-backed)
+cd ironcore-operator && make build vet
+cd ui && npm ci && npm run typecheck && npm run build
 ```
 
-**Deploy the Manager to the cluster with the image specified by `IMG`:**
-
-```sh
-make deploy IMG=<some-registry>/showroom-msp-sap-hosting:tag
-```
-
-> **NOTE**: If you encounter RBAC errors, you may need to grant yourself cluster-admin
-privileges or be logged in as admin.
-
-**Create instances of your solution**
-You can apply the samples (examples) from the config/sample:
-
-```sh
-kubectl apply -k config/samples/
-```
-
->**NOTE**: Ensure that the samples has default values to test it out.
-
-### To Uninstall
-**Delete the instances (CRs) from the cluster:**
-
-```sh
-kubectl delete -k config/samples/
-```
-
-**Delete the APIs(CRDs) from the cluster:**
-
-```sh
-make uninstall
-```
-
-**UnDeploy the controller from the cluster:**
-
-```sh
-make undeploy
-```
-
-## Project Distribution
-
-Following the options to release and provide this solution to the users.
-
-### By providing a bundle with all YAML files
-
-1. Build the installer for the image built and published in the registry:
-
-```sh
-make build-installer IMG=<some-registry>/showroom-msp-sap-hosting:tag
-```
-
-**NOTE:** The makefile target mentioned above generates an 'install.yaml'
-file in the dist directory. This file contains all the resources built
-with Kustomize, which are necessary to install this project without its
-dependencies.
-
-2. Using the installer
-
-Users can just run 'kubectl apply -f <URL for YAML BUNDLE>' to install
-the project, i.e.:
-
-```sh
-kubectl apply -f https://raw.githubusercontent.com/<org>/showroom-msp-sap-hosting/<tag or branch>/dist/install.yaml
-```
-
-### By providing a Helm Chart
-
-1. Build the chart using the optional helm plugin
-
-```sh
-kubebuilder edit --plugins=helm/v1-alpha
-```
-
-2. See that a chart was generated under 'dist/chart', and users
-can obtain this solution from there.
-
-**NOTE:** If you change the project, you need to update the Helm Chart
-using the same command above to sync the latest changes. Furthermore,
-if you create webhooks, you need to use the above command with
-the '--force' flag and manually ensure that any custom configuration
-previously added to 'dist/chart/values.yaml' or 'dist/chart/manager/manager.yaml'
-is manually re-applied afterwards.
-
-## Contributing
-Contributions go via pull requests with Conventional-Commit titles (release-please
-derives the changelog and version bump from them). Before opening a PR, run
-`make test` and `make lint`, and regenerate manifests with `make manifests generate`
-if you changed API types.
-
-**NOTE:** Run `make help` for more information on all potential `make` targets
-
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the pull-request workflow, the SBOM
+regeneration step after dependency changes, and what CI requires.
 
 ## License
 
-Copyright 2026.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Licensed under the [Apache License 2.0](LICENSE). Copyright 2026 SAP SE or an
+SAP affiliate company and showroom-msp-sap-hosting contributors. The repository
+is [REUSE](https://reuse.software/) compliant; see [REUSE.toml](REUSE.toml) and
+[docs/third-party-licenses.md](docs/third-party-licenses.md).
 
 ---
 
