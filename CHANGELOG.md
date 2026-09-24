@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.35.4](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.35.3...v0.35.4) (2026-09-24)
+
+
+### Bug Fixes
+
+* remove anonymous bind RBAC from pm-integration chart ([#29](https://github.com/apeirora/showroom-msp-sap-hosting/issues/29)) ([96fb6f4](https://github.com/apeirora/showroom-msp-sap-hosting/commit/96fb6f4bb02ab9501dac7bf815358234fbe40a92))
+
 ## [0.35.3](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.35.2...v0.35.3) (2026-09-17)
 
 
