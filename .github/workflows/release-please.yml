@@ -1,0 +1,52 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  packages: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      # The tag ruleset restricts tag creation to the apeirora-showroom-bot
+      # GitHub App. release-please must push the release tag as that App, so we
+      # mint an installation token here instead of using GITHUB_TOKEN.
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+      - id: release
+        uses: googleapis/release-please-action@v4.3.0
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          skip-github-pull-request: false
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  # Build/push the operator + UI images and publish every chart at the release
+  # version — images first, then charts — so they stay in lockstep. See publish.yml.
+  publish:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    uses: ./.github/workflows/publish.yml
+    with:
+      version: ${{ needs.release-please.outputs.version }}
+    permissions:
+      contents: read
+      packages: write
+    secrets: inherit

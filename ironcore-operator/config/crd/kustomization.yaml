@@ -1,0 +1,2 @@
+resources:
+  - bases/sap.eu_ironcorevms.yaml
