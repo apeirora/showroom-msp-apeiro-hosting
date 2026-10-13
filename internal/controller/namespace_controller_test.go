@@ -63,7 +63,10 @@ var _ = Describe("Namespace Controller", func() {
 	}
 
 	newReconciler := func() *NamespaceReconciler {
+		manifest, err := ConfigureIronCoreManifest(gardenDevConfig(GinkgoT()))
+		Expect(err).NotTo(HaveOccurred())
 		return &NamespaceReconciler{
+			IronCoreManifest:                manifest,
 			Client:                          k8sClient,
 			Scheme:                          k8sClient.Scheme(),
 			KubeconfigSource:                KubeconfigSourceGlobal,
@@ -173,5 +176,7 @@ var _ = Describe("Namespace Controller", func() {
 		ic, err := getSCPC(name, ironcoreSCPCName)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(scpcShootTemplate(ic)).To(ContainSubstring("ironcore"))
+		Expect(scpcShootTemplate(ic)).To(ContainSubstring("ironcore-infra"))
+		Expect(scpcShootTemplate(ic)).NotTo(ContainSubstring("wdf4-ora-dev"))
 	})
 })

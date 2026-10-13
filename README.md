@@ -49,8 +49,8 @@ All user-facing CRs are namespaced, in API group `sap.eu`:
 | `IronCoreVM` | A single IronCore `Machine` (VM) | `ironcore-operator/` |
 
 A flavor CR's free-text `spec` is a plain Gardener Shoot manifest used
-verbatim; an empty `spec` uses the operator's built-in default template for
-that flavor:
+verbatim; an empty `spec` uses the configured IronCore template or the
+built-in OpenStack template:
 
 ```yaml
 apiVersion: sap.eu/v1alpha1
@@ -118,6 +118,65 @@ Two Go modules, one UI, five Helm charts:
 > APIResourceSchema used for the KCP projection; it is generated from
 > `ironcore-operator/config/crd/bases`. Bump `vmSchemaRevision` and refresh it
 > when that CRD changes.
+
+## IronCore landscape values
+
+The operator requires `scpc.ironcore` in the `sapprovider-operator` chart.
+There is no built-in IronCore landscape. Missing settings stop the chart render
+or the operator start with a field-specific error.
+
+The chart mounts these values from a ConfigMap and sets `--ironcore-config`.
+A checksum restarts the operator when the configuration changes.
+For a direct operator start, supply the same configuration file with that flag.
+
+| Value | Purpose |
+|---|---|
+| `scpc.ironcore.projectNamespace` | Garden project namespace, such as `garden-dev` |
+| `scpc.ironcore.shootAnnotations` | Garden Shoot annotations, including the managed service-account issuer |
+| `scpc.ironcore.autoscaling` | SimpleCluster autoscaling support; neutral default `true` |
+| `scpc.ironcore.profiles` | Machine profiles, ordered smallest first; each requires string `name`, `cpu`, and `memory` |
+| `scpc.ironcore.shootSpec` | Complete Gardener Shoot spec |
+| `shootSpec.cloudProfile` | CloudProfile name and kind |
+| `shootSpec.credentialsBindingName` | CredentialsBinding in the Garden project |
+| `shootSpec.kubernetes.version` | Kubernetes version |
+| `shootSpec.region` | Cloud region |
+| `shootSpec.provider.workers[0].machine` | Machine type, architecture, image name and version |
+| `shootSpec.provider.workers[0].volume` | Disk size and volume type (storage class) |
+| `shootSpec.provider.workers[0].zones` | Worker zones |
+| `shootSpec.networking` | Network type, CIDRs, IP families and extension configuration |
+
+All other Shoot settings, including addons, DNS, extensions, maintenance,
+provider configuration and worker settings, pass through `shootSpec`.
+CloudProfile, region, Kubernetes version and image name remain SimpleCluster inputs.
+A single configured zone remains the `zone` input. Multiple zones pass through as a list.
+`GARDEN_PROJECT_NAMESPACE` applies only to OpenStack. IronCore uses `projectNamespace`.
+The operator supports one worker pool. SimpleCluster controls its minimum and
+maximum worker counts. A standalone Shoot with an empty spec uses one worker.
+With profiles, SimpleCluster selects the machine type from the requested CPU
+and memory. Without profiles, set `machine.type` explicitly.
+A standalone Shoot uses the first profile. An explicit provider CR spec still
+overrides the configured Shoot spec. The configured Garden project remains the target.
+OpenStack configuration is unchanged.
+
+Use the [garden-dev example](charts/sapprovider-operator/examples/garden-dev.yaml)
+with Kubernetes 1.33.13, gardenlinux 2150.1.0, a 50Gi disk and CPU profiles 1/2/4/8.
+The example also enables `shoot-dns-service`, `shoot-cert-service` and the
+managed service-account issuer. Each DNS name contains the request name and
+physical account namespace. The example references the project DNS credential Secret.
+Change the DNS domain and credential reference for another landscape.
+[Gardener requires](https://gardener.cloud/docs/gardener/security/shoot_serviceaccounts/)
+`authentication.gardener.cloud/issuer: managed` on the Shoot for its managed
+issuer. Do not also set `serviceAccountConfig.issuer` for that mode.
+All `dns` and `kubernetes.kubeAPIServer.serviceAccountConfig` fields pass through.
+
+Check the CloudProfile and CredentialsBinding before use. Quota and available
+capacity are separate requirements.
+
+```sh
+helm template sap-provider charts/sapprovider-operator \
+  --namespace sap-provider \
+  -f charts/sapprovider-operator/examples/garden-dev.yaml
+```
 
 ## Installation
 

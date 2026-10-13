@@ -20,6 +20,13 @@ namespaceScpc:
   sapExportName: sap.eu
 
 scpc:
+  # Required landscape configuration. See examples/garden-dev.yaml.
+  ironcore:
+    shootAnnotations: {}
+    autoscaling: true
+    projectNamespace: ""
+    profiles: []
+    shootSpec: {}
   kubeconfig:
     # Source of the Gardener kubeconfig each SCPC targets:
     #   global — one shared admin-managed Secret (below). Default.

@@ -31,6 +31,7 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/apeirora/showroom-msp-sap-hosting/test/utils"
+	"sigs.k8s.io/yaml"
 )
 
 // namespace where the project is deployed in
@@ -72,6 +73,35 @@ var _ = Describe("Manager", Ordered, func() {
 		cmd = exec.Command("make", "deploy", fmt.Sprintf("IMG=%s", projectImage))
 		_, err = utils.Run(cmd)
 		Expect(err).NotTo(HaveOccurred(), "Failed to deploy the controller-manager")
+
+		By("supplying an explicit IronCore landscape for the test manager")
+		projectDir, err := utils.GetProjectDir()
+		Expect(err).NotTo(HaveOccurred())
+		valuesData, err := os.ReadFile(filepath.Join(projectDir, "charts/sapprovider-operator/examples/garden-dev.yaml"))
+		Expect(err).NotTo(HaveOccurred())
+		var values map[string]interface{}
+		Expect(yaml.Unmarshal(valuesData, &values)).To(Succeed())
+		configData, err := yaml.Marshal(values["scpc"].(map[string]interface{})["ironcore"])
+		Expect(err).NotTo(HaveOccurred())
+		configFile, err := os.CreateTemp("", "ironcore-e2e-*.yaml")
+		Expect(err).NotTo(HaveOccurred())
+		DeferCleanup(func() { _ = os.Remove(configFile.Name()) })
+		_, err = configFile.Write(configData)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(configFile.Close()).To(Succeed())
+		cmd = exec.Command("kubectl", "create", "configmap", "ironcore-test-config", "-n", namespace,
+			"--from-file=ironcore.yaml="+configFile.Name())
+		_, err = utils.Run(cmd)
+		Expect(err).NotTo(HaveOccurred())
+		patch := `[
+          {"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--ironcore-config=/etc/sap-provider/ironcore.yaml"},
+          {"op":"add","path":"/spec/template/spec/containers/0/volumeMounts","value":[{"name":"ironcore-config","mountPath":"/etc/sap-provider","readOnly":true}]},
+          {"op":"add","path":"/spec/template/spec/volumes","value":[{"name":"ironcore-config","configMap":{"name":"ironcore-test-config"}}]}
+        ]`
+		cmd = exec.Command("kubectl", "patch", "deployment", "showroom-msp-sap-provider-controller-manager",
+			"-n", namespace, "--type=json", "-p", patch)
+		_, err = utils.Run(cmd)
+		Expect(err).NotTo(HaveOccurred())
 	})
 
 	// After all tests have been executed, clean up by undeploying the controller, uninstalling CRDs,

@@ -33,6 +33,8 @@ import (
 // duplicate controller name only surfaces at Complete().
 var _ = Describe("Manager wiring", func() {
 	It("registers both flavor reconcilers and the namespace reconciler", func() {
+		ironcoreManifest, err := ConfigureIronCoreManifest(gardenDevConfig(GinkgoT()))
+		Expect(err).NotTo(HaveOccurred())
 		mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 			Scheme:  scheme.Scheme,
 			Metrics: metricsserver.Options{BindAddress: "0"},
@@ -52,13 +54,14 @@ var _ = Describe("Manager wiring", func() {
 			Client: mgr.GetClient(), Scheme: mgr.GetScheme(),
 			SCPCName:       ironcoreSCPCName,
 			KindName:       "IronCoreShoot",
-			Manifest:       ironcoreSCPCManifest,
+			Manifest:       ironcoreManifest,
 			New:            func() FlavorShoot { return &sapv1alpha1.IronCoreShoot{} },
 			ControllerName: "ironcoreshoot",
 		}).SetupWithManager(mgr)).To(Succeed())
 
 		Expect((&NamespaceReconciler{
 			Client: mgr.GetClient(), Scheme: mgr.GetScheme(),
+			IronCoreManifest:        ironcoreManifest,
 			KubeconfigSource:        KubeconfigSourceGlobal,
 			SimpleClusterExportName: DefaultSimpleClusterExportName,
 			SapExportName:           DefaultSapExportName,
