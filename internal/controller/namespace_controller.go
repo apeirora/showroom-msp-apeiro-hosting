@@ -40,18 +40,18 @@ const (
 	bindExportsAnnotation = "bind.simple-cluster.apeirora.eu/exports"
 
 	// DefaultSimpleClusterExportName / DefaultSapExportName are the APIExport
-	// names whose joint presence in the annotation signals that the SAP
+	// names whose joint presence in the annotation signals that the Apeiro
 	// Gardener SCPCs must exist in the account namespace.
 	DefaultSimpleClusterExportName = "simpleclusters.showroom.apeirora.eu"
 	DefaultSapExportName           = "sap.eu"
 )
 
-// NamespaceReconciler is the sole creator of the SAP Integration
+// NamespaceReconciler is the sole creator of the Apeiro Integration
 // SimpleClusterProviderConfigs (both flavors: OpenStack and IronCore). It
 // watches account namespaces and, whenever the bind-watcher annotation shows
-// that both SimpleCluster and the SAP Integration export are bound, materialises
+// that both SimpleCluster and the Apeiro Integration export are bound, materialises
 // both SCPCs in that namespace (owned by the namespace so they are
-// garbage-collected on unbind by namespace deletion). When the SAP binding is
+// garbage-collected on unbind by namespace deletion). When the Apeiro binding is
 // gone it removes the SCPCs it manages.
 type NamespaceReconciler struct {
 	client.Client
@@ -158,7 +158,7 @@ func (r *NamespaceReconciler) applySCPC(ctx context.Context, ns *corev1.Namespac
 	return r.Update(ctx, existing)
 }
 
-// ensureSCPCsAbsent deletes every SAP Integration SCPC in the namespace that
+// ensureSCPCsAbsent deletes every Apeiro Integration SCPC in the namespace that
 // exists and is one we manage (stamped with the managed-by label).
 func (r *NamespaceReconciler) ensureSCPCsAbsent(ctx context.Context, namespace string) error {
 	for _, name := range allSCPCNames() {

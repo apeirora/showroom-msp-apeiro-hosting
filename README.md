@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="charts/sapprovider-ui/files/icon.svg" alt="SAP Hosting" width="96" />
+  <img src="charts/sapprovider-ui/files/icon.svg" alt="Apeiro Hosting" width="96" />
 </p>
 
-<h1 align="center">SAP Hosting Provider</h1>
+<h1 align="center">Apeiro Hosting Provider</h1>
 
 <p align="center">
-  <strong>Gardener clusters and IronCore VMs on SAP infrastructure, delivered as a Platform Mesh provider.</strong>
+  <strong>Gardener clusters and IronCore VMs on Apeiro infrastructure, delivered as a Platform Mesh provider.</strong>
 </p>
 
 <p align="center">
@@ -22,19 +22,19 @@
 
 ---
 
-## What is the SAP Hosting provider?
+## What is the Apeiro Hosting provider?
 
-This repository is the SAP hosting provider for the Showroom MSP: it lets a
+This repository is the Apeiro hosting provider for the Showroom MSP: it lets a
 Platform Mesh account order **Gardener Kubernetes
 clusters** (OpenStack or IronCore flavor) and **IronCore virtual machines** on
-SAP infrastructure, and hands the resulting cluster's admin kubeconfig back as
+Apeiro infrastructure, and hands the resulting cluster's admin kubeconfig back as
 a Secret next to the request.
 
 It plugs into the
 [simple-cluster](https://github.com/apeirora/showroom-msp-simple-cluster) stack:
 when an account binds this provider, the operator materialises ready-to-use
 `SimpleClusterProviderConfig`s in the account's namespace, so a plain
-`SimpleCluster` request can be fulfilled on SAP infrastructure. Independently of
+`SimpleCluster` request can be fulfilled on Apeiro infrastructure. Independently of
 that, the account can create the provider's own CRs directly for a standalone
 Gardener cluster or a single VM.
 
@@ -107,7 +107,7 @@ Two Go modules, one UI, five Helm charts:
 |---|---|
 | `/` (root module) | The provider bundle operator: both Shoot reconcilers + the `NamespaceReconciler` |
 | `ironcore-operator/` | The IronCore VM operator (`IronCoreVM` → IronCore `Machine`) |
-| `ui/` | "SAP Shoots" portal micro-frontend (Luigi + UI5): CRUD for both Shoot flavors and VMs through the GraphQL gateway |
+| `ui/` | "Apeiro Shoots" portal micro-frontend (Luigi + UI5): CRUD for both Shoot flavors and VMs through the GraphQL gateway |
 | `charts/sapprovider-operator` | Deploys the bundle operator |
 | `charts/ironcore-operator` | Deploys the IronCore VM operator |
 | `charts/sapprovider-ui` | Deploys the portal micro-frontend |

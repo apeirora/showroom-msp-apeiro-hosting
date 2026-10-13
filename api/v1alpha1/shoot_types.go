@@ -69,7 +69,7 @@ type KubeconfigSecretRef struct {
 // +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
 // +kubebuilder:printcolumn:name="Age",type=date,JSONPath=`.metadata.creationTimestamp`
 
-// OpenStackShoot provisions a Gardener cluster of the SAP Integration
+// OpenStackShoot provisions a Gardener cluster of the Apeiro Integration
 // OpenStack flavor for one namespace (KCP account workspace): the operator
 // creates a real Gardener Shoot from it and maintains an admin-kubeconfig
 // Secret next to the CR.
@@ -104,7 +104,7 @@ type OpenStackShootList struct {
 // +kubebuilder:printcolumn:name="Phase",type=string,JSONPath=`.status.phase`
 // +kubebuilder:printcolumn:name="Age",type=date,JSONPath=`.metadata.creationTimestamp`
 
-// IronCoreShoot provisions a Gardener cluster of the SAP Integration IronCore
+// IronCoreShoot provisions a Gardener cluster of the Apeiro Integration IronCore
 // flavor for one namespace (KCP account workspace): the operator creates a
 // real Gardener Shoot from it and maintains an admin-kubeconfig Secret next
 // to the CR.

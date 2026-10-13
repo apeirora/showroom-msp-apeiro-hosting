@@ -20,7 +20,7 @@ spec:
   - name: v1alpha1
     schema:
       description: |-
-        OpenStackShoot provisions a Gardener cluster of the SAP Integration
+        OpenStackShoot provisions a Gardener cluster of the Apeiro Integration
         OpenStack flavor for one namespace (KCP account workspace): the operator
         creates a real Gardener Shoot from it and maintains an admin-kubeconfig
         Secret next to the CR.
@@ -205,7 +205,7 @@ spec:
   - name: v1alpha1
     schema:
       description: |-
-        IronCoreShoot provisions a Gardener cluster of the SAP Integration IronCore
+        IronCoreShoot provisions a Gardener cluster of the Apeiro Integration IronCore
         flavor for one namespace (KCP account workspace): the operator creates a
         real Gardener Shoot from it and maintains an admin-kubeconfig Secret next
         to the CR.

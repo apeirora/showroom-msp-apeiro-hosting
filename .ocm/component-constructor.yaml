@@ -1,4 +1,4 @@
-# OCM component for the SAP hosting provider stack.
+# OCM component for the Apeiro hosting provider stack.
 #
 # Every image and chart is referenced at the same ${VERSION} — the one the
 # publish workflow stamps into all of them — so a component version always

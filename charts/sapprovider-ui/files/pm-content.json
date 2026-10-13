@@ -10,7 +10,7 @@
                 {
                     "pathSegment": "sap_eu",
                     "navigationContext": "sap_eu",
-                    "label": "SAP Shoots",
+                    "label": "Apeiro Shoots",
                     "icon": "data:image/svg+xml;base64,{{ $logo }}",
                     "category": {
                         "label": {{ $sidebarTitle | quote }},

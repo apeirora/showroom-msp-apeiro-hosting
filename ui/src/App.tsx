@@ -180,7 +180,7 @@ const App = () => {
   if (route === 'vms') {
     return (
       <FlexBox direction={FlexBoxDirection.Column} style={{ height: '100vh' }}>
-        <ShellBar primaryTitle="IronCore VMs" secondaryTitle="SAP Integration" />
+        <ShellBar primaryTitle="IronCore VMs" secondaryTitle="Apeiro Integration" />
         <div style={{ flex: 1, overflow: 'auto', background: 'var(--sapBackgroundColor)' }}>
           <VmView
             client={client}
@@ -194,7 +194,7 @@ const App = () => {
 
   return (
     <FlexBox direction={FlexBoxDirection.Column} style={{ height: '100vh' }}>
-      <ShellBar primaryTitle="SAP Shoots" secondaryTitle="Gardener Shoots" />
+      <ShellBar primaryTitle="Apeiro Shoots" secondaryTitle="Gardener Shoots" />
       <div
         style={{
           flex: 1,

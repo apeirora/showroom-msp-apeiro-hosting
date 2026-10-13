@@ -1,5 +1,5 @@
 /*
- * CRUD + subscriptions for SAP Integration provider Shoot resources.
+ * CRUD + subscriptions for Apeiro Integration provider Shoot resources.
  * GraphQL group: sap_eu.v1alpha1
  * Two Kinds share the same shape and surface:
  *   - OpenStackShoot (list field OpenStackShoots)

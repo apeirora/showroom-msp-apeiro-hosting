@@ -129,7 +129,7 @@ var _ = Describe("Namespace Controller", func() {
 		}
 	})
 
-	It("does not create SCPCs when the SAP export is absent", func() {
+	It("does not create SCPCs when the Apeiro export is absent", func() {
 		name := newNamespace(DefaultSimpleClusterExportName)
 		reconcileNS(name)
 
@@ -139,7 +139,7 @@ var _ = Describe("Namespace Controller", func() {
 		}
 	})
 
-	It("removes the managed SCPCs when the SAP binding is dropped", func() {
+	It("removes the managed SCPCs when the Apeiro binding is dropped", func() {
 		name := newNamespace(bothExports)
 		reconcileNS(name)
 		for _, scpcName := range allSCPCNames() {
@@ -147,7 +147,7 @@ var _ = Describe("Namespace Controller", func() {
 			Expect(err).NotTo(HaveOccurred())
 		}
 
-		// Unbind SAP: the annotation now lists only SimpleCluster.
+		// Unbind Apeiro: the annotation now lists only SimpleCluster.
 		setExports(name, DefaultSimpleClusterExportName)
 		reconcileNS(name)
 

@@ -56,7 +56,7 @@ const (
 	phaseDeleting     = "Deleting"
 )
 
-// FlavorShoot is the common surface both SAP Integration provider CRs
+// FlavorShoot is the common surface both Apeiro Integration provider CRs
 // (OpenStackShoot, IronCoreShoot) present to the generic reconciler.
 type FlavorShoot interface {
 	client.Object

@@ -1,6 +1,6 @@
 name: Publish
 
-# Builds and pushes the sap provider operator + UI images and packages every
+# Builds and pushes the provider operator + UI images and packages every
 # Helm chart at one version, with that version stamped into each chart's version,
 # appVersion and image tag. Charts are packaged only after their images exist, so
 # a chart X.Y.Z always pulls images X.Y.Z.
