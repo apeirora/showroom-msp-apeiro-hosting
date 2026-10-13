@@ -9,7 +9,7 @@ layout:
 plugins:
   helm.kubebuilder.io/v1-alpha: {}
 projectName: simple-cluster-operator-ironcore
-repo: github.com/apeirora/showroom-msp-sap-hosting/ironcore-operator
+repo: github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator
 resources:
 - api:
     crdVersion: v1
@@ -18,6 +18,6 @@ resources:
   domain: eu
   group: sap
   kind: IronCoreVM
-  path: github.com/apeirora/showroom-msp-sap-hosting/ironcore-operator/api/v1alpha1
+  path: github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/api/v1alpha1
   version: v1alpha1
 version: "3"

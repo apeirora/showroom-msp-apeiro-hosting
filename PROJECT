@@ -6,8 +6,8 @@ cliVersion: 4.9.0
 domain: eu
 layout:
 - go.kubebuilder.io/v4
-projectName: showroom-msp-sap-hosting
-repo: github.com/apeirora/showroom-msp-sap-hosting
+projectName: showroom-msp-apeiro-hosting
+repo: github.com/apeirora/showroom-msp-apeiro-hosting
 resources:
 - api:
     crdVersion: v1
@@ -16,7 +16,7 @@ resources:
   domain: eu
   group: sap
   kind: OpenStackShoot
-  path: github.com/apeirora/showroom-msp-sap-hosting/api/v1alpha1
+  path: github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -25,6 +25,6 @@ resources:
   domain: eu
   group: sap
   kind: IronCoreShoot
-  path: github.com/apeirora/showroom-msp-sap-hosting/api/v1alpha1
+  path: github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1
   version: v1alpha1
 version: "3"

@@ -26,7 +26,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	ironcoreapiv1alpha1 "github.com/apeirora/showroom-msp-sap-hosting/ironcore-operator/api/v1alpha1"
+	ironcoreapiv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/api/v1alpha1"
 )
 
 // Clients holds a controller-runtime client targeting the IronCore cluster

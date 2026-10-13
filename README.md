@@ -9,11 +9,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/apeirora/showroom-msp-sap-hosting/releases"><img src="https://img.shields.io/github/v/release/apeirora/showroom-msp-sap-hosting?style=flat-square&color=blue" alt="Release"></a>
-  <a href="go.mod"><img src="https://img.shields.io/github/go-mod/go-version/apeirora/showroom-msp-sap-hosting?style=flat-square" alt="Go Version"></a>
+  <a href="https://github.com/apeirora/showroom-msp-apeiro-hosting/releases"><img src="https://img.shields.io/github/v/release/apeirora/showroom-msp-apeiro-hosting?style=flat-square&color=blue" alt="Release"></a>
+  <a href="go.mod"><img src="https://img.shields.io/github/go-mod/go-version/apeirora/showroom-msp-apeiro-hosting?style=flat-square" alt="Go Version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-green?style=flat-square" alt="License"></a>
-  <a href="https://github.com/apeirora/showroom-msp-sap-hosting/actions"><img src="https://img.shields.io/github/actions/workflow/status/apeirora/showroom-msp-sap-hosting/test.yml?style=flat-square&label=CI" alt="CI"></a>
-  <a href="https://api.reuse.software/info/github.com/apeirora/showroom-msp-sap-hosting"><img src="https://api.reuse.software/badge/github.com/apeirora/showroom-msp-sap-hosting" alt="REUSE"></a>
+  <a href="https://github.com/apeirora/showroom-msp-apeiro-hosting/actions"><img src="https://img.shields.io/github/actions/workflow/status/apeirora/showroom-msp-apeiro-hosting/test.yml?style=flat-square&label=CI" alt="CI"></a>
+  <a href="https://api.reuse.software/info/github.com/apeirora/showroom-msp-apeiro-hosting"><img src="https://api.reuse.software/badge/github.com/apeirora/showroom-msp-apeiro-hosting" alt="REUSE"></a>
 </p>
 
 <p align="center">
@@ -216,7 +216,7 @@ regeneration step after dependency changes, and what CI requires.
 ## License
 
 Licensed under the [Apache License 2.0](LICENSE). Copyright 2026 SAP SE or an
-SAP affiliate company and showroom-msp-sap-hosting contributors. The repository
+SAP affiliate company and showroom-msp-apeiro-hosting contributors. The repository
 is [REUSE](https://reuse.software/) compliant; see [REUSE.toml](REUSE.toml) and
 [docs/third-party-licenses.md](docs/third-party-licenses.md).
 

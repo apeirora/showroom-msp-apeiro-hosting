@@ -24,8 +24,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
-	ironcorev1alpha1 "github.com/apeirora/showroom-msp-sap-hosting/ironcore-operator/api/v1alpha1"
-	"github.com/apeirora/showroom-msp-sap-hosting/ironcore-operator/internal/controller"
+	ironcorev1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/api/v1alpha1"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/internal/controller"
 )
 
 var (

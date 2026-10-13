@@ -31,7 +31,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	sapv1alpha1 "github.com/apeirora/showroom-msp-sap-hosting/api/v1alpha1"
+	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
 )
 
 // fakeGardener records Shoots in memory and mints canned kubeconfigs.
