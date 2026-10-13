@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.37.0](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.36.0...v0.37.0) (2026-10-13)
+
+
+### Features
+
+* **rbac:** configure Secret reference validation ([#37](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/37)) ([c318f50](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/c318f50c58db796c8c5c297923f8572e4cddf782))
+
+
+### Bug Fixes
+
+* validate VM and Shoot credential references ([#38](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/38)) ([8dfe541](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/8dfe541cebfd86b62671269b4fe1e878c8149e26))
+
 ## [0.36.0](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.35.4...v0.36.0) (2026-10-13)
 
 
