@@ -35,6 +35,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/secretpolicy"
 )
 
 const (
@@ -73,7 +74,8 @@ type FlavorShoot interface {
 // status.providerConfigs, but the CR no longer influences it.
 type ShootReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	SecretPolicy secretpolicy.Policy
+	Scheme       *runtime.Scheme
 	// SCPCName is the SimpleClusterProviderConfig this flavor materialises.
 	SCPCName string
 	// KindName is the flavor CR Kind, part of the Gardener Shoot name hash.

@@ -81,3 +81,5 @@ certmanager:
 # [NETWORK POLICIES]: To enable NetworkPolicies set true
 networkPolicy:
   enable: false
+# Exact operator-approved reference exceptions, with namespace, name, and purpose.
+secretReferenceAllowlist: []

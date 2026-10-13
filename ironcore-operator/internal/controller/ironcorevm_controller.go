@@ -32,6 +32,7 @@ import (
 
 	ironcorev1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/api/v1alpha1"
 	"github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/internal/ironcore"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/internal/secretpolicy"
 )
 
 const (
@@ -45,8 +46,9 @@ const (
 // IronCoreVMReconciler drives one IronCore Machine per IronCoreVM CR.
 type IronCoreVMReconciler struct {
 	client.Client
-	Scheme   *runtime.Scheme
-	Recorder record.EventRecorder
+	SecretPolicy secretpolicy.Policy
+	Scheme       *runtime.Scheme
+	Recorder     record.EventRecorder
 }
 
 // +kubebuilder:rbac:groups=sap.eu,resources=ironcorevms,verbs=get;list;watch;create;update;patch;delete
