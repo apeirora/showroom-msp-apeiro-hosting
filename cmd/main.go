@@ -19,7 +19,6 @@ package main
 import (
 	"crypto/tls"
 	"flag"
-	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/secretpolicy"
 	"os"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -38,6 +37,7 @@ import (
 
 	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
 	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/controller"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/secretpolicy"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -108,7 +108,8 @@ func main() {
 	}
 	opts.BindFlags(flag.CommandLine)
 	var secretReferenceAllowlist string
-	flag.StringVar(&secretReferenceAllowlist, "secret-reference-allowlist", "[]", "Exact operator-approved reference exceptions as a JSON list.")
+	flag.StringVar(&secretReferenceAllowlist, "secret-reference-allowlist", "[]",
+		"Exact operator-approved reference exceptions as a JSON list.")
 	flag.Parse()
 	secretPolicy, err := secretpolicy.Parse(secretReferenceAllowlist)
 	if err != nil {
@@ -203,7 +204,11 @@ func main() {
 	}
 
 	if controller.KubeconfigSource(kubeconfigSource) == controller.KubeconfigSourceGlobal {
-		secretPolicy.Allowlist = append(secretPolicy.Allowlist, secretpolicy.Entry{Namespace: globalKubeconfigSecretNamespace, Name: globalKubeconfigSecretName, Purpose: secretpolicy.Use})
+		secretPolicy.Allowlist = append(secretPolicy.Allowlist, secretpolicy.Entry{
+			Namespace: globalKubeconfigSecretNamespace,
+			Name:      globalKubeconfigSecretName,
+			Purpose:   secretpolicy.Use,
+		})
 	}
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,

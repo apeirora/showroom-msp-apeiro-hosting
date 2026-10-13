@@ -13,7 +13,6 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/internal/secretpolicy"
 	"strings"
 	"time"
 
@@ -33,6 +32,7 @@ import (
 
 	ironcorev1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/api/v1alpha1"
 	"github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/internal/ironcore"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/internal/secretpolicy"
 )
 
 const (

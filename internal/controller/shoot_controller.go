@@ -19,7 +19,6 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/secretpolicy"
 	"strings"
 	"time"
 
@@ -36,6 +35,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
 	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/secretpolicy"
 )
 
 const (
