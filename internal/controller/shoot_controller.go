@@ -443,14 +443,54 @@ func (r *ShootReconciler) validateShootReferences(shoot *unstructured.Unstructur
 		if !ok {
 			return fmt.Errorf("spec.dns.providers[%d] must be an object", i)
 		}
-		name, found, err := unstructured.NestedString(provider, "secretName")
-		if err != nil {
-			return fmt.Errorf("spec.dns.providers[%d].secretName: %w", i, err)
+		if err := r.validateDNSProvider(provider); err != nil {
+			return fmt.Errorf("spec.dns.providers[%d]: %w", i, err)
 		}
-		if found {
-			if err := r.SecretPolicy.Require(r.defaults.targetNamespace, name, secretpolicy.GardenerDNS); err != nil {
-				return fmt.Errorf("spec.dns.providers[%d].secretName: %w", i, err)
-			}
+	}
+	return nil
+}
+
+func (r *ShootReconciler) validateDNSCredentialsRef(ref map[string]interface{}) error {
+	apiVersion, _, err := unstructured.NestedString(ref, "apiVersion")
+	if err != nil || apiVersion != "v1" {
+		return fmt.Errorf("%w: apiVersion must be v1", secretpolicy.ErrDenied)
+	}
+	kind, _, err := unstructured.NestedString(ref, "kind")
+	if err != nil || kind != "Secret" {
+		return fmt.Errorf("%w: kind must be Secret", secretpolicy.ErrDenied)
+	}
+	name, _, err := unstructured.NestedString(ref, "name")
+	if err != nil {
+		return fmt.Errorf("name: %w", err)
+	}
+	namespace, _, err := unstructured.NestedString(ref, "namespace")
+	if err != nil {
+		return fmt.Errorf("namespace: %w", err)
+	}
+	if namespace == "" {
+		namespace = r.defaults.targetNamespace
+	}
+	return r.SecretPolicy.Require(namespace, name, secretpolicy.GardenerDNS)
+}
+
+func (r *ShootReconciler) validateDNSProvider(provider map[string]interface{}) error {
+	name, found, err := unstructured.NestedString(provider, "secretName")
+	if err != nil {
+		return fmt.Errorf("secretName: %w", err)
+	}
+	if found {
+		if err := r.SecretPolicy.Require(r.defaults.targetNamespace, name, secretpolicy.GardenerDNS); err != nil {
+			return fmt.Errorf("secretName: %w", err)
+		}
+	}
+
+	ref, found, err := unstructured.NestedMap(provider, "credentialsRef")
+	if err != nil {
+		return fmt.Errorf("credentialsRef: %w", err)
+	}
+	if found {
+		if err := r.validateDNSCredentialsRef(ref); err != nil {
+			return fmt.Errorf("credentialsRef: %w", err)
 		}
 	}
 	return nil

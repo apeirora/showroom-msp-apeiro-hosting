@@ -80,7 +80,7 @@ func checkGardenDevManifest(t *testing.T, data []byte) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if defaults.targetNamespace != "garden-dev" {
+	if defaults.targetNamespace != testGardenNamespace {
 		t.Fatal(defaults.targetNamespace)
 	}
 	shoot, err := renderDefaultShootManifest(defaults, "account", "shoot")
@@ -298,7 +298,7 @@ func TestIronCoreShootCallerKeepsManagedIssuer(t *testing.T) {
 		t.Fatal(err)
 	}
 	created := garden.shoots[name]
-	if created.GetName() != name || created.GetNamespace() != "garden-dev" {
+	if created.GetName() != name || created.GetNamespace() != testGardenNamespace {
 		t.Fatal("configured Garden target lost")
 	}
 	for key, want := range map[string]string{shootOwnerAnnotation: "account/sc-demo", "authentication.gardener.cloud/issuer": "managed"} {

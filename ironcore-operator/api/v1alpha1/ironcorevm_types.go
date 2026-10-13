@@ -56,8 +56,8 @@ const (
 // +kubebuilder:validation:XValidation:rule="has(self.cloudProfile) != has(self.resources)",message="set exactly one of spec.cloudProfile or spec.resources"
 type IronCoreVMSpec struct {
 	// IronCoreKubeconfig references a Secret carrying a kubeconfig for the IronCore
-	// cluster under key `kubeconfig`. Set `namespace` to read the Secret from a
-	// different namespace; when empty it defaults to the VM's namespace.
+	// cluster under key `kubeconfig`. The namespace must be the VM namespace.
+	// When empty, it defaults to the VM namespace.
 	IronCoreKubeconfig corev1.SecretReference `json:"ironcoreKubeconfig"`
 
 	// IronCoreNamespace is the namespace in the IronCore cluster where resources
@@ -117,12 +117,12 @@ type IronCoreVMSpec struct {
 	// +optional
 	UserData string `json:"userData,omitempty"`
 
-	// SSHKeyRef selects the SSH key material for the VM. It accepts either an
-	// SSHKey custom resource (apiGroup sshkeys.apeirora.eu, kind SSHKey) — whose
-	// public key is read directly — or a kubernetes.io/ssh-auth Secret (core
-	// apiGroup, kind Secret) whose ssh-publickey is used (looked up, or generated
-	// and stored when absent). namespace is optional and defaults to the VM's
-	// namespace. When unset, a per-VM Secret `<vm-name>-ssh` is generated.
+	// SSHKeyRef selects the SSH key for the VM. Use an SSHKey custom resource
+	// (apiGroup sshkeys.apeirora.eu, kind SSHKey) or a kubernetes.io/ssh-auth Secret
+	// (core apiGroup, kind Secret). The operator reads the SSHKey public key or
+	// the Secret ssh-publickey. It creates a Secret keypair if the Secret is absent.
+	// The namespace must be the VM namespace. An empty namespace defaults to
+	// the VM namespace. When unset, the operator creates `<vm-name>-ssh`.
 	// +optional
 	SSHKeyRef *corev1.TypedObjectReference `json:"sshKeyRef,omitempty"`
 }
