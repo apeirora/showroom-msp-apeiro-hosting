@@ -34,6 +34,7 @@ spec:
           command:
             - /manager
           args:
+            - {{ printf "--secret-reference-allowlist=%s" (.Values.secretReferenceAllowlist | default list | toJson) | quote }}
             - --ironcore-config=/etc/sap-provider/ironcore.yaml
             - --metrics-bind-address=:8443
             - --health-probe-bind-address=:8081

@@ -13,6 +13,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/internal/secretpolicy"
 	"strings"
 	"time"
 
@@ -45,8 +46,9 @@ const (
 // IronCoreVMReconciler drives one IronCore Machine per IronCoreVM CR.
 type IronCoreVMReconciler struct {
 	client.Client
-	Scheme   *runtime.Scheme
-	Recorder record.EventRecorder
+	SecretPolicy secretpolicy.Policy
+	Scheme       *runtime.Scheme
+	Recorder     record.EventRecorder
 }
 
 // +kubebuilder:rbac:groups=sap.eu,resources=ironcorevms,verbs=get;list;watch;create;update;patch;delete

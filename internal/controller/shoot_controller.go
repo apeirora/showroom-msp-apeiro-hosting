@@ -19,6 +19,7 @@ package controller
 import (
 	"context"
 	"fmt"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/secretpolicy"
 	"strings"
 	"time"
 
@@ -73,7 +74,8 @@ type FlavorShoot interface {
 // status.providerConfigs, but the CR no longer influences it.
 type ShootReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	SecretPolicy secretpolicy.Policy
+	Scheme       *runtime.Scheme
 	// SCPCName is the SimpleClusterProviderConfig this flavor materialises.
 	SCPCName string
 	// KindName is the flavor CR Kind, part of the Gardener Shoot name hash.

@@ -49,3 +49,6 @@ resources:
   requests:
     cpu: 10m
     memory: 64Mi
+
+# Exact operator-approved reference exceptions, with namespace, name, and purpose.
+secretReferenceAllowlist: []

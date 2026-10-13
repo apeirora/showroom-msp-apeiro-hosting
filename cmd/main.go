@@ -19,6 +19,7 @@ package main
 import (
 	"crypto/tls"
 	"flag"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/secretpolicy"
 	"os"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -106,7 +107,14 @@ func main() {
 		Development: true,
 	}
 	opts.BindFlags(flag.CommandLine)
+	var secretReferenceAllowlist string
+	flag.StringVar(&secretReferenceAllowlist, "secret-reference-allowlist", "[]", "Exact operator-approved reference exceptions as a JSON list.")
 	flag.Parse()
+	secretPolicy, err := secretpolicy.Parse(secretReferenceAllowlist)
+	if err != nil {
+		setupLog.Error(err, "invalid Secret reference configuration")
+		os.Exit(1)
+	}
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
@@ -194,6 +202,9 @@ func main() {
 		metricsServerOptions.KeyName = metricsCertKey
 	}
 
+	if controller.KubeconfigSource(kubeconfigSource) == controller.KubeconfigSourceGlobal {
+		secretPolicy.Allowlist = append(secretPolicy.Allowlist, secretpolicy.Entry{Namespace: globalKubeconfigSecretNamespace, Name: globalKubeconfigSecretName, Purpose: secretpolicy.Use})
+	}
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
 		Metrics:                metricsServerOptions,
@@ -219,6 +230,7 @@ func main() {
 	}
 
 	if err := (&controller.ShootReconciler{
+		SecretPolicy:                    secretPolicy,
 		Client:                          mgr.GetClient(),
 		Scheme:                          mgr.GetScheme(),
 		SCPCName:                        controller.OpenStackSCPCName(),
@@ -235,6 +247,7 @@ func main() {
 		os.Exit(1)
 	}
 	if err := (&controller.ShootReconciler{
+		SecretPolicy:                    secretPolicy,
 		Client:                          mgr.GetClient(),
 		Scheme:                          mgr.GetScheme(),
 		SCPCName:                        controller.IronCoreSCPCName(),
