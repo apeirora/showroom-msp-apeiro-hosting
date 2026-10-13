@@ -12,6 +12,7 @@ import (
 // IronCoreConfig is the chart's scpc.ironcore contract. ShootSpec is the complete
 // Gardener Shoot spec, so extension settings need no new operator flags.
 type IronCoreConfig struct {
+	ShootAnnotations map[string]string        `json:"shootAnnotations,omitempty"`
 	Autoscaling      *bool                    `json:"autoscaling,omitempty"`
 	ProjectNamespace string                   `json:"projectNamespace"`
 	Profiles         []map[string]interface{} `json:"profiles"`
@@ -38,7 +39,7 @@ func ConfigureIronCoreManifest(data []byte) ([]byte, error) {
 	if err := unstructured.SetNestedSlice(cfg.ShootSpec, []interface{}{worker}, "provider", "workers"); err != nil {
 		return nil, err
 	}
-	shootBytes, err := json.Marshal(map[string]interface{}{"apiVersion": "core.gardener.cloud/v1beta1", "kind": "Shoot", "spec": cfg.ShootSpec})
+	shootBytes, err := json.Marshal(map[string]interface{}{"apiVersion": "core.gardener.cloud/v1beta1", "kind": "Shoot", "metadata": map[string]interface{}{"annotations": cfg.ShootAnnotations}, "spec": cfg.ShootSpec})
 	if err != nil {
 		return nil, err
 	}

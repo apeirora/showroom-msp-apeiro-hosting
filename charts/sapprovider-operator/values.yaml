@@ -22,6 +22,7 @@ namespaceScpc:
 scpc:
   # Required landscape configuration. See examples/garden-dev.yaml.
   ironcore:
+    shootAnnotations: {}
     autoscaling: true
     projectNamespace: ""
     profiles: []

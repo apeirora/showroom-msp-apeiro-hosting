@@ -132,6 +132,7 @@ For a direct operator start, supply the same configuration file with that flag.
 | Value | Purpose |
 |---|---|
 | `scpc.ironcore.projectNamespace` | Garden project namespace, such as `garden-dev` |
+| `scpc.ironcore.shootAnnotations` | Garden Shoot annotations, including the managed service-account issuer |
 | `scpc.ironcore.autoscaling` | SimpleCluster autoscaling support; neutral default `true` |
 | `scpc.ironcore.profiles` | Machine profiles, ordered smallest first; each requires string `name`, `cpu`, and `memory` |
 | `scpc.ironcore.shootSpec` | Complete Gardener Shoot spec |
@@ -159,6 +160,15 @@ OpenStack configuration is unchanged.
 
 Use the [garden-dev example](charts/sapprovider-operator/examples/garden-dev.yaml)
 with Kubernetes 1.33.13, gardenlinux 2150.1.0, a 50Gi disk and CPU profiles 1/2/4/8.
+The example also enables `shoot-dns-service`, `shoot-cert-service` and the
+managed service-account issuer. Each DNS name contains the request name and
+physical account namespace. The example references the project DNS credential Secret.
+Change the DNS domain and credential reference for another landscape.
+[Gardener requires](https://gardener.cloud/docs/gardener/security/shoot_serviceaccounts/)
+`authentication.gardener.cloud/issuer: managed` on the Shoot for its managed
+issuer. Do not also set `serviceAccountConfig.issuer` for that mode.
+All `dns` and `kubernetes.kubeAPIServer.serviceAccountConfig` fields pass through.
+
 Check the CloudProfile and CredentialsBinding before use. Quota and available
 capacity are separate requirements.
 

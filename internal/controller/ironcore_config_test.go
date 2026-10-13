@@ -1,11 +1,14 @@
 package controller
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"strings"
 	"testing"
 
+	sapv1alpha1 "github.com/apeirora/showroom-msp-sap-hosting/api/v1alpha1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/yaml"
 )
@@ -84,7 +87,7 @@ func checkGardenDevManifest(t *testing.T, data []byte) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for path, want := range map[string]string{"spec.cloudProfile.name": "ironcore", "spec.credentialsBindingName": "ironcore-infra", "spec.kubernetes.version": "1.33.13", "spec.region": "wdf4", "spec.networking.type": "calico"} {
+	for path, want := range map[string]string{"spec.cloudProfile.name": "ironcore", "spec.credentialsBindingName": "ironcore-infra", "spec.kubernetes.version": "1.33.13", "spec.region": "wdf4", "spec.networking.type": "calico", "spec.dns.domain": "shoot.account.dev.ic.showroom.apeirora.eu"} {
 		got, _, err := unstructured.NestedString(shoot.Object, strings.Split(path, ".")...)
 		if err != nil || got != want {
 			t.Fatalf("%s: got %q, want %q (%v)", path, got, want, err)
@@ -92,6 +95,17 @@ func checkGardenDevManifest(t *testing.T, data []byte) {
 	}
 	workers, _, _ := unstructured.NestedSlice(shoot.Object, "spec", "provider", "workers")
 	worker := workers[0].(map[string]interface{})
+	if shoot.GetAnnotations()["authentication.gardener.cloud/issuer"] != "managed" {
+		t.Fatal("managed issuer annotation lost")
+	}
+	extensions, _, _ := unstructured.NestedSlice(shoot.Object, "spec", "extensions")
+	if len(extensions) != 2 {
+		t.Fatal("DNS/certificate extensions lost")
+	}
+	providers, _, _ := unstructured.NestedSlice(shoot.Object, "spec", "dns", "providers")
+	if len(providers) != 1 || providers[0].(map[string]interface{})["type"] != "openstack-designate" {
+		t.Fatal("DNS provider lost")
+	}
 	for _, key := range []string{"minimum", "maximum"} {
 		got, _, err := unstructured.NestedInt64(worker, key)
 		if err != nil || got != 1 {
@@ -186,6 +200,13 @@ func TestIronCoreExplicitMachineAndExtraSettings(t *testing.T) {
 		t.Fatal(err)
 	}
 	config.ShootSpec["purpose"] = "evaluation"
+	config.ShootAnnotations = nil
+	if err := unstructured.SetNestedField(config.ShootSpec, "https://issuer.example.test", "kubernetes", "kubeAPIServer", "serviceAccountConfig", "issuer"); err != nil {
+		t.Fatal(err)
+	}
+	if err := unstructured.SetNestedStringSlice(config.ShootSpec, []string{"https://old-issuer.example.test"}, "kubernetes", "kubeAPIServer", "serviceAccountConfig", "acceptedIssuers"); err != nil {
+		t.Fatal(err)
+	}
 	config.ShootSpec["extensions"] = []interface{}{map[string]interface{}{"type": "shoot-cert-service"}}
 	if err := unstructured.SetNestedField(config.ShootSpec, "10.0.0.0/16", "networking", "nodes"); err != nil {
 		t.Fatal(err)
@@ -225,6 +246,7 @@ func TestIronCoreExplicitMachineAndExtraSettings(t *testing.T) {
 	if err != nil || !found || autoscale {
 		t.Fatalf("autoscaling override lost: %v %v %v", autoscale, found, err)
 	}
+	checkIssuerFields(t, shoot)
 	purpose, _, _ := unstructured.NestedString(shoot.Object, "spec", "purpose")
 	if purpose != "evaluation" {
 		t.Fatal(purpose)
@@ -244,5 +266,48 @@ func TestIronCoreExplicitMachineAndExtraSettings(t *testing.T) {
 	extensions, _, _ := unstructured.NestedSlice(shoot.Object, "spec", "extensions")
 	if len(extensions) != 1 {
 		t.Fatal(extensions)
+	}
+}
+
+func checkIssuerFields(t *testing.T, shoot *unstructured.Unstructured) {
+	t.Helper()
+	issuer, _, _ := unstructured.NestedString(shoot.Object, "spec", "kubernetes", "kubeAPIServer", "serviceAccountConfig", "issuer")
+	if issuer != "https://issuer.example.test" {
+		t.Fatal("service-account issuer lost")
+	}
+	accepted, _, _ := unstructured.NestedStringSlice(shoot.Object, "spec", "kubernetes", "kubeAPIServer", "serviceAccountConfig", "acceptedIssuers")
+	if len(accepted) != 1 || accepted[0] != "https://old-issuer.example.test" {
+		t.Fatal("accepted issuers lost")
+	}
+}
+
+func TestIronCoreShootCallerKeepsManagedIssuer(t *testing.T) {
+	manifest, err := ConfigureIronCoreManifest(gardenDevConfig(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defaults, err := parseFlavorDefaults(manifest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	r := &ShootReconciler{defaults: defaults}
+	sh := &sapv1alpha1.IronCoreShoot{ObjectMeta: metav1.ObjectMeta{Name: "sc-demo", Namespace: "account"}}
+	name := gardenShootName("IronCoreShoot", sh.Namespace, sh.Name)
+	garden := newFakeGardener()
+	if err := r.createShoot(context.Background(), garden, sh, name); err != nil {
+		t.Fatal(err)
+	}
+	created := garden.shoots[name]
+	if created.GetName() != name || created.GetNamespace() != "garden-dev" {
+		t.Fatal("configured Garden target lost")
+	}
+	for key, want := range map[string]string{shootOwnerAnnotation: "account/sc-demo", "authentication.gardener.cloud/issuer": "managed"} {
+		if created.GetAnnotations()[key] != want {
+			t.Fatalf("%s annotation lost", key)
+		}
+	}
+	domain, _, _ := unstructured.NestedString(created.Object, "spec", "dns", "domain")
+	if domain != "sc-demo.account.dev.ic.showroom.apeirora.eu" {
+		t.Fatal(domain)
 	}
 }

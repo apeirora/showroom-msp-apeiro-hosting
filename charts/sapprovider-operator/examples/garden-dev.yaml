@@ -1,6 +1,8 @@
 scpc:
   ironcore:
     projectNamespace: garden-dev
+    shootAnnotations:
+      authentication.gardener.cloud/issuer: managed
     profiles:
       - {name: memory-intel1-1cpu, cpu: "1", memory: 8Gi}
       - {name: memory-intel1-2cpu, cpu: "2", memory: 16Gi}
@@ -11,6 +13,19 @@ scpc:
       credentialsBindingName: ironcore-infra
       region: wdf4
       kubernetes: {version: "1.33.13"}
+      dns:
+        # The physical account namespace separates same-named requests.
+        domain: "{{ .SC.name }}.{{ .SC.namespace }}.dev.ic.showroom.apeirora.eu"
+        providers:
+          - type: openstack-designate
+            primary: true
+            credentialsRef:
+              apiVersion: v1
+              kind: Secret
+              name: designate-dns
+      extensions:
+        - type: shoot-dns-service
+        - type: shoot-cert-service
       provider:
         type: ironcore
         workers:

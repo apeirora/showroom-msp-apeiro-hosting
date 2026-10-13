@@ -75,7 +75,9 @@ var _ = Describe("Manager", Ordered, func() {
 		Expect(err).NotTo(HaveOccurred(), "Failed to deploy the controller-manager")
 
 		By("supplying an explicit IronCore landscape for the test manager")
-		valuesData, err := os.ReadFile("../../charts/sapprovider-operator/examples/garden-dev.yaml")
+		projectDir, err := utils.GetProjectDir()
+		Expect(err).NotTo(HaveOccurred())
+		valuesData, err := os.ReadFile(filepath.Join(projectDir, "charts/sapprovider-operator/examples/garden-dev.yaml"))
 		Expect(err).NotTo(HaveOccurred())
 		var values map[string]interface{}
 		Expect(yaml.Unmarshal(valuesData, &values)).To(Succeed())
