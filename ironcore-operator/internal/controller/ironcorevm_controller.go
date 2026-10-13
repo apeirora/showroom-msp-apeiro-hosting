@@ -66,6 +66,10 @@ func (r *IronCoreVMReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
+	if err := validateVMReferences(&vm); err != nil {
+		return r.fail(ctx, &vm, "SecretReferenceDenied", err.Error())
+	}
+
 	if !vm.DeletionTimestamp.IsZero() {
 		return r.reconcileDelete(ctx, &vm)
 	}
@@ -304,6 +308,9 @@ func (r *IronCoreVMReconciler) eventf(vm *ironcorev1alpha1.IronCoreVM, eventType
 }
 
 func (r *IronCoreVMReconciler) ironcoreClients(ctx context.Context, vm *ironcorev1alpha1.IronCoreVM) (*ironcore.Clients, error) {
+	if err := validateVMReferences(vm); err != nil {
+		return nil, err
+	}
 	var creds corev1.Secret
 	key := ironCoreKubeconfigRef(vm)
 	if err := r.Get(ctx, key, &creds); err != nil {
@@ -350,6 +357,9 @@ func secretKeyRef(vm *ironcorev1alpha1.IronCoreVM) (nn types.NamespacedName, sha
 // resource. The returned name is the SSHKey's exported Secret (for status), or
 // the SSHKey name when it exports none.
 func (r *IronCoreVMReconciler) resolveSSHKeyResource(ctx context.Context, vm *ironcorev1alpha1.IronCoreVM) (types.NamespacedName, string, error) {
+	if err := validateVMReferences(vm); err != nil {
+		return types.NamespacedName{}, "", err
+	}
 	ref := vm.Spec.SSHKeyRef
 	ns := refNamespace(ref.Namespace, vm.Namespace)
 	u := &unstructured.Unstructured{}
@@ -370,6 +380,9 @@ func (r *IronCoreVMReconciler) resolveSSHKeyResource(ctx context.Context, vm *ir
 }
 
 func (r *IronCoreVMReconciler) ensureSSHKeypair(ctx context.Context, vm *ironcorev1alpha1.IronCoreVM) (types.NamespacedName, string, error) {
+	if err := validateVMReferences(vm); err != nil {
+		return types.NamespacedName{}, "", err
+	}
 	if isSSHKeyResourceRef(vm.Spec.SSHKeyRef) {
 		return r.resolveSSHKeyResource(ctx, vm)
 	}
@@ -463,4 +476,16 @@ func (r *IronCoreVMReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(&ironcorev1alpha1.IronCoreVM{}).
 		Named("ironcorevm").
 		Complete(r)
+}
+
+// validateVMReferences checks all local references before any credential access.
+// VM references remain in the VM namespace, including operator allowlist entries.
+func validateVMReferences(vm *ironcorev1alpha1.IronCoreVM) error {
+	if ns := ironCoreKubeconfigRef(vm).Namespace; ns != vm.Namespace {
+		return fmt.Errorf("%w: spec.ironcoreKubeconfig must use the VM namespace", secretpolicy.ErrDenied)
+	}
+	if ref := vm.Spec.SSHKeyRef; ref != nil && refNamespace(ref.Namespace, vm.Namespace) != vm.Namespace {
+		return fmt.Errorf("%w: spec.sshKeyRef must use the VM namespace", secretpolicy.ErrDenied)
+	}
+	return nil
 }

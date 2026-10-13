@@ -116,6 +116,11 @@ func (r *ShootReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
+	if err := r.validateRawShoot(sh); err != nil {
+		return ctrl.Result{RequeueAfter: providerRequeue},
+			r.patchStatus(ctx, sh, false, phaseFailed, "ShootCreateFailed", err.Error())
+	}
+
 	if !sh.GetDeletionTimestamp().IsZero() {
 		return r.reconcileDelete(ctx, sh)
 	}
@@ -186,6 +191,11 @@ func (r *ShootReconciler) createShoot(ctx context.Context, g Gardener, sh Flavor
 	}
 	if err != nil {
 		return err
+	}
+	if strings.TrimSpace(text) != "" {
+		if err := r.validateShootReferences(shoot); err != nil {
+			return err
+		}
 	}
 	shoot.SetName(shootName)
 	shoot.SetNamespace(r.defaults.targetNamespace)
@@ -393,4 +403,95 @@ func (r *ShootReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		For(r.New()).
 		Named(r.ControllerName).
 		Complete(r)
+}
+
+// validateRawShoot checks tenant manifests before management or remote access.
+// The embedded default manifests are operator configuration.
+func (r *ShootReconciler) validateRawShoot(sh FlavorShoot) error {
+	text := sh.GetSpecText()
+	if strings.TrimSpace(text) == "" {
+		return nil
+	}
+	shoot, err := parseShootManifest(text)
+	if err != nil {
+		return err
+	}
+	return r.validateShootReferences(shoot)
+}
+
+func (r *ShootReconciler) validateShootReferences(shoot *unstructured.Unstructured) error {
+	for _, ref := range []struct{ field, purpose string }{
+		{"credentialsBindingName", secretpolicy.GardenerCredentialBinding},
+		{"secretBindingName", secretpolicy.GardenerSecretBinding},
+	} {
+		name, found, err := unstructured.NestedString(shoot.Object, "spec", ref.field)
+		if err != nil {
+			return fmt.Errorf("spec.%s: %w", ref.field, err)
+		}
+		if found {
+			if err := r.SecretPolicy.Require(r.defaults.targetNamespace, name, ref.purpose); err != nil {
+				return fmt.Errorf("spec.%s: %w", ref.field, err)
+			}
+		}
+	}
+	providers, _, err := unstructured.NestedSlice(shoot.Object, "spec", "dns", "providers")
+	if err != nil {
+		return fmt.Errorf("spec.dns.providers: %w", err)
+	}
+	for i, value := range providers {
+		provider, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("spec.dns.providers[%d] must be an object", i)
+		}
+		if err := r.validateDNSProvider(provider); err != nil {
+			return fmt.Errorf("spec.dns.providers[%d]: %w", i, err)
+		}
+	}
+	return nil
+}
+
+func (r *ShootReconciler) validateDNSCredentialsRef(ref map[string]interface{}) error {
+	apiVersion, _, err := unstructured.NestedString(ref, "apiVersion")
+	if err != nil || apiVersion != "v1" {
+		return fmt.Errorf("%w: apiVersion must be v1", secretpolicy.ErrDenied)
+	}
+	kind, _, err := unstructured.NestedString(ref, "kind")
+	if err != nil || kind != "Secret" {
+		return fmt.Errorf("%w: kind must be Secret", secretpolicy.ErrDenied)
+	}
+	name, _, err := unstructured.NestedString(ref, "name")
+	if err != nil {
+		return fmt.Errorf("name: %w", err)
+	}
+	namespace, _, err := unstructured.NestedString(ref, "namespace")
+	if err != nil {
+		return fmt.Errorf("namespace: %w", err)
+	}
+	if namespace == "" {
+		namespace = r.defaults.targetNamespace
+	}
+	return r.SecretPolicy.Require(namespace, name, secretpolicy.GardenerDNS)
+}
+
+func (r *ShootReconciler) validateDNSProvider(provider map[string]interface{}) error {
+	name, found, err := unstructured.NestedString(provider, "secretName")
+	if err != nil {
+		return fmt.Errorf("secretName: %w", err)
+	}
+	if found {
+		if err := r.SecretPolicy.Require(r.defaults.targetNamespace, name, secretpolicy.GardenerDNS); err != nil {
+			return fmt.Errorf("secretName: %w", err)
+		}
+	}
+
+	ref, found, err := unstructured.NestedMap(provider, "credentialsRef")
+	if err != nil {
+		return fmt.Errorf("credentialsRef: %w", err)
+	}
+	if found {
+		if err := r.validateDNSCredentialsRef(ref); err != nil {
+			return fmt.Errorf("credentialsRef: %w", err)
+		}
+	}
+	return nil
 }
