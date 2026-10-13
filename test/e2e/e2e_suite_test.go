@@ -28,7 +28,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/apeirora/showroom-msp-sap-hosting/test/utils"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/test/utils"
 )
 
 var (

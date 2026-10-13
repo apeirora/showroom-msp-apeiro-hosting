@@ -30,8 +30,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
-	ironcorev1alpha1 "github.com/apeirora/showroom-msp-sap-hosting/ironcore-operator/api/v1alpha1"
-	"github.com/apeirora/showroom-msp-sap-hosting/ironcore-operator/internal/ironcore"
+	ironcorev1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/api/v1alpha1"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/internal/ironcore"
 )
 
 const (

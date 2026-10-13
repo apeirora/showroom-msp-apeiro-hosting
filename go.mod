@@ -1,4 +1,4 @@
-module github.com/apeirora/showroom-msp-sap-hosting
+module github.com/apeirora/showroom-msp-apeiro-hosting
 
 go 1.26.9
 

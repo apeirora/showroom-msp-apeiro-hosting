@@ -35,8 +35,8 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	sapv1alpha1 "github.com/apeirora/showroom-msp-sap-hosting/api/v1alpha1"
-	"github.com/apeirora/showroom-msp-sap-hosting/internal/controller"
+	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
+	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/controller"
 	// +kubebuilder:scaffold:imports
 )
 

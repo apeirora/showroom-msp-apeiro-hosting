@@ -23,7 +23,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
-	sapv1alpha1 "github.com/apeirora/showroom-msp-sap-hosting/api/v1alpha1"
+	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
 )
 
 // Verifies the manager wiring — in particular that the generic ShootReconciler

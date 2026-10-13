@@ -10,7 +10,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 
-	ironcorev1alpha1 "github.com/apeirora/showroom-msp-sap-hosting/ironcore-operator/api/v1alpha1"
+	ironcorev1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/api/v1alpha1"
 )
 
 const ns1 = "ns1"

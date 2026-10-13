@@ -1,4 +1,4 @@
-module github.com/apeirora/showroom-msp-sap-hosting/ironcore-operator
+module github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator
 
 go 1.26.9
 
