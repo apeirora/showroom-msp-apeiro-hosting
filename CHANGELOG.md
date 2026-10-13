@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.36.0](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.35.4...v0.36.0) (2026-10-13)
+
+
+### Features
+
+* configure the IronCore Garden landscape through chart values ([#33](https://github.com/apeirora/showroom-msp-sap-hosting/issues/33)) ([2367fa9](https://github.com/apeirora/showroom-msp-sap-hosting/commit/2367fa9897417b0405f7fad50a27d23bad4daf4a))
+
 ## [0.35.4](https://github.com/apeirora/showroom-msp-sap-hosting/compare/v0.35.3...v0.35.4) (2026-09-24)
 
 
