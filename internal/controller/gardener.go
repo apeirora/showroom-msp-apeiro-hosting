@@ -206,8 +206,9 @@ func parseFlavorDefaults(manifest []byte) (*flavorDefaults, error) {
 
 	targetNS, _, _ := unstructured.NestedString(scpc.Object, "spec", "target", "namespace")
 	// The garden project namespace is deployment-specific; the value in the
-	// embedded skeleton is only a placeholder.
-	if env := os.Getenv("GARDEN_PROJECT_NAMESPACE"); env != "" {
+	// embedded OpenStack skeleton is only a placeholder. IronCore uses its
+	// explicit per-flavor configuration.
+	if env := os.Getenv("GARDEN_PROJECT_NAMESPACE"); env != "" && scpc.GetName() != ironcoreSCPCName {
 		targetNS = env
 	}
 	if targetNS == "" {
@@ -313,11 +314,14 @@ func parseShootManifest(text string) (*unstructured.Unstructured, error) {
 
 // decodeShootManifest unmarshals a Shoot manifest and defaults apiVersion/kind.
 func decodeShootManifest(manifest []byte) (*unstructured.Unstructured, error) {
-	var obj map[string]interface{}
-	if err := yaml.Unmarshal(manifest, &obj); err != nil {
+	data, err := yaml.YAMLToJSON(manifest)
+	if err != nil {
 		return nil, fmt.Errorf("unmarshal shoot manifest: %w", err)
 	}
-	shoot := &unstructured.Unstructured{Object: obj}
+	shoot := &unstructured.Unstructured{}
+	if err := shoot.UnmarshalJSON(data); err != nil {
+		return nil, fmt.Errorf("unmarshal shoot manifest: %w", err)
+	}
 	if shoot.GetAPIVersion() == "" {
 		shoot.SetAPIVersion("core.gardener.cloud/v1beta1")
 	}

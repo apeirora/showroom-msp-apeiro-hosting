@@ -55,7 +55,8 @@ const (
 // gone it removes the SCPCs it manages.
 type NamespaceReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme           *runtime.Scheme
+	IronCoreManifest []byte
 	// KubeconfigSource is the source for the Gardener kubeconfig the SCPCs
 	// target: "global" (shared admin Secret) or "kcp" (per-account Secret in
 	// the account namespace).
@@ -95,6 +96,9 @@ func (r *NamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	}
 
 	for _, f := range flavors {
+		if f.scpcName == ironcoreSCPCName && len(r.IronCoreManifest) > 0 {
+			f.manifest = r.IronCoreManifest
+		}
 		scpc, err := renderSCPC(f, ns.Name)
 		if err != nil {
 			return ctrl.Result{RequeueAfter: providerRequeue}, err

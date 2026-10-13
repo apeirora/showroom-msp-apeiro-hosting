@@ -30,6 +30,9 @@ jobs:
         with:
           go-version-file: ${{ matrix.module }}/go.mod
 
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
       - name: Running Tests
         working-directory: ${{ matrix.module }}
         run: |
@@ -86,6 +89,10 @@ jobs:
           set -euo pipefail
           chart_dir="charts/${{ matrix.chart }}"
           helm dependency build "$chart_dir" || helm dependency update "$chart_dir"
-          helm lint "$chart_dir"
-          helm template "ci-${{ matrix.chart }}" "$chart_dir" --namespace default >/dev/null
+          values_args=()
+          if [[ "${{ matrix.chart }}" == "sapprovider-operator" ]]; then
+            values_args=(-f "$chart_dir/examples/garden-dev.yaml")
+          fi
+          helm lint "$chart_dir" "${values_args[@]}"
+          helm template "ci-${{ matrix.chart }}" "$chart_dir" --namespace default "${values_args[@]}" >/dev/null
           helm package "$chart_dir" --destination "dist/${{ matrix.chart }}"

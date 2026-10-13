@@ -1,0 +1,34 @@
+scpc:
+  ironcore:
+    projectNamespace: garden-dev
+    profiles:
+      - {name: memory-intel1-1cpu, cpu: "1", memory: 8Gi}
+      - {name: memory-intel1-2cpu, cpu: "2", memory: 16Gi}
+      - {name: memory-intel1-4cpu, cpu: "4", memory: 32Gi}
+      - {name: memory-intel1-8cpu, cpu: "8", memory: 64Gi}
+    shootSpec:
+      cloudProfile: {name: ironcore, kind: CloudProfile}
+      credentialsBindingName: ironcore-infra
+      region: wdf4
+      kubernetes: {version: "1.33.13"}
+      provider:
+        type: ironcore
+        workers:
+          - name: worker-main
+            machine:
+              architecture: amd64
+              image: {name: gardenlinux, version: "2150.1.0"}
+            volume: {type: general-purpose, size: 50Gi}
+            zones: [wdf4a, wdf4b, wdf4c]
+      networking:
+        type: calico
+        nodes: 10.250.0.0/16
+        pods: 100.64.0.0/12
+        services: 100.104.0.0/13
+        providerConfig:
+          apiVersion: calico.networking.extensions.gardener.cloud/v1alpha1
+          kind: NetworkConfig
+          overlay: {enabled: true}
+          vxlan: {enabled: true}
+      addons:
+        nginxIngress: {enabled: false}

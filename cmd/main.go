@@ -90,6 +90,9 @@ func main() {
 		"'global' mode: namespace of the shared admin-managed Gardener kubeconfig Secret.")
 	flag.StringVar(&clientKubeconfigSecretName, "client-kubeconfig-secret-name", "sap-gardener-kubeconfig",
 		"'kcp' mode: name of the per-client kubeconfig Secret, looked up in the account's own namespace.")
+	var ironcoreConfigPath string
+	flag.StringVar(&ironcoreConfigPath, "ironcore-config", "",
+		"Required path to the IronCore landscape configuration (chart scpc.ironcore).")
 	var enableNamespaceSCPC bool
 	var simpleClusterExportName, sapExportName string
 	flag.BoolVar(&enableNamespaceSCPC, "enable-namespace-scpc", true,
@@ -110,6 +113,17 @@ func main() {
 	if !controller.ValidKubeconfigSource(controller.KubeconfigSource(kubeconfigSource)) {
 		setupLog.Error(nil, "invalid --kubeconfig-source", "value", kubeconfigSource,
 			"allowed", []string{string(controller.KubeconfigSourceGlobal), string(controller.KubeconfigSourceKCP)})
+		os.Exit(1)
+	}
+
+	ironcoreConfig, err := os.ReadFile(ironcoreConfigPath)
+	if err != nil {
+		setupLog.Error(err, "read required --ironcore-config")
+		os.Exit(1)
+	}
+	ironcoreManifest, err := controller.ConfigureIronCoreManifest(ironcoreConfig)
+	if err != nil {
+		setupLog.Error(err, "invalid IronCore configuration")
 		os.Exit(1)
 	}
 
@@ -225,7 +239,7 @@ func main() {
 		Scheme:                          mgr.GetScheme(),
 		SCPCName:                        controller.IronCoreSCPCName(),
 		KindName:                        "IronCoreShoot",
-		Manifest:                        controller.IronCoreSCPCManifest(),
+		Manifest:                        ironcoreManifest,
 		New:                             func() controller.FlavorShoot { return &sapv1alpha1.IronCoreShoot{} },
 		ControllerName:                  "ironcoreshoot",
 		KubeconfigSource:                controller.KubeconfigSource(kubeconfigSource),
@@ -244,6 +258,7 @@ func main() {
 			GlobalKubeconfigSecretName:      globalKubeconfigSecretName,
 			GlobalKubeconfigSecretNamespace: globalKubeconfigSecretNamespace,
 			ClientKubeconfigSecretName:      clientKubeconfigSecretName,
+			IronCoreManifest:                ironcoreManifest,
 			SimpleClusterExportName:         simpleClusterExportName,
 			SapExportName:                   sapExportName,
 		}).SetupWithManager(mgr); err != nil {
