@@ -17,8 +17,8 @@ build-time tooling and are not part of any shipped artefact.
 
 ## Summary
 
-- **167** distinct third-party dependencies across **3** published components.
-- Licences in use: `Apache-2.0` (68), `MIT` (38), `BSD-3-Clause` (34), `Apache-2.0 AND BSD-3-Clause` (16), `Apache-2.0 AND MIT` (4), `Apache-2.0 AND BSD-3-Clause AND MIT` (3), `ISC` (2), `BSD-2-Clause` (1), `Unlicense OR Apache-2.0` (1).
+- **165** distinct third-party dependencies across **3** published components.
+- Licences in use: `Apache-2.0` (67), `MIT` (38), `BSD-3-Clause` (31), `Apache-2.0 AND BSD-3-Clause` (18), `Apache-2.0 AND MIT` (4), `Apache-2.0 AND BSD-3-Clause AND MIT` (3), `ISC` (2), `BSD-2-Clause` (1), `Unlicense OR Apache-2.0` (1).
 - **No copyleft dependencies.** Every licence above is permissive (Apache-2.0, BSD, MIT, ISC), so redistribution under Apache-2.0 carries no source-disclosure obligation.
 
 ## Obligations
@@ -54,7 +54,7 @@ in the Go module cache and is recorded in `OVERRIDES` in
 
 ## Full inventory
 
-### Apache-2.0 (68)
+### Apache-2.0 (67)
 
 | Dependency | Version | Used by |
 |---|---|---|
@@ -71,7 +71,8 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `@ui5/webcomponents-react-base` | `2.24.1` | ui |
 | `@ui5/webcomponents-theming` | `2.24.0` | ui |
 | `cel.dev/expr` | `v0.25.2` | sap-provider-operator |
-| `github.com/go-logr/logr` | `v1.4.3` | ironcore-operator, sap-provider-operator |
+| `github.com/go-logr/logr` | `v1.4.3` | ironcore-operator |
+| `github.com/go-logr/logr` | `v1.4.4` | sap-provider-operator |
 | `github.com/go-logr/stdr` | `v1.2.2` | sap-provider-operator |
 | `github.com/go-logr/zapr` | `v1.3.0` | ironcore-operator, sap-provider-operator |
 | `github.com/go-openapi/jsonpointer` | `v0.21.0` | sap-provider-operator |
@@ -106,13 +107,11 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `github.com/spf13/cobra` | `v1.9.1` | sap-provider-operator |
 | `go.opentelemetry.io/auto/sdk` | `v1.2.1` | sap-provider-operator |
 | `go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp` | `v0.61.0` | sap-provider-operator |
-| `go.opentelemetry.io/otel/exporters/otlp/otlptrace` | `v1.34.0` | sap-provider-operator |
-| `go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc` | `v1.34.0` | sap-provider-operator |
-| `go.opentelemetry.io/proto/otlp` | `v1.5.0` | sap-provider-operator |
+| `go.opentelemetry.io/proto/otlp` | `v1.11.0` | sap-provider-operator |
 | `gomodules.xyz/jsonpatch/v2` | `v2.4.0` | sap-provider-operator |
 | `gomodules.xyz/jsonpatch/v2` | `v2.5.0` | ironcore-operator |
-| `google.golang.org/genproto/googleapis/api` | `v0.0.0-20260526163538-3dc84a4a5aaa` | sap-provider-operator |
-| `google.golang.org/genproto/googleapis/rpc` | `v0.0.0-20260526163538-3dc84a4a5aaa` | sap-provider-operator |
+| `google.golang.org/genproto/googleapis/api` | `v0.0.0-20260803160001-6ac0973c030d` | sap-provider-operator |
+| `google.golang.org/genproto/googleapis/rpc` | `v0.0.0-20260803160001-6ac0973c030d` | sap-provider-operator |
 | `google.golang.org/grpc` | `v1.83.1` | sap-provider-operator |
 | `k8s.io/api` | `v0.34.0` | sap-provider-operator |
 | `k8s.io/api` | `v0.34.1` | ironcore-operator |
@@ -146,7 +145,7 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `csstype` | `3.2.3` | ui |
 | `github.com/beorn7/perks` | `v1.0.1` | ironcore-operator, sap-provider-operator |
 | `github.com/blang/semver/v4` | `v4.0.0` | sap-provider-operator |
-| `github.com/cenkalti/backoff/v4` | `v4.3.0` | sap-provider-operator |
+| `github.com/cenkalti/backoff/v5` | `v5.0.3` | sap-provider-operator |
 | `github.com/cespare/xxhash/v2` | `v2.3.0` | ironcore-operator, sap-provider-operator |
 | `github.com/emicklei/go-restful/v3` | `v3.12.2` | sap-provider-operator |
 | `github.com/emicklei/go-restful/v3` | `v3.13.0` | ironcore-operator |
@@ -170,7 +169,7 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `scheduler` | `0.23.2` | ui |
 | `ts-custom-error` | `3.3.1` | ui |
 
-### BSD-3-Clause (34)
+### BSD-3-Clause (31)
 
 | Dependency | Version | Used by |
 |---|---|---|
@@ -181,35 +180,32 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `github.com/gogo/protobuf` | `v1.3.2` | ironcore-operator, sap-provider-operator |
 | `github.com/google/go-cmp` | `v0.7.0` | ironcore-operator, sap-provider-operator |
 | `github.com/google/uuid` | `v1.6.0` | ironcore-operator, sap-provider-operator |
-| `github.com/grpc-ecosystem/grpc-gateway/v2` | `v2.26.3` | sap-provider-operator |
+| `github.com/grpc-ecosystem/grpc-gateway/v2` | `v2.29.0` | sap-provider-operator |
 | `github.com/munnerz/goautoneg` | `v0.0.0-20191010083416-a7dc8b61c822` | ironcore-operator, sap-provider-operator |
 | `github.com/pmezard/go-difflib` | `v1.0.0` | sap-provider-operator |
 | `github.com/pmezard/go-difflib` | `v1.0.1-0.20181226105442-5d4384ee4fb2` | ironcore-operator |
 | `github.com/spf13/pflag` | `v1.0.10` | ironcore-operator |
 | `github.com/spf13/pflag` | `v1.0.6` | sap-provider-operator |
 | `go4.org/netipx` | `v0.0.0-20231129151722-fdeea329fbba` | ironcore-operator |
-| `golang.org/x/crypto` | `v0.51.0` | ironcore-operator |
+| `golang.org/x/crypto` | `v0.57.0` | ironcore-operator |
 | `golang.org/x/exp` | `v0.0.0-20240823005443-9b4947da3948` | sap-provider-operator |
-| `golang.org/x/net` | `v0.55.0` | ironcore-operator |
-| `golang.org/x/net` | `v0.56.0` | sap-provider-operator |
+| `golang.org/x/net` | `v0.60.0` | ironcore-operator, sap-provider-operator |
 | `golang.org/x/oauth2` | `v0.34.0` | ironcore-operator |
 | `golang.org/x/oauth2` | `v0.36.0` | sap-provider-operator |
-| `golang.org/x/sync` | `v0.21.0` | ironcore-operator, sap-provider-operator |
-| `golang.org/x/sys` | `v0.45.0` | ironcore-operator |
-| `golang.org/x/sys` | `v0.46.0` | sap-provider-operator |
-| `golang.org/x/term` | `v0.43.0` | ironcore-operator |
-| `golang.org/x/term` | `v0.44.0` | sap-provider-operator |
-| `golang.org/x/text` | `v0.39.0` | ironcore-operator, sap-provider-operator |
+| `golang.org/x/sync` | `v0.23.0` | ironcore-operator, sap-provider-operator |
+| `golang.org/x/sys` | `v0.48.0` | ironcore-operator, sap-provider-operator |
+| `golang.org/x/term` | `v0.46.0` | ironcore-operator, sap-provider-operator |
+| `golang.org/x/text` | `v0.42.0` | ironcore-operator, sap-provider-operator |
 | `golang.org/x/time` | `v0.14.0` | ironcore-operator |
 | `golang.org/x/time` | `v0.9.0` | sap-provider-operator |
-| `golang.org/x/tools` | `v0.47.0` | sap-provider-operator |
+| `golang.org/x/tools` | `v0.49.0` | sap-provider-operator |
 | `google.golang.org/protobuf` | `v1.36.11` | ironcore-operator, sap-provider-operator |
 | `gopkg.in/evanphx/json-patch.v4` | `v4.12.0` | sap-provider-operator |
 | `gopkg.in/evanphx/json-patch.v4` | `v4.13.0` | ironcore-operator |
 | `gopkg.in/inf.v0` | `v0.9.1` | ironcore-operator, sap-provider-operator |
 | `lit-html` | `2.8.0` | ui |
 
-### Apache-2.0 AND BSD-3-Clause (16)
+### Apache-2.0 AND BSD-3-Clause (18)
 
 | Dependency | Version | Used by |
 |---|---|---|
@@ -217,10 +213,12 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `github.com/google/pprof` | `v0.0.0-20241029153458-d1b30febd7db` | sap-provider-operator |
 | `github.com/prometheus/client_golang` | `v1.22.0` | sap-provider-operator |
 | `github.com/prometheus/client_golang` | `v1.23.2` | ironcore-operator |
-| `go.opentelemetry.io/otel` | `v1.44.0` | sap-provider-operator |
-| `go.opentelemetry.io/otel/metric` | `v1.44.0` | sap-provider-operator |
-| `go.opentelemetry.io/otel/sdk` | `v1.44.0` | sap-provider-operator |
-| `go.opentelemetry.io/otel/trace` | `v1.44.0` | sap-provider-operator |
+| `go.opentelemetry.io/otel` | `v1.45.0` | sap-provider-operator |
+| `go.opentelemetry.io/otel/exporters/otlp/otlptrace` | `v1.45.0` | sap-provider-operator |
+| `go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc` | `v1.45.0` | sap-provider-operator |
+| `go.opentelemetry.io/otel/metric` | `v1.45.0` | sap-provider-operator |
+| `go.opentelemetry.io/otel/sdk` | `v1.45.0` | sap-provider-operator |
+| `go.opentelemetry.io/otel/trace` | `v1.45.0` | sap-provider-operator |
 | `k8s.io/apimachinery` | `v0.34.0` | sap-provider-operator |
 | `k8s.io/apimachinery` | `v0.34.1` | ironcore-operator |
 | `k8s.io/client-go` | `v0.34.0` | sap-provider-operator |
