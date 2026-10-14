@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.37.3](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.37.2...v0.37.3) (2026-10-14)
+
+
+### Bug Fixes
+
+* **ui:** use normal portal navigation ([#49](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/49)) ([99207bd](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/99207bd61334c516f723768b3796fcc7e17dbff9))
+
 ## [0.37.2](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.37.1...v0.37.2) (2026-10-14)
 
 
