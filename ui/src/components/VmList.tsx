@@ -67,7 +67,7 @@ export const VmList = ({ vms, loading, onCreate, onRefresh, onDelete, onDownload
       <IllustratedMessage
         name="NoData"
         titleText="No virtual machines yet"
-        subtitleText="Create an IronCore VM on the SAP Integration cluster."
+        subtitleText="Create an IronCore VM on the Apeiro Integration cluster."
       >
         <Button design="Emphasized" onClick={onCreate}>
           New VM

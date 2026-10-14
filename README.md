@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="charts/sapprovider-ui/files/icon.svg" alt="SAP Hosting" width="96" />
+  <img src="charts/apeiroprovider-ui/files/icon.svg" alt="Apeiro Hosting" width="96" />
 </p>
 
-<h1 align="center">SAP Hosting Provider</h1>
+<h1 align="center">Apeiro Hosting Provider</h1>
 
 <p align="center">
-  <strong>Gardener clusters and IronCore VMs on SAP infrastructure, delivered as a Platform Mesh provider.</strong>
+  <strong>Gardener clusters and IronCore VMs on Apeiro infrastructure, delivered as a Platform Mesh provider.</strong>
 </p>
 
 <p align="center">
@@ -22,25 +22,25 @@
 
 ---
 
-## What is the SAP Hosting provider?
+## What is the Apeiro Hosting provider?
 
-This repository is the SAP hosting provider for the Showroom MSP: it lets a
+This repository is the Apeiro hosting provider for the Showroom MSP: it lets a
 Platform Mesh account order **Gardener Kubernetes
 clusters** (OpenStack or IronCore flavor) and **IronCore virtual machines** on
-SAP infrastructure, and hands the resulting cluster's admin kubeconfig back as
+Apeiro infrastructure, and hands the resulting cluster's admin kubeconfig back as
 a Secret next to the request.
 
 It plugs into the
 [simple-cluster](https://github.com/apeirora/showroom-msp-simple-cluster) stack:
 when an account binds this provider, the operator materialises ready-to-use
 `SimpleClusterProviderConfig`s in the account's namespace, so a plain
-`SimpleCluster` request can be fulfilled on SAP infrastructure. Independently of
+`SimpleCluster` request can be fulfilled on Apeiro infrastructure. Independently of
 that, the account can create the provider's own CRs directly for a standalone
 Gardener cluster or a single VM.
 
 ## The resources
 
-All user-facing CRs are namespaced, in API group `sap.eu`:
+All user-facing CRs are namespaced, in API group `apeiro.eu`:
 
 | Kind | What it provisions | Reconciled by |
 |---|---|---|
@@ -53,7 +53,7 @@ verbatim; an empty `spec` uses the configured IronCore template or the
 built-in OpenStack template:
 
 ```yaml
-apiVersion: sap.eu/v1alpha1
+apiVersion: apeiro.eu/v1alpha1
 kind: OpenStackShoot
 metadata:
   name: demo
@@ -78,13 +78,13 @@ from the simple-cluster stack.
  Platform Mesh (KCP)                        MSP cluster                        Gardener / IronCore
 ┌──────────────────────┐   bind   ┌───────────────────────────────┐   ┌───────────────────────────┐
 │ account workspace    │─────────►│ bind-watcher annotates the    │   │                           │
-│ binds sap.eu (+      │          │ account namespace             │   │  ┌─────────────────────┐  │
+│ binds apeiro.eu (+   │          │ account namespace             │   │  ┌─────────────────────┐  │
 │ simple-cluster)      │          │        │                      │   │  │ Shoot / Machine     │  │
 └──────────┬───────────┘          │        ▼                      │   │  └──────────▲──────────┘  │
            │                      │ NamespaceReconciler creates   │   │             │             │
-           │  sync-agent mirrors  │ sap-gardener-openstack and    │   │             │             │
-           ├─────────────────────►│ sap-gardener-ironcore SCPCs   │   │             │             │
-           │  sap.eu resources    │        │                      │   │             │             │
+           │  sync-agent mirrors  │ apeiro-gardener-openstack and │   │             │             │
+           ├─────────────────────►│ apeiro-gardener-ironcore SCPCs│   │             │             │
+           │  apeiro.eu resources │        │                      │   │             │             │
            │                      │        ▼                      │   │             │             │
            │                      │ SimpleCluster or *Shoot CR ───┼───┼─────────────┘             │
            │                      │ … kubeconfig Secret written   │   │                           │
@@ -93,7 +93,7 @@ from the simple-cluster stack.
 ```
 
 The `NamespaceReconciler` is the sole creator of the SCPCs: it waits until the
-account namespace is annotated with **both** the simple-cluster and the sap.eu
+account namespace is annotated with **both** the simple-cluster and the apeiro.eu
 APIExport names, then materialises both flavors and wires in the Gardener
 kubeconfig — either one shared admin-managed Secret (`global` mode, the
 default) or a per-client kubeconfig delivered from the account's KCP workspace
@@ -107,21 +107,21 @@ Two Go modules, one UI, five Helm charts:
 |---|---|
 | `/` (root module) | The provider bundle operator: both Shoot reconcilers + the `NamespaceReconciler` |
 | `ironcore-operator/` | The IronCore VM operator (`IronCoreVM` → IronCore `Machine`) |
-| `ui/` | "SAP Shoots" portal micro-frontend (Luigi + UI5): CRUD for both Shoot flavors and VMs through the GraphQL gateway |
-| `charts/sapprovider-operator` | Deploys the bundle operator |
+| `ui/` | "Apeiro Shoots" portal micro-frontend (Luigi + UI5): CRUD for both Shoot flavors and VMs through the GraphQL gateway |
+| `charts/apeiroprovider-operator` | Deploys the bundle operator |
 | `charts/ironcore-operator` | Deploys the IronCore VM operator |
-| `charts/sapprovider-ui` | Deploys the portal micro-frontend |
-| `charts/sapprovider-pm-integration` | Registers the provider in Platform Mesh: APIExport, APIResourceSchemas, marketplace tile and portal content |
-| `charts/sapprovider-sync-agent` | Mirrors `sap.eu` resources between the KCP workspace and the MSP cluster |
+| `charts/apeiroprovider-ui` | Deploys the portal micro-frontend |
+| `charts/apeiroprovider-pm-integration` | Registers the provider in Platform Mesh: APIExport, APIResourceSchemas, marketplace tile and portal content |
+| `charts/apeiroprovider-sync-agent` | Mirrors `apeiro.eu` resources between the KCP workspace and the MSP cluster |
 
-> **Schema note:** `charts/sapprovider-pm-integration` carries the `IronCoreVM`
+> **Schema note:** `charts/apeiroprovider-pm-integration` carries the `IronCoreVM`
 > APIResourceSchema used for the KCP projection; it is generated from
 > `ironcore-operator/config/crd/bases`. Bump `vmSchemaRevision` and refresh it
 > when that CRD changes.
 
 ## IronCore landscape values
 
-The operator requires `scpc.ironcore` in the `sapprovider-operator` chart.
+The operator requires `scpc.ironcore` in the `apeiroprovider-operator` chart.
 There is no built-in IronCore landscape. Missing settings stop the chart render
 or the operator start with a field-specific error.
 
@@ -158,7 +158,7 @@ A standalone Shoot uses the first profile. An explicit provider CR spec still
 overrides the configured Shoot spec. The configured Garden project remains the target.
 OpenStack configuration is unchanged.
 
-Use the [garden-dev example](charts/sapprovider-operator/examples/garden-dev.yaml)
+Use the [garden-dev example](charts/apeiroprovider-operator/examples/garden-dev.yaml)
 with Kubernetes 1.33.13, gardenlinux 2150.1.0, a 50Gi disk and CPU profiles 1/2/4/8.
 The example also enables `shoot-dns-service`, `shoot-cert-service` and the
 managed service-account issuer. Each DNS name contains the request name and
@@ -173,9 +173,9 @@ Check the CloudProfile and CredentialsBinding before use. Quota and available
 capacity are separate requirements.
 
 ```sh
-helm template sap-provider charts/sapprovider-operator \
-  --namespace sap-provider \
-  -f charts/sapprovider-operator/examples/garden-dev.yaml
+helm template apeiro-provider charts/apeiroprovider-operator \
+  --namespace apeiro-provider \
+  -f charts/apeiroprovider-operator/examples/garden-dev.yaml
 ```
 
 ## Installation
@@ -184,11 +184,11 @@ Images and charts are published to GHCR at one common version — a chart
 `X.Y.Z` always pulls images `X.Y.Z`:
 
 ```sh
-helm install sap-provider oci://ghcr.io/apeirora/charts/sapprovider-operator --version <X.Y.Z>
+helm install apeiro-provider oci://ghcr.io/apeirora/charts/apeiroprovider-operator --version <X.Y.Z>
 ```
 
 Every release also publishes an [OCM](https://ocm.software/) component
-(`showroom.apeirora.eu/sap-hosting`) at `ghcr.io/apeirora/ocm`, referencing all
+(`showroom.apeirora.eu/apeiro-hosting`) at `ghcr.io/apeirora/ocm`, referencing all
 images and charts of that version.
 
 Deployment-specific configuration worth knowing:
@@ -200,7 +200,7 @@ Deployment-specific configuration worth knowing:
   see `scpc.kubeconfig.global.*` chart values) or `kcp` (per-client Secret in
   the account namespace).
 - The pm-integration and sync-agent charts need the KCP workspace kubeconfig;
-  see `charts/sapprovider-pm-integration/values.yaml`.
+  see `charts/apeiroprovider-pm-integration/values.yaml`.
 
 ## Development
 

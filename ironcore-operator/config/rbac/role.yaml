@@ -24,7 +24,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - sap.eu
+  - apeiro.eu
   resources:
   - ironcorevms
   verbs:
@@ -36,13 +36,13 @@ rules:
   - update
   - watch
 - apiGroups:
-  - sap.eu
+  - apeiro.eu
   resources:
   - ironcorevms/finalizers
   verbs:
   - update
 - apiGroups:
-  - sap.eu
+  - apeiro.eu
   resources:
   - ironcorevms/status
   verbs:

@@ -1,7 +1,7 @@
-# This rule is not used by the project showroom-msp-sap-provider itself.
+# This rule is not used by the project showroom-msp-apeiro-provider itself.
 # It is provided to allow the cluster admin to help manage permissions for users.
 #
-# Grants permissions to create, update, and delete resources within the sap.eu.
+# Grants permissions to create, update, and delete resources within the apeiro.eu.
 # This role is intended for users who need to manage these resources
 # but should not control RBAC or manage permissions for others.
 
@@ -9,12 +9,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/name: showroom-msp-sap-provider
+    app.kubernetes.io/name: showroom-msp-apeiro-provider
     app.kubernetes.io/managed-by: kustomize
   name: shoot-editor-role
 rules:
 - apiGroups:
-  - sap.eu
+  - apeiro.eu
   resources:
   - openstackshoots
   - ironcoreshoots
@@ -27,7 +27,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - sap.eu
+  - apeiro.eu
   resources:
   - openstackshoots/status
   - ironcoreshoots/status

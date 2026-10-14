@@ -1,0 +1,9 @@
+apiVersion: apeiro.eu/v1alpha1
+kind: OpenStackShoot
+metadata:
+  name: apeiro-openstack
+# spec is the Gardener Shoot manifest as text, used as the apeiro-gardener-openstack
+# SCPC resource template. It may contain simple-cluster expressions
+# ({{ .SC.* }}, {{ .Inputs.* }}). Empty spec selects the operator's built-in
+# default OpenStack template.
+spec: ""

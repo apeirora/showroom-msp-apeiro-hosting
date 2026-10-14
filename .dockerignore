@@ -11,5 +11,5 @@
 !go.sum
 
 # Re-include files consumed by //go:embed
-!**/scpc-sap-openstack.yaml
-!**/scpc-sap-ironcore.yaml
+!**/scpc-apeiro-openstack.yaml
+!**/scpc-apeiro-ironcore.yaml

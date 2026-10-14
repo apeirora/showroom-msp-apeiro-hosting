@@ -35,7 +35,7 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
+	apeirov1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
 	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/controller"
 	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/secretpolicy"
 	// +kubebuilder:scaffold:imports
@@ -49,7 +49,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(sapv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(apeirov1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -85,24 +85,24 @@ func main() {
 	flag.StringVar(&kubeconfigSource, "kubeconfig-source", string(controller.KubeconfigSourceGlobal),
 		"Source of the Gardener kubeconfig the SCPCs target: 'global' (one shared admin-managed Secret) "+
 			"or 'kcp' (per-client kubeconfig from the workspace, looked up in the account's namespace).")
-	flag.StringVar(&globalKubeconfigSecretName, "global-kubeconfig-secret-name", "sap-gardener-kubeconfig",
+	flag.StringVar(&globalKubeconfigSecretName, "global-kubeconfig-secret-name", "apeiro-gardener-kubeconfig",
 		"'global' mode: name of the shared admin-managed Gardener kubeconfig Secret.")
-	flag.StringVar(&globalKubeconfigSecretNamespace, "global-kubeconfig-secret-namespace", "sap-provider",
+	flag.StringVar(&globalKubeconfigSecretNamespace, "global-kubeconfig-secret-namespace", "apeiro-provider",
 		"'global' mode: namespace of the shared admin-managed Gardener kubeconfig Secret.")
-	flag.StringVar(&clientKubeconfigSecretName, "client-kubeconfig-secret-name", "sap-gardener-kubeconfig",
+	flag.StringVar(&clientKubeconfigSecretName, "client-kubeconfig-secret-name", "apeiro-gardener-kubeconfig",
 		"'kcp' mode: name of the per-client kubeconfig Secret, looked up in the account's own namespace.")
 	var ironcoreConfigPath string
 	flag.StringVar(&ironcoreConfigPath, "ironcore-config", "",
 		"Required path to the IronCore landscape configuration (chart scpc.ironcore).")
 	var enableNamespaceSCPC bool
-	var simpleClusterExportName, sapExportName string
+	var simpleClusterExportName, apeiroExportName string
 	flag.BoolVar(&enableNamespaceSCPC, "enable-namespace-scpc", true,
-		"Enable the NamespaceReconciler that creates both SAP Integration SCPCs on bind (account namespace annotated "+
-			"with both the SimpleCluster and SAP Integration APIExport names). This is the sole SCPC creator.")
+		"Enable the NamespaceReconciler that creates both Apeiro Integration SCPCs on bind (account namespace annotated "+
+			"with both the SimpleCluster and Apeiro Integration APIExport names). This is the sole SCPC creator.")
 	flag.StringVar(&simpleClusterExportName, "simplecluster-export-name", controller.DefaultSimpleClusterExportName,
 		"APIExport name that marks SimpleCluster as bound to an account namespace.")
-	flag.StringVar(&sapExportName, "sap-export-name", controller.DefaultSapExportName,
-		"APIExport name that marks the SAP Integration provider as bound to an account namespace.")
+	flag.StringVar(&apeiroExportName, "apeiro-export-name", controller.DefaultApeiroExportName,
+		"APIExport name that marks the Apeiro Integration provider as bound to an account namespace.")
 	opts := zap.Options{
 		Development: true,
 	}
@@ -216,7 +216,7 @@ func main() {
 		WebhookServer:          webhookServer,
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
-		LeaderElectionID:       "sap-provider.gardener",
+		LeaderElectionID:       "apeiro-provider.gardener",
 		// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily
 		// when the Manager ends. This requires the binary to immediately end when the
 		// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly
@@ -241,7 +241,7 @@ func main() {
 		SCPCName:                        controller.OpenStackSCPCName(),
 		KindName:                        "OpenStackShoot",
 		Manifest:                        controller.OpenStackSCPCManifest(),
-		New:                             func() controller.FlavorShoot { return &sapv1alpha1.OpenStackShoot{} },
+		New:                             func() controller.FlavorShoot { return &apeirov1alpha1.OpenStackShoot{} },
 		ControllerName:                  "openstackshoot",
 		KubeconfigSource:                controller.KubeconfigSource(kubeconfigSource),
 		GlobalKubeconfigSecretName:      globalKubeconfigSecretName,
@@ -258,7 +258,7 @@ func main() {
 		SCPCName:                        controller.IronCoreSCPCName(),
 		KindName:                        "IronCoreShoot",
 		Manifest:                        ironcoreManifest,
-		New:                             func() controller.FlavorShoot { return &sapv1alpha1.IronCoreShoot{} },
+		New:                             func() controller.FlavorShoot { return &apeirov1alpha1.IronCoreShoot{} },
 		ControllerName:                  "ironcoreshoot",
 		KubeconfigSource:                controller.KubeconfigSource(kubeconfigSource),
 		GlobalKubeconfigSecretName:      globalKubeconfigSecretName,
@@ -278,7 +278,7 @@ func main() {
 			ClientKubeconfigSecretName:      clientKubeconfigSecretName,
 			IronCoreManifest:                ironcoreManifest,
 			SimpleClusterExportName:         simpleClusterExportName,
-			SapExportName:                   sapExportName,
+			ApeiroExportName:                apeiroExportName,
 		}).SetupWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create controller", "controller", "Namespace")
 			os.Exit(1)

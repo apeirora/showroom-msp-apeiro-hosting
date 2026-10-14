@@ -1,0 +1,39 @@
+# Public host/scheme of the apeiroprovider-ui that serves pm-content.json. The
+# portal fetches ContentConfiguration.remoteConfiguration.url from here, so this
+# must match the apeiroprovider-ui chart's PUBLIC_HOST/PUBLIC_SCHEME.
+PUBLIC_HOST: "localhost"
+PUBLIC_SCHEME: "http"
+
+# Name prefix of the APIResourceSchemas (full name: <schemaRevision>.<plural>.apeiro.eu).
+# KCP APIResourceSchemas are immutable — whenever the generated schema content in
+# templates/api-resource-schemas.yaml changes, bump this revision so a NEW schema
+# is created and the APIExport is repointed at it; patching in place is rejected.
+schemaRevision: "v1alpha1-r3"
+
+# Name prefix of the IronCoreVM APIResourceSchema (full name:
+# <vmSchemaRevision>.ironcorevms.apeiro.eu). Separate from
+# schemaRevision so the namespaced VM schema and the cluster-scoped shoot
+# schemas rotate independently. KCP APIResourceSchemas are immutable — whenever
+# the generated IronCoreVM schema content in templates/api-resource-schemas.yaml
+# changes, bump this revision so a NEW schema is created and the APIExport is
+# repointed at it; patching in place is rejected.
+vmSchemaRevision: "v1alpha1-r1"
+
+ui:
+  # Register the apeiroprovider-ui micro-frontend with the portal via a
+  # ContentConfiguration. Disable if the UI is not deployed.
+  enabled: true
+  contentPath: "/pm-content.json"
+
+rbac:
+  # Create the sync-agent identity's ClusterRole + binding inside the provider's
+  # KCP workspace (applied via this release's kubeConfig). Enabled because the
+  # platform onboarding writes this RBAC into the parent root:providers workspace,
+  # not the child, leaving the child workspace without it.
+  enabled: true
+  # KCP User the api-syncagent authenticates as (client-cert CN, <provider>-syncagent).
+  syncagentUser: apeiroprovider-syncagent
+branding:
+  marketplace:
+    title: "Apeiro Hosting"
+    description: "Enables Apeiro Integration (OpenStack and IronCore flavors) as a provider for SimpleCluster: installing it provisions the apeiro-gardener-openstack and apeiro-gardener-ironcore provider configurations for your workspace."

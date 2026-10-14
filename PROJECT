@@ -14,7 +14,7 @@ resources:
     namespaced: true
   controller: true
   domain: eu
-  group: sap
+  group: apeiro
   kind: OpenStackShoot
   path: github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1
   version: v1alpha1
@@ -23,7 +23,7 @@ resources:
     namespaced: true
   controller: true
   domain: eu
-  group: sap
+  group: apeiro
   kind: IronCoreShoot
   path: github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1
   version: v1alpha1

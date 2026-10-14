@@ -1,0 +1,10 @@
+apiVersion: v2
+name: apeiroprovider-operator
+description: >-
+  Standalone deployment of the Apeiro Integration provider controller: watches
+  OpenStackShoot/IronCoreShoot CRs synced from KCP account workspaces and
+  materialises the namespaced SimpleClusterProviderConfigs apeiro-gardener-openstack
+  and apeiro-gardener-ironcore per account namespace for simple-cluster.
+type: application
+version: 0.1.0
+appVersion: 0.1.0

@@ -31,7 +31,7 @@ GOMODCACHE="${GOMODCACHE:-$(go env GOMODCACHE)}"
 # Every component that is built and published from this repository, mapped to the
 # directory it is built from. The operator module lives at the repository root.
 COMPONENTS=(
-  "sap-provider-operator:."
+  "apeiro-provider-operator:."
   "ironcore-operator:ironcore-operator"
   "ui:ui"
 )

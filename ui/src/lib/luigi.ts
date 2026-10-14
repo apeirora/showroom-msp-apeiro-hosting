@@ -208,7 +208,7 @@ export const subscribeToLuigi = (
       }
       attach(resolved);
     } catch (err) {
-      console.warn('[sapprovider-ui] Luigi client unavailable', err);
+      console.warn('[apeiroprovider-ui] Luigi client unavailable', err);
     }
   };
 

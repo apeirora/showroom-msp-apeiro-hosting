@@ -1,0 +1,54 @@
+image:
+  repository: ghcr.io/apeirora/apeiro-provider-operator
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+replicaCount: 1
+
+leaderElect: true
+
+extraEnv: []
+
+namespaceScpc:
+  # The NamespaceReconciler is the sole creator of the Apeiro Integration SCPCs. It watches
+  # account namespaces and materialises the SCPC once the bind-watcher
+  # annotation shows both APIExports below are bound to the account.
+  enabled: true
+  simpleClusterExportName: simpleclusters.showroom.apeirora.eu
+  apeiroExportName: apeiro.eu
+
+scpc:
+  # Required landscape configuration. See examples/garden-dev.yaml.
+  ironcore:
+    shootAnnotations: {}
+    autoscaling: true
+    projectNamespace: ""
+    profiles: []
+    shootSpec: {}
+  kubeconfig:
+    # Source of the Gardener kubeconfig each SCPC targets:
+    #   global — one shared admin-managed Secret (below). Default.
+    #   kcp    — per-client kubeconfig brought from the KCP workspace and
+    #            looked up in the account's own namespace (client.secretName).
+    source: global
+    global:
+      secretName: apeiro-gardener-kubeconfig
+      secretNamespace: apeiro-provider
+    client:
+      # Secret name expected in the Shoot's namespace in 'kcp' mode; the
+      # sync agent delivers the client's workspace kubeconfig under this name
+      # (see apeiroprovider-sync-agent publishedResources.clientKubeconfig).
+      secretName: apeiro-gardener-kubeconfig
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 128Mi
+  requests:
+    cpu: 10m
+    memory: 64Mi
+
+# Exact operator-approved reference exceptions, with namespace, name, and purpose.
+secretReferenceAllowlist: []

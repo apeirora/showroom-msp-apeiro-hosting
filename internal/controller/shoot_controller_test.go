@@ -31,7 +31,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
+	apeirov1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
 )
 
 // fakeGardener records Shoots in memory and mints canned kubeconfigs.
@@ -83,7 +83,7 @@ var _ = Describe("Shoot Controller", func() {
 	// The reconciler is generic; exercise it against the OpenStack flavor.
 	const (
 		ns             = "default"
-		shName         = "sap-openstack"
+		shName         = "apeiro-openstack"
 		scpcName       = openstackSCPCName
 		gardenerSecret = "test-gardener-kubeconfig"
 	)
@@ -101,7 +101,7 @@ var _ = Describe("Shoot Controller", func() {
 			SCPCName:                        scpcName,
 			KindName:                        "OpenStackShoot",
 			Manifest:                        openstackSCPCManifest,
-			New:                             func() FlavorShoot { return &sapv1alpha1.OpenStackShoot{} },
+			New:                             func() FlavorShoot { return &apeirov1alpha1.OpenStackShoot{} },
 			ControllerName:                  "openstackshoot",
 			KubeconfigSource:                KubeconfigSourceGlobal,
 			GlobalKubeconfigSecretName:      gardenerSecret,
@@ -111,8 +111,8 @@ var _ = Describe("Shoot Controller", func() {
 		}
 	}
 
-	getShoot := func() *sapv1alpha1.OpenStackShoot {
-		return &sapv1alpha1.OpenStackShoot{}
+	getShoot := func() *apeirov1alpha1.OpenStackShoot {
+		return &apeirov1alpha1.OpenStackShoot{}
 	}
 
 	seedGardenerSecret := func() {
@@ -141,7 +141,7 @@ var _ = Describe("Shoot Controller", func() {
 	}
 
 	create := func(spec string) {
-		Expect(k8sClient.Create(ctx, &sapv1alpha1.OpenStackShoot{
+		Expect(k8sClient.Create(ctx, &apeirov1alpha1.OpenStackShoot{
 			ObjectMeta: metav1.ObjectMeta{Name: shName, Namespace: ns},
 			Spec:       spec,
 		})).To(Succeed())

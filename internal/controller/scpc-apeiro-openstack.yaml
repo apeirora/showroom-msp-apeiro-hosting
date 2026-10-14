@@ -1,0 +1,113 @@
+apiVersion: showroom.apeirora.eu/v1alpha1
+kind: SimpleClusterProviderConfig
+metadata:
+  name: apeiro-gardener-openstack
+  labels:
+    app.kubernetes.io/name: apeiro-provider-operator
+    app.kubernetes.io/managed-by: apeiro-provider-operator
+spec:
+  autoscaling: true
+  target:
+    # Garden project namespace — deployment-specific. Set the
+    # GARDEN_PROJECT_NAMESPACE env var on the operator to override.
+    namespace: garden-<your-gardener-project>
+    # kubeconfigSecretRef is overwritten by the operator (global/kcp source).
+    kubeconfigSecretRef:
+      name: apeiro-gardener-kubeconfig
+      namespace: apeiro-provider
+  inputs:
+    - { name: cloudProfile, type: string,   default: converged-cloud-ora-fp,      description: "Gardener CloudProfile name" }
+    - { name: region,       type: string,   default: eu-de-1,                     description: "Cloud region" }
+    - { name: k8sVersion,   type: string,   default: "1.34.3",                    description: "Kubernetes version" }
+    - { name: machineType,  from: profile,                                        description: "Worker machine type; auto-picked as the smallest profile fitting the SC's requested cpu/memory" }
+    - { name: machineImage, type: string,   default: gardenlinux,                 description: "Worker OS image name" }
+    - { name: zone,         type: string,   default: eu-de-1a,                    description: "Availability zone for the worker pool" }
+  # General-purpose (g_) machine types from the converged-cloud-ora-fp CloudProfile.
+  profiles:
+    - { name: g_c2_m4,    cpu: "2",   memory: 4Gi }
+    - { name: g_c2_m8,    cpu: "2",   memory: 8Gi }
+    - { name: g_c4_m8,    cpu: "4",   memory: 8Gi }
+    - { name: g_c4_m16,   cpu: "4",   memory: 16Gi }
+    - { name: g_c6_m24,   cpu: "6",   memory: 24Gi }
+    - { name: g_c8_m16,   cpu: "8",   memory: 16Gi }
+    - { name: g_c8_m32,   cpu: "8",   memory: 32Gi }
+    - { name: g_c12_m24,  cpu: "12",  memory: 24Gi }
+    - { name: g_c12_m48,  cpu: "12",  memory: 48Gi }
+    - { name: g_c16_m32,  cpu: "16",  memory: 32Gi }
+    - { name: g_c16_m64,  cpu: "16",  memory: 64Gi }
+    - { name: g_c24_m96,  cpu: "24",  memory: 96Gi }
+  # The SimpleCluster materialises a local OpenStackShoot on the service cluster
+  # (this provider's own CR); the apeiro-provider operator turns it into a real
+  # Gardener Shoot on the garden and maintains the admin-kubeconfig Secret next
+  # to it, which the kubeconfigSource below hands back to the SimpleCluster. The
+  # OpenStackShoot.spec is the plain Gardener Shoot manifest, rendered here with
+  # the SimpleCluster's inputs. spec.target.namespace above is the garden
+  # project namespace the operator places the Shoot in (read from this skeleton,
+  # not applied by the SimpleCluster); the operator rewrites the ensured SCPC's
+  # target to the account namespace so the OpenStackShoot lands locally.
+  resources:
+    - name: shoot
+      apiVersion: apeiro.eu/v1alpha1
+      kind: OpenStackShoot
+      nameTemplate: '{{- printf "%s/%s" .SC.namespace .SC.name | sha256sum | trunc 8 | printf "sc-%s" }}'
+      readiness:
+        phasePath: status.phase
+        phaseReadyValue: Ready
+        phaseFailedValues:
+          - Failed
+      template: |
+        apiVersion: apeiro.eu/v1alpha1
+        kind: OpenStackShoot
+        metadata:
+          labels:
+            # Routes the up-sync to the owning KCP workspace (logical-cluster id).
+            sync.apeirora.eu/owner-cluster: '{{ .SC.namespace }}'
+        spec: |
+          apiVersion: core.gardener.cloud/v1beta1
+          kind: Shoot
+          spec:
+            cloudProfile:
+              name: {{ .Inputs.cloudProfile }}
+              kind: CloudProfile
+            credentialsBindingName: cc-eu-de-1
+            region: {{ .Inputs.region }}
+            kubernetes:
+              version: "{{ .Inputs.k8sVersion }}"
+            addons:
+              nginxIngress:
+                enabled: true
+                loadBalancerSourceRanges:
+                  - 0.0.0.0/0
+            provider:
+              type: openstack
+              infrastructureConfig:
+                apiVersion: openstack.provider.extensions.gardener.cloud/v1alpha1
+                kind: InfrastructureConfig
+                floatingPoolName: FloatingIP-external-ora-01
+                networks:
+                  workers: 10.250.0.0/16
+              controlPlaneConfig:
+                apiVersion: openstack.provider.extensions.gardener.cloud/v1alpha1
+                kind: ControlPlaneConfig
+                loadBalancerProvider: f5
+              workers:
+                - name: worker-main
+                  minimum: {{ .SC.workers.min }}
+                  maximum: {{ .SC.workers.max }}
+                  machine:
+                    type: {{ .Inputs.machineType }}
+                    image:
+                      name: {{ .Inputs.machineImage }}
+                  zones:
+                    - {{ .Inputs.zone }}
+            networking:
+              type: calico
+              nodes: 10.250.0.0/16
+              pods: 100.64.0.0/12
+              services: 100.104.0.0/13
+  # The OpenStackShoot operator mints the admin kubeconfig into a Secret named
+  # <shoot>-openstackshoot-kubeconfig next to the CR; hand that back verbatim.
+  kubeconfigSource:
+    resourceName: shoot
+    secretRef:
+      name: '{{ .Target.name }}-openstackshoot-kubeconfig'

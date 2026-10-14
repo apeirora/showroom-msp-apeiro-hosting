@@ -39,7 +39,7 @@ The following rule governs code contributions:
 
 ## Developing
 
-The repository holds two Go modules — the SAP provider operator at the root and
+The repository holds two Go modules — the Apeiro provider operator at the root and
 `ironcore-operator` — plus the UI under `ui/` and the Helm charts under
 `charts/`.
 

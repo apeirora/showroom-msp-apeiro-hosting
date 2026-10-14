@@ -1,2 +1,2 @@
 resources:
-  - bases/sap.eu_ironcorevms.yaml
+  - bases/apeiro.eu_ironcorevms.yaml

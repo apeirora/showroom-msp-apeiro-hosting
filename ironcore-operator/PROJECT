@@ -16,7 +16,7 @@ resources:
     namespaced: true
   controller: true
   domain: eu
-  group: sap
+  group: apeiro
   kind: IronCoreVM
   path: github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/api/v1alpha1
   version: v1alpha1

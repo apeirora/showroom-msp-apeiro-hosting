@@ -34,12 +34,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
-	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
+	apeirov1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
 	"github.com/apeirora/showroom-msp-apeiro-hosting/internal/secretpolicy"
 )
 
 const (
-	shootFinalizer = "sap.eu/provider"
+	shootFinalizer = "apeiro.eu/provider"
 
 	conditionReady = "Ready"
 
@@ -57,12 +57,12 @@ const (
 	phaseDeleting     = "Deleting"
 )
 
-// FlavorShoot is the common surface both SAP Integration provider CRs
+// FlavorShoot is the common surface both Apeiro Integration provider CRs
 // (OpenStackShoot, IronCoreShoot) present to the generic reconciler.
 type FlavorShoot interface {
 	client.Object
 	GetSpecText() string
-	GetShootStatus() *sapv1alpha1.ShootStatus
+	GetShootStatus() *apeirov1alpha1.ShootStatus
 }
 
 // ShootReconciler manages one flavor's provider CR as a standalone cluster
@@ -101,9 +101,9 @@ type ShootReconciler struct {
 	defaults *flavorDefaults
 }
 
-// +kubebuilder:rbac:groups=sap.eu,resources=openstackshoots;ironcoreshoots,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=sap.eu,resources=openstackshoots/status;ironcoreshoots/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=sap.eu,resources=openstackshoots/finalizers;ironcoreshoots/finalizers,verbs=update
+// +kubebuilder:rbac:groups=apeiro.eu,resources=openstackshoots;ironcoreshoots,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=apeiro.eu,resources=openstackshoots/status;ironcoreshoots/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=apeiro.eu,resources=openstackshoots/finalizers;ironcoreshoots/finalizers,verbs=update
 // +kubebuilder:rbac:groups=showroom.apeirora.eu,resources=simpleclusterproviderconfigs,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=showroom.apeirora.eu,resources=simpleclusters,verbs=get;list;watch
 // +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete
@@ -281,7 +281,7 @@ func (r *ShootReconciler) ensureKubeconfig(ctx context.Context, g Gardener, sh F
 		}
 	}
 
-	st.KubeconfigSecretRef = &sapv1alpha1.KubeconfigSecretRef{Name: secretName}
+	st.KubeconfigSecretRef = &apeirov1alpha1.KubeconfigSecretRef{Name: secretName}
 	st.KubeconfigExpires = &metav1.Time{Time: expires}
 	return nil
 }
