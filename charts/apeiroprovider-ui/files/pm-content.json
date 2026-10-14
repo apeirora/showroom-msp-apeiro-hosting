@@ -18,7 +18,54 @@
                         "collapsible": true,
                         "order": 7
                     },
+                    "entityType": "main.core_platform-mesh_io_account",
+                    "context": { "resourceDefinition": { "apiGroup": "apeiro_eu", "version": "v1alpha1", "entityCollection": "OpenStackShoots", "entity": "OpenStackShoot", "scope": "Cluster" } },
+                    "children": [
+                      { "pathSegment": "openstack", "hideFromNav": true, "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "openstack" }, "url": "{{ $host }}/index.html" }] },
+                      { "pathSegment": "ironcore", "hideFromNav": true, "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "ironcore" }, "url": "{{ $host }}/index.html" }] }
+                    ],
+                    "loadingIndicator": {
+                        "enabled": false
+                    },
+                    "keepSelectedForChildren": true,
+                    "url": "{{ $host }}/index.html"
+                },
+                {
+                    "pathSegment": "ironcore_vms",
+                    "navigationContext": "ironcore_vms",
+                    "label": "IronCore VMs",
+                    "icon": "data:image/svg+xml;base64,{{ $logo }}",
+                    "category": {
+                        "label": {{ $sidebarTitle | quote }},
+                        "icon": "data:image/svg+xml;base64,{{ $logo }}",
+                        "collapsible": true,
+                        "order": 7
+                    },
+                    "entityType": "main.core_platform-mesh_io_account",
+                    "context": { "resourceDefinition": { "apiGroup": "apeiro_eu", "version": "v1alpha1", "entityCollection": "IronCoreVMs", "entity": "IronCoreVM", "scope": "Namespaced" } },
+                    "loadingIndicator": {
+                        "enabled": false
+                    },
+                    "keepSelectedForChildren": true,
+                    "url": "{{ $host }}/index.html#vms"
+                },
+                {
+                    "pathSegment": "apeiro_eu",
+                    "navigationContext": "apeiro_eu",
+                    "label": "Apeiro Shoots",
+                    "icon": "data:image/svg+xml;base64,{{ $logo }}",
+                    "category": {
+                        "label": {{ $sidebarTitle | quote }},
+                        "icon": "data:image/svg+xml;base64,{{ $logo }}",
+                        "collapsible": true,
+                        "order": 7
+                    },
                     "entityType": "main.core_platform-mesh_io_account.namespace",
+                    "context": { "resourceDefinition": { "apiGroup": "apeiro_eu", "version": "v1alpha1", "entityCollection": "OpenStackShoots", "entity": "OpenStackShoot", "scope": "Cluster" } },
+                    "children": [
+                      { "pathSegment": "openstack", "hideFromNav": true, "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "openstack" }, "url": "{{ $host }}/index.html" }] },
+                      { "pathSegment": "ironcore", "hideFromNav": true, "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "ironcore" }, "url": "{{ $host }}/index.html" }] }
+                    ],
                     "loadingIndicator": {
                         "enabled": false
                     },
@@ -37,6 +84,7 @@
                         "order": 7
                     },
                     "entityType": "main.core_platform-mesh_io_account.namespace",
+                    "context": { "resourceDefinition": { "apiGroup": "apeiro_eu", "version": "v1alpha1", "entityCollection": "IronCoreVMs", "entity": "IronCoreVM", "scope": "Namespaced" } },
                     "loadingIndicator": {
                         "enabled": false
                     },

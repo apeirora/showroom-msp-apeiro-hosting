@@ -87,7 +87,7 @@ const buildObject = (namespace: string, input: CreateInput): Record<string, unkn
 const INPUT_TYPE = 'ApeiroEuV1alpha1IronCoreVM_Input';
 
 const listQuery = `
-  query List($ns: String!) {
+  query List($ns: String) {
     apeiro_eu {
       v1alpha1 {
         IronCoreVMs(namespace: $ns) {
@@ -132,7 +132,7 @@ const deleteMutation = `
 `;
 
 const subscription = `
-  subscription Watch($ns: String!) {
+  subscription Watch($ns: String) {
     apeiro_eu_v1alpha1_ironcorevms(namespace: $ns, subscribeToAll: true) {
       type
       object { metadata { name } }
@@ -145,10 +145,10 @@ interface ListResponse {
 }
 
 export interface VmApi {
-  list: (opts: GraphqlClientOptions, namespace: string) => Promise<IronCoreVM[]>;
+  list: (opts: GraphqlClientOptions, namespace: string | null) => Promise<IronCoreVM[]>;
   create: (opts: GraphqlClientOptions, namespace: string, input: CreateInput) => Promise<void>;
   remove: (opts: GraphqlClientOptions, namespace: string, name: string) => Promise<void>;
-  subscribe: (opts: GraphqlClientOptions, namespace: string, onEvent: () => void) => SubscriptionHandle;
+  subscribe: (opts: GraphqlClientOptions, namespace: string | null, onEvent: () => void) => SubscriptionHandle;
 }
 
 export const ironCoreVmApi: VmApi = {
