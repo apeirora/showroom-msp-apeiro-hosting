@@ -263,15 +263,7 @@ func TestIronCoreExplicitMachineAndExtraSettings(t *testing.T) {
 	if len(zones) != 1 || zones[0] != "wdf4c" {
 		t.Fatal(zones)
 	}
-	for _, key := range []string{"minimum", "maximum"} {
-		count, found, err := unstructured.NestedInt64(worker, key)
-		if err != nil || !found || count != 1 {
-			t.Fatalf("single-zone %s must preserve one requested worker: %v (%v)", key, worker[key], err)
-		}
-		if key == "maximum" && count < int64(len(zones)) {
-			t.Fatal("single-zone Shoot violates Gardener's maximum >= zone count rule")
-		}
-	}
+	checkSingleZoneWorkerCounts(t, worker, len(zones))
 	extensions, _, _ := unstructured.NestedSlice(shoot.Object, "spec", "extensions")
 	if len(extensions) != 1 {
 		t.Fatal(extensions)
@@ -318,5 +310,18 @@ func TestIronCoreShootCallerKeepsManagedIssuer(t *testing.T) {
 	domain, _, _ := unstructured.NestedString(created.Object, "spec", "dns", "domain")
 	if domain != "sc-demo.account.dev.ic.showroom.apeirora.eu" {
 		t.Fatal(domain)
+	}
+}
+
+func checkSingleZoneWorkerCounts(t *testing.T, worker map[string]interface{}, zoneCount int) {
+	t.Helper()
+	for _, key := range []string{"minimum", "maximum"} {
+		count, found, err := unstructured.NestedInt64(worker, key)
+		if err != nil || !found || count != 1 {
+			t.Fatalf("single-zone %s must preserve one requested worker: %v (%v)", key, worker[key], err)
+		}
+		if key == "maximum" && count < int64(zoneCount) {
+			t.Fatal("single-zone Shoot violates Gardener's maximum >= zone count rule")
+		}
 	}
 }
