@@ -100,6 +100,7 @@ const shoot = (name: string): Shoot => ({ metadata: { name } });
 const change = (next: RuntimeContext) => act(() => api.onContext?.(next));
 beforeEach(() => {
   vi.clearAllMocks();
+  api.navigate.mockResolvedValue(undefined);
   api.list.mockResolvedValue([]);
 });
 afterEach(cleanup);
@@ -175,4 +176,13 @@ it('makes no resource requests for an unresolved placeholder and a display accou
   await act(async () => {});
   expect(next.workspacePath).toBeNull();
   expect(api.list).not.toHaveBeenCalled();
+});
+
+it('uses the visible Details control to open the account detail route', async () => {
+  api.list.mockResolvedValue([shoot('same-name')]);
+  render(<App />);
+  change(context('a'));
+  await screen.findByText('same-name');
+  fireEvent.click(screen.getByText('View same-name'));
+  await waitFor(() => { expect(api.navigate).toHaveBeenCalledWith('same-name', 'openstack', expect.any(AbortSignal)); });
 });
