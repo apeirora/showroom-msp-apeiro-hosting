@@ -23,7 +23,7 @@ import type { GraphqlClientOptions } from './lib/graphql';
 import { ironcoreShootApi, openstackShootApi } from './lib/shoot';
 
 // The two portal left-menu nodes both load this SPA; the "IronCore VMs" node's
-// URL carries a `#vms` fragment (see the sapprovider-ui pm-content.json) so the
+// URL carries a `#vms` fragment (see the apeiroprovider-ui pm-content.json) so the
 // SPA can pick the view. Absent/unrecognised fragment => the Shoots view.
 type Route = 'shoots' | 'vms';
 
@@ -180,7 +180,7 @@ const App = () => {
   if (route === 'vms') {
     return (
       <FlexBox direction={FlexBoxDirection.Column} style={{ height: '100vh' }}>
-        <ShellBar primaryTitle="IronCore VMs" secondaryTitle="SAP Integration" />
+        <ShellBar primaryTitle="IronCore VMs" secondaryTitle="Apeiro Integration" />
         <div style={{ flex: 1, overflow: 'auto', background: 'var(--sapBackgroundColor)' }}>
           <VmView
             client={client}
@@ -194,7 +194,7 @@ const App = () => {
 
   return (
     <FlexBox direction={FlexBoxDirection.Column} style={{ height: '100vh' }}>
-      <ShellBar primaryTitle="SAP Shoots" secondaryTitle="Gardener Shoots" />
+      <ShellBar primaryTitle="Apeiro Shoots" secondaryTitle="Gardener Shoots" />
       <div
         style={{
           flex: 1,

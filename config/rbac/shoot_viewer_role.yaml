@@ -1,7 +1,7 @@
-# This rule is not used by the project showroom-msp-sap-provider itself.
+# This rule is not used by the project showroom-msp-apeiro-provider itself.
 # It is provided to allow the cluster admin to help manage permissions for users.
 #
-# Grants read-only access to sap.eu resources.
+# Grants read-only access to apeiro.eu resources.
 # This role is intended for users who need visibility into these resources
 # without permissions to modify them. It is ideal for monitoring purposes and limited-access viewing.
 
@@ -9,12 +9,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/name: showroom-msp-sap-provider
+    app.kubernetes.io/name: showroom-msp-apeiro-provider
     app.kubernetes.io/managed-by: kustomize
   name: shoot-viewer-role
 rules:
 - apiGroups:
-  - sap.eu
+  - apeiro.eu
   resources:
   - openstackshoots
   - ironcoreshoots
@@ -23,7 +23,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - sap.eu
+  - apeiro.eu
   resources:
   - openstackshoots/status
   - ironcoreshoots/status

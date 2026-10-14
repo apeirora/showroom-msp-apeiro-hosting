@@ -33,27 +33,27 @@ import (
 // The Shoot reconciler reuses the same skeletons for its standalone Gardener
 // Shoots (parseFlavorDefaults).
 //
-//go:embed scpc-sap-openstack.yaml
+//go:embed scpc-apeiro-openstack.yaml
 var openstackSCPCManifest []byte
 
-//go:embed scpc-sap-ironcore.yaml
+//go:embed scpc-apeiro-ironcore.yaml
 var ironcoreSCPCManifest []byte
 
 const (
 	// openstackSCPCName / ironcoreSCPCName are the fixed names of the two
-	// SimpleClusterProviderConfigs the SAP Integration provider materialises in
+	// SimpleClusterProviderConfigs the Apeiro Integration provider materialises in
 	// each bound account namespace.
-	openstackSCPCName = "sap-gardener-openstack"
-	ironcoreSCPCName  = "sap-gardener-ironcore"
+	openstackSCPCName = "apeiro-gardener-openstack"
+	ironcoreSCPCName  = "apeiro-gardener-ironcore"
 
 	// managedByLabelKey / managedByNamespaceBind stamp the SCPCs so the
 	// NamespaceReconciler can unambiguously identify and clean up the objects
 	// it owns.
-	managedByLabelKey      = "sap.eu/managed-by"
+	managedByLabelKey      = "apeiro.eu/managed-by"
 	managedByNamespaceBind = "namespace-bind"
 )
 
-// flavor describes one SAP Integration SimpleCluster provider variant.
+// flavor describes one Apeiro Integration SimpleCluster provider variant.
 type flavor struct {
 	// scpcName is the SimpleClusterProviderConfig name for this flavor.
 	scpcName string

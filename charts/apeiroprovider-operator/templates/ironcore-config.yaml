@@ -1,0 +1,13 @@
+{{- $ic := .Values.scpc.ironcore -}}
+{{- $_ := required "scpc.ironcore.projectNamespace is required" $ic.projectNamespace -}}
+{{- $_ := required "scpc.ironcore.shootSpec is required" $ic.shootSpec -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apeiro-provider-ironcore-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "apeiroprovider-operator.labels" . | nindent 4 }}
+data:
+  ironcore.yaml: |
+    {{- toYaml $ic | nindent 4 }}

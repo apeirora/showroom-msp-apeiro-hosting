@@ -28,16 +28,16 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
+	apeirov1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
 )
 
 var _ = Describe("Namespace Controller", func() {
 	ctx := context.Background()
 
 	const (
-		globalSecretName      = "sap-gardener-kubeconfig"
-		globalSecretNamespace = "sap-provider"
-		bothExports           = DefaultSimpleClusterExportName + "," + DefaultSapExportName
+		globalSecretName      = "apeiro-gardener-kubeconfig"
+		globalSecretNamespace = "apeiro-provider"
+		bothExports           = DefaultSimpleClusterExportName + "," + DefaultApeiroExportName
 	)
 
 	nsCounter := 0
@@ -72,9 +72,9 @@ var _ = Describe("Namespace Controller", func() {
 			KubeconfigSource:                KubeconfigSourceGlobal,
 			GlobalKubeconfigSecretName:      globalSecretName,
 			GlobalKubeconfigSecretNamespace: globalSecretNamespace,
-			ClientKubeconfigSecretName:      "sap-gardener-kubeconfig",
+			ClientKubeconfigSecretName:      "apeiro-gardener-kubeconfig",
 			SimpleClusterExportName:         DefaultSimpleClusterExportName,
-			SapExportName:                   DefaultSapExportName,
+			ApeiroExportName:                DefaultApeiroExportName,
 		}
 	}
 
@@ -124,12 +124,12 @@ var _ = Describe("Namespace Controller", func() {
 
 			// The local provider CR (OpenStackShoot/IronCoreShoot) carries the
 			// plain Gardener Shoot manifest in its spec.
-			Expect(scpcShootTemplate(scpc)).To(ContainSubstring("sap.eu/v1alpha1"))
+			Expect(scpcShootTemplate(scpc)).To(ContainSubstring("apeiro.eu/v1alpha1"))
 			Expect(scpcShootTemplate(scpc)).To(ContainSubstring("core.gardener.cloud/v1beta1"))
 		}
 	})
 
-	It("does not create SCPCs when the SAP export is absent", func() {
+	It("does not create SCPCs when the Apeiro export is absent", func() {
 		name := newNamespace(DefaultSimpleClusterExportName)
 		reconcileNS(name)
 
@@ -139,7 +139,7 @@ var _ = Describe("Namespace Controller", func() {
 		}
 	})
 
-	It("removes the managed SCPCs when the SAP binding is dropped", func() {
+	It("removes the managed SCPCs when the Apeiro binding is dropped", func() {
 		name := newNamespace(bothExports)
 		reconcileNS(name)
 		for _, scpcName := range allSCPCNames() {
@@ -147,7 +147,7 @@ var _ = Describe("Namespace Controller", func() {
 			Expect(err).NotTo(HaveOccurred())
 		}
 
-		// Unbind SAP: the annotation now lists only SimpleCluster.
+		// Unbind Apeiro: the annotation now lists only SimpleCluster.
 		setExports(name, DefaultSimpleClusterExportName)
 		reconcileNS(name)
 
@@ -160,7 +160,7 @@ var _ = Describe("Namespace Controller", func() {
 	It("keeps the embedded SCPC templates even when a flavor CR carries a spec", func() {
 		name := newNamespace(bothExports)
 		custom := "apiVersion: core.gardener.cloud/v1beta1\nkind: Shoot\nmetadata:\n  name: custom\nspec:\n  region: eu\n"
-		Expect(k8sClient.Create(ctx, &sapv1alpha1.OpenStackShoot{
+		Expect(k8sClient.Create(ctx, &apeirov1alpha1.OpenStackShoot{
 			ObjectMeta: metav1.ObjectMeta{Name: "svc", Namespace: name},
 			Spec:       custom,
 		})).To(Succeed())

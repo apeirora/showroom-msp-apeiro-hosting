@@ -64,7 +64,7 @@ export const CreateVmDialog = ({ open, busy, onClose, onSubmit }: Props) => {
     >
       <FlexBox direction={FlexBoxDirection.Column} style={{ gap: '1rem', padding: '0.5rem 0' }}>
         <MessageStrip design="Information" hideCloseButton>
-          Provisions one IronCore Machine. Network, image and credentials use the SAP Integration
+          Provisions one IronCore Machine. Network, image and credentials use the Apeiro Integration
           provider defaults; a per-VM SSH keypair is generated automatically.
         </MessageStrip>
 

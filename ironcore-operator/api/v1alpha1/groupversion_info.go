@@ -8,9 +8,9 @@ You may obtain a copy of the License at
     http://www.apache.org/licenses/LICENSE-2.0
 */
 
-// Package v1alpha1 contains API Schema definitions for the sap.eu v1alpha1 API group.
+// Package v1alpha1 contains API Schema definitions for the apeiro.eu v1alpha1 API group.
 // +kubebuilder:object:generate=true
-// +groupName=sap.eu
+// +groupName=apeiro.eu
 package v1alpha1
 
 import (
@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	GroupVersion  = schema.GroupVersion{Group: "sap.eu", Version: "v1alpha1"}
+	GroupVersion  = schema.GroupVersion{Group: "apeiro.eu", Version: "v1alpha1"}
 	SchemeBuilder = &scheme.Builder{GroupVersion: GroupVersion}
 	AddToScheme   = SchemeBuilder.AddToScheme
 )

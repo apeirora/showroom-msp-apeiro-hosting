@@ -73,10 +73,10 @@ jobs:
       matrix:
         chart:
           - ironcore-operator
-          - sapprovider-operator
-          - sapprovider-pm-integration
-          - sapprovider-sync-agent
-          - sapprovider-ui
+          - apeiroprovider-operator
+          - apeiroprovider-pm-integration
+          - apeiroprovider-sync-agent
+          - apeiroprovider-ui
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -90,7 +90,7 @@ jobs:
           chart_dir="charts/${{ matrix.chart }}"
           helm dependency build "$chart_dir" || helm dependency update "$chart_dir"
           values_args=()
-          if [[ "${{ matrix.chart }}" == "sapprovider-operator" ]]; then
+          if [[ "${{ matrix.chart }}" == "apeiroprovider-operator" ]]; then
             values_args=(-f "$chart_dir/examples/garden-dev.yaml")
           fi
           helm lint "$chart_dir" "${values_args[@]}"

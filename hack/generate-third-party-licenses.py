@@ -31,7 +31,7 @@ OVERRIDES = {
 
 # Components published from this repository — never third party.
 def is_self(name: str) -> bool:
-    return name.startswith("/src") or name == "sapprovider-ui"
+    return name.startswith("/src") or name == "apeiroprovider-ui"
 
 
 def licences_of(component) -> list:

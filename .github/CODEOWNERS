@@ -7,8 +7,8 @@
 *                       @m-szalik @ifdotpy @dweidenfeld
 
 # Platform Mesh / KCP integration
-/charts/sapprovider-pm-integration/   @m-szalik @ifdotpy
-/charts/sapprovider-sync-agent/       @m-szalik @ifdotpy
+/charts/apeiroprovider-pm-integration/   @m-szalik @ifdotpy
+/charts/apeiroprovider-sync-agent/       @m-szalik @ifdotpy
 
 # Release, compliance and supply-chain tooling
 /.github/workflows/     @m-szalik @dweidenfeld

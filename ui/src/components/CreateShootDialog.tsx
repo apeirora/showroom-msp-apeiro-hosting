@@ -81,7 +81,7 @@ export const CreateShootDialog = ({
     >
       <FlexBox direction={FlexBoxDirection.Column} style={{ gap: '1rem', padding: '0.5rem 0' }}>
         <MessageStrip design="Information" hideCloseButton>
-          A Shoot is an optional Gardener resource provided by SAP Integration {flavor}. The manifest
+          A Shoot is an optional Gardener resource provided by Apeiro Integration {flavor}. The manifest
           below is pre-filled with a ready-to-use default; edit it as needed, or clear it to fall
           back to the operator's built-in default template.
         </MessageStrip>

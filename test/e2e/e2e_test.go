@@ -35,16 +35,16 @@ import (
 )
 
 // namespace where the project is deployed in
-const namespace = "showroom-msp-sap-provider-system"
+const namespace = "showroom-msp-apeiro-provider-system"
 
 // serviceAccountName created for the project
-const serviceAccountName = "showroom-msp-sap-provider-controller-manager"
+const serviceAccountName = "showroom-msp-apeiro-provider-controller-manager"
 
 // metricsServiceName is the name of the metrics service of the project
-const metricsServiceName = "showroom-msp-sap-provider-controller-manager-metrics-service"
+const metricsServiceName = "showroom-msp-apeiro-provider-controller-manager-metrics-service"
 
 // metricsRoleBindingName is the name of the RBAC that will be created to allow get the metrics data
-const metricsRoleBindingName = "showroom-msp-sap-provider-metrics-binding"
+const metricsRoleBindingName = "showroom-msp-apeiro-provider-metrics-binding"
 
 var _ = Describe("Manager", Ordered, func() {
 	var controllerPodName string
@@ -77,7 +77,7 @@ var _ = Describe("Manager", Ordered, func() {
 		By("supplying an explicit IronCore landscape for the test manager")
 		projectDir, err := utils.GetProjectDir()
 		Expect(err).NotTo(HaveOccurred())
-		valuesData, err := os.ReadFile(filepath.Join(projectDir, "charts/sapprovider-operator/examples/garden-dev.yaml"))
+		valuesData, err := os.ReadFile(filepath.Join(projectDir, "charts/apeiroprovider-operator/examples/garden-dev.yaml"))
 		Expect(err).NotTo(HaveOccurred())
 		var values map[string]interface{}
 		Expect(yaml.Unmarshal(valuesData, &values)).To(Succeed())
@@ -94,11 +94,11 @@ var _ = Describe("Manager", Ordered, func() {
 		_, err = utils.Run(cmd)
 		Expect(err).NotTo(HaveOccurred())
 		patch := `[
-          {"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--ironcore-config=/etc/sap-provider/ironcore.yaml"},
-          {"op":"add","path":"/spec/template/spec/containers/0/volumeMounts","value":[{"name":"ironcore-config","mountPath":"/etc/sap-provider","readOnly":true}]},
+          {"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--ironcore-config=/etc/apeiro-provider/ironcore.yaml"},
+          {"op":"add","path":"/spec/template/spec/containers/0/volumeMounts","value":[{"name":"ironcore-config","mountPath":"/etc/apeiro-provider","readOnly":true}]},
           {"op":"add","path":"/spec/template/spec/volumes","value":[{"name":"ironcore-config","configMap":{"name":"ironcore-test-config"}}]}
         ]`
-		cmd = exec.Command("kubectl", "patch", "deployment", "showroom-msp-sap-provider-controller-manager",
+		cmd = exec.Command("kubectl", "patch", "deployment", "showroom-msp-apeiro-provider-controller-manager",
 			"-n", namespace, "--type=json", "-p", patch)
 		_, err = utils.Run(cmd)
 		Expect(err).NotTo(HaveOccurred())
@@ -206,7 +206,7 @@ var _ = Describe("Manager", Ordered, func() {
 		It("should ensure the metrics endpoint is serving metrics", func() {
 			By("creating a ClusterRoleBinding for the service account to allow access to metrics")
 			cmd := exec.Command("kubectl", "create", "clusterrolebinding", metricsRoleBindingName,
-				"--clusterrole=showroom-msp-sap-provider-metrics-reader",
+				"--clusterrole=showroom-msp-apeiro-provider-metrics-reader",
 				fmt.Sprintf("--serviceaccount=%s:%s", namespace, serviceAccountName),
 			)
 			_, err := utils.Run(cmd)

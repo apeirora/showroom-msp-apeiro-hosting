@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
+	apeirov1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/yaml"
@@ -18,7 +18,7 @@ func gardenDevConfig(t interface {
 	Fatal(...interface{})
 }) []byte {
 	t.Helper()
-	data, err := os.ReadFile("../../charts/sapprovider-operator/examples/garden-dev.yaml")
+	data, err := os.ReadFile("../../charts/apeiroprovider-operator/examples/garden-dev.yaml")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -144,7 +144,7 @@ func TestIronCoreChartRender(t *testing.T) {
 	if _, err := exec.LookPath("helm"); err != nil {
 		t.Skip("helm is required for chart render tests")
 	}
-	chart := "../../charts/sapprovider-operator"
+	chart := "../../charts/apeiroprovider-operator"
 	output, err := exec.Command("helm", "template", "test", chart).CombinedOutput()
 	if err == nil || !strings.Contains(string(output), "scpc.ironcore.projectNamespace is required") {
 		t.Fatalf("default values must fail: %s (%v)", output, err)
@@ -164,7 +164,7 @@ func TestIronCoreChartRender(t *testing.T) {
 		}
 		if obj["kind"] == "Deployment" {
 			raw := string(output)
-			for _, value := range []string{"--ironcore-config=/etc/sap-provider/ironcore.yaml", "checksum/ironcore-config:", "mountPath: /etc/sap-provider", "name: sap-provider-ironcore-config"} {
+			for _, value := range []string{"--ironcore-config=/etc/apeiro-provider/ironcore.yaml", "checksum/ironcore-config:", "mountPath: /etc/apeiro-provider", "name: apeiro-provider-ironcore-config"} {
 				if !strings.Contains(raw, value) {
 					t.Fatalf("missing config connection: %s", value)
 				}
@@ -291,7 +291,7 @@ func TestIronCoreShootCallerKeepsManagedIssuer(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := &ShootReconciler{defaults: defaults}
-	sh := &sapv1alpha1.IronCoreShoot{ObjectMeta: metav1.ObjectMeta{Name: "sc-demo", Namespace: "account"}}
+	sh := &apeirov1alpha1.IronCoreShoot{ObjectMeta: metav1.ObjectMeta{Name: "sc-demo", Namespace: "account"}}
 	name := gardenShootName("IronCoreShoot", sh.Namespace, sh.Name)
 	garden := newFakeGardener()
 	if err := r.createShoot(context.Background(), garden, sh, name); err != nil {

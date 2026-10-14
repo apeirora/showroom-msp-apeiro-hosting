@@ -3,7 +3,7 @@
   "packages": {
     ".": {
       "release-type": "go",
-      "component": "sap-provider",
+      "component": "apeiro-provider",
       "include-component-in-tag": false
     }
   }

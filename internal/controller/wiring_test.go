@@ -23,7 +23,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
-	sapv1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
+	apeirov1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/api/v1alpha1"
 )
 
 // Verifies the manager wiring — in particular that the generic ShootReconciler
@@ -46,7 +46,7 @@ var _ = Describe("Manager wiring", func() {
 			SCPCName:       openstackSCPCName,
 			KindName:       "OpenStackShoot",
 			Manifest:       openstackSCPCManifest,
-			New:            func() FlavorShoot { return &sapv1alpha1.OpenStackShoot{} },
+			New:            func() FlavorShoot { return &apeirov1alpha1.OpenStackShoot{} },
 			ControllerName: "openstackshoot",
 		}).SetupWithManager(mgr)).To(Succeed())
 
@@ -55,7 +55,7 @@ var _ = Describe("Manager wiring", func() {
 			SCPCName:       ironcoreSCPCName,
 			KindName:       "IronCoreShoot",
 			Manifest:       ironcoreManifest,
-			New:            func() FlavorShoot { return &sapv1alpha1.IronCoreShoot{} },
+			New:            func() FlavorShoot { return &apeirov1alpha1.IronCoreShoot{} },
 			ControllerName: "ironcoreshoot",
 		}).SetupWithManager(mgr)).To(Succeed())
 
@@ -64,7 +64,7 @@ var _ = Describe("Manager wiring", func() {
 			IronCoreManifest:        ironcoreManifest,
 			KubeconfigSource:        KubeconfigSourceGlobal,
 			SimpleClusterExportName: DefaultSimpleClusterExportName,
-			SapExportName:           DefaultSapExportName,
+			ApeiroExportName:        DefaultApeiroExportName,
 		}).SetupWithManager(mgr)).To(Succeed())
 	})
 })

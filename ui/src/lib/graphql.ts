@@ -96,12 +96,12 @@ export const subscribe = (
       { query, variables },
       {
         next: () => onEvent(),
-        error: (error) => console.warn('[sapprovider-ui] subscription error', error),
+        error: (error) => console.warn('[apeiroprovider-ui] subscription error', error),
         complete: () => undefined
       }
     );
   } catch (err) {
-    console.warn('[sapprovider-ui] failed to open subscription, will fall back to polling', err);
+    console.warn('[apeiroprovider-ui] failed to open subscription, will fall back to polling', err);
     return () => {};
   }
 };

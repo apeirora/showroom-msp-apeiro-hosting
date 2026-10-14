@@ -1,7 +1,7 @@
 /*
  * CRUD + subscriptions for IronCoreVM resources served by
  * ironcore-operator.
- * GraphQL group: sap_eu (sap.eu, dots -> underscores)
+ * GraphQL group: apeiro_eu (apeiro.eu, dots -> underscores)
  * Kind: IronCoreVM (plural ironcorevms, list field IronCoreVMs).
  *
  * IronCoreVM is projected NAMESPACED into the KCP workspace (APIResourceSchema
@@ -11,8 +11,8 @@
  *
  * The whole GraphQL surface is intentionally confined to this file. Field/type
  * names (createIronCoreVM/deleteIronCoreVM, the IronCoreVMs list field, the
- * sap_eu_v1alpha1_ironcorevms subscription and the
- * SapEuV1alpha1IronCoreVM_Input create input type) follow the
+ * apeiro_eu_v1alpha1_ironcorevms subscription and the
+ * ApeiroEuV1alpha1IronCoreVM_Input create input type) follow the
  * gateway's own schema-generation rules
  * (github.com/platform-mesh/kubernetes-graphql-gateway, pinned at v1.12.0 for
  * this deployment): the input type is Pascalize(sanitizedGroup_version) + Kind +
@@ -31,7 +31,7 @@ import { graphqlFetch, subscribe, type GraphqlClientOptions, type SubscriptionHa
 import { fixtureVMs, fixturesEnabled } from './fixtures';
 
 // Hidden defaults for the create payload.
-const IRONCORE_KUBECONFIG = { name: 'ironcore-kubeconfig', namespace: 'sap-provider' };
+const IRONCORE_KUBECONFIG = { name: 'ironcore-kubeconfig', namespace: 'apeiro-provider' };
 const NETWORK = 'sample-net';
 const IMAGE = 'ghcr.io/ironcore-dev/gardenlinux:latest';
 const PUBLIC_IP = true;
@@ -84,11 +84,11 @@ const buildObject = (namespace: string, input: CreateInput): Record<string, unkn
   };
 };
 
-const INPUT_TYPE = 'SapEuV1alpha1IronCoreVM_Input';
+const INPUT_TYPE = 'ApeiroEuV1alpha1IronCoreVM_Input';
 
 const listQuery = `
   query List($ns: String!) {
-    sap_eu {
+    apeiro_eu {
       v1alpha1 {
         IronCoreVMs(namespace: $ns) {
           items {
@@ -111,7 +111,7 @@ const listQuery = `
 
 const createMutation = `
   mutation Create($ns: String!, $object: ${INPUT_TYPE}!) {
-    sap_eu {
+    apeiro_eu {
       v1alpha1 {
         createIronCoreVM(namespace: $ns, object: $object) {
           metadata { name }
@@ -123,7 +123,7 @@ const createMutation = `
 
 const deleteMutation = `
   mutation Delete($ns: String!, $name: String!) {
-    sap_eu {
+    apeiro_eu {
       v1alpha1 {
         deleteIronCoreVM(namespace: $ns, name: $name)
       }
@@ -133,7 +133,7 @@ const deleteMutation = `
 
 const subscription = `
   subscription Watch($ns: String!) {
-    sap_eu_v1alpha1_ironcorevms(namespace: $ns, subscribeToAll: true) {
+    apeiro_eu_v1alpha1_ironcorevms(namespace: $ns, subscribeToAll: true) {
       type
       object { metadata { name } }
     }
@@ -141,7 +141,7 @@ const subscription = `
 `;
 
 interface ListResponse {
-  sap_eu?: { v1alpha1?: { IronCoreVMs?: { items: IronCoreVM[] } } };
+  apeiro_eu?: { v1alpha1?: { IronCoreVMs?: { items: IronCoreVM[] } } };
 }
 
 export interface VmApi {
@@ -155,7 +155,7 @@ export const ironCoreVmApi: VmApi = {
   list: async (opts, namespace) => {
     if (fixturesEnabled()) return fixtureVMs();
     const data = await graphqlFetch<ListResponse>(opts, { query: listQuery, variables: { ns: namespace } });
-    return data.sap_eu?.v1alpha1?.IronCoreVMs?.items ?? [];
+    return data.apeiro_eu?.v1alpha1?.IronCoreVMs?.items ?? [];
   },
   create: async (opts, namespace, input) => {
     if (fixturesEnabled()) {

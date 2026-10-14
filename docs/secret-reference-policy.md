@@ -31,7 +31,7 @@ The controller checks still apply if Kubernetes RBAC permits broader access.
 The configured global Gardener Secret is an exact `use` exception.
 The operator derives its name and namespace from its startup flags.
 
-The SAP chart derives remote exceptions from `scpc.ironcore.projectNamespace`
+The Apeiro chart derives remote exceptions from `scpc.ironcore.projectNamespace`
 and `scpc.ironcore.shootSpec`.
 These fields are operator configuration.
 Tenant Shoot text cannot add exceptions.

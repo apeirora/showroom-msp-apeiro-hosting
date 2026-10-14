@@ -55,7 +55,7 @@ func TestVersionLabels(t *testing.T) {
 						t.Fatalf("packages: %v, %v", packages, err)
 					}
 					args := []string{"template", "test", packages[0]}
-					if filepath.Base(chart) == "sapprovider-operator" {
+					if filepath.Base(chart) == "apeiroprovider-operator" {
 						args = append(args, "-f", filepath.Join(chart, "examples", "garden-dev.yaml"))
 					}
 					output, err = exec.Command("helm", args...).CombinedOutput()

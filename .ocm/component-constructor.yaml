@@ -1,4 +1,4 @@
-# OCM component for the SAP hosting provider stack.
+# OCM component for the Apeiro hosting provider stack.
 #
 # Every image and chart is referenced at the same ${VERSION} — the one the
 # publish workflow stamps into all of them — so a component version always
@@ -6,26 +6,26 @@
 #
 # Rendered by .github/workflows/publish.yml; ${VERSION} and
 # ${GITHUB_REPOSITORY_OWNER} are substituted by the OCM CLI.
-name: showroom.apeirora.eu/sap-hosting
+name: showroom.apeirora.eu/apeiro-hosting
 version: ${VERSION}
 provider:
   name: ${GITHUB_REPOSITORY_OWNER}
 
 resources:
   # ---------------------------------------------------------------- images
-  - name: sap-provider-operator-image
+  - name: apeiro-provider-operator-image
     type: ociImage
     version: "${VERSION}"
     access:
       type: ociArtifact
-      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/sap-provider-operator:${VERSION}
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/apeiro-provider-operator:${VERSION}
 
-  - name: sapprovider-ui-image
+  - name: apeiroprovider-ui-image
     type: ociImage
     version: "${VERSION}"
     access:
       type: ociArtifact
-      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/sapprovider-ui:${VERSION}
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/apeiroprovider-ui:${VERSION}
 
   - name: ironcore-operator-image
     type: ociImage
@@ -35,33 +35,33 @@ resources:
       imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/ironcore-operator:${VERSION}
 
   # ----------------------------------------------------------- helm charts
-  - name: sapprovider-operator-chart
+  - name: apeiroprovider-operator-chart
     type: helmChart
     version: "${VERSION}"
     access:
       type: ociArtifact
-      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/sapprovider-operator:${VERSION}
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/apeiroprovider-operator:${VERSION}
 
-  - name: sapprovider-pm-integration-chart
+  - name: apeiroprovider-pm-integration-chart
     type: helmChart
     version: "${VERSION}"
     access:
       type: ociArtifact
-      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/sapprovider-pm-integration:${VERSION}
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/apeiroprovider-pm-integration:${VERSION}
 
-  - name: sapprovider-sync-agent-chart
+  - name: apeiroprovider-sync-agent-chart
     type: helmChart
     version: "${VERSION}"
     access:
       type: ociArtifact
-      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/sapprovider-sync-agent:${VERSION}
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/apeiroprovider-sync-agent:${VERSION}
 
-  - name: sapprovider-ui-chart
+  - name: apeiroprovider-ui-chart
     type: helmChart
     version: "${VERSION}"
     access:
       type: ociArtifact
-      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/sapprovider-ui:${VERSION}
+      imageReference: ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts/apeiroprovider-ui:${VERSION}
 
   - name: ironcore-operator-chart
     type: helmChart

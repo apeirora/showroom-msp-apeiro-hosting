@@ -51,9 +51,9 @@ type IronCoreVMReconciler struct {
 	Recorder     record.EventRecorder
 }
 
-// +kubebuilder:rbac:groups=sap.eu,resources=ironcorevms,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=sap.eu,resources=ironcorevms/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=sap.eu,resources=ironcorevms/finalizers,verbs=update
+// +kubebuilder:rbac:groups=apeiro.eu,resources=ironcorevms,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=apeiro.eu,resources=ironcorevms/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=apeiro.eu,resources=ironcorevms/finalizers,verbs=update
 // +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups="",resources=events,verbs=create;patch
 // +kubebuilder:rbac:groups=sshkeys.apeirora.eu,resources=sshkeys,verbs=get;list;watch
