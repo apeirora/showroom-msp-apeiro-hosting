@@ -3,7 +3,7 @@ app.kubernetes.io/name: sapprovider-ui
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: Helm
 app.kubernetes.io/part-of: sapprovider
-app.kubernetes.io/version: {{ .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
 {{- end }}
 
 {{- define "sapprovider-ui.image" -}}
