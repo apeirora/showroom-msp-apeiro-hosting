@@ -18,7 +18,12 @@
                         "collapsible": true,
                         "order": 7
                     },
-                    "entityType": "main.core_platform-mesh_io_account.namespace",
+                    "entityType": "main.core_platform-mesh_io_account",
+                    "context": { "resourceDefinition": { "apiGroup": "sap_eu", "version": "v1alpha1", "entityCollection": "OpenStackShoots", "entity": "OpenStackShoot", "scope": "Cluster" } },
+                    "children": [
+                      { "pathSegment": "openstack", "hideFromNav": true, "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "openstack" }, "url": "{{ $host }}/index.html" }] },
+                      { "pathSegment": "ironcore", "hideFromNav": true, "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "ironcore" }, "url": "{{ $host }}/index.html" }] }
+                    ],
                     "loadingIndicator": {
                         "enabled": false
                     },
@@ -36,7 +41,8 @@
                         "collapsible": true,
                         "order": 7
                     },
-                    "entityType": "main.core_platform-mesh_io_account.namespace",
+                    "entityType": "main.core_platform-mesh_io_account",
+                    "context": { "resourceDefinition": { "apiGroup": "sap_eu", "version": "v1alpha1", "entityCollection": "IronCoreVMs", "entity": "IronCoreVM", "scope": "Namespaced" } },
                     "loadingIndicator": {
                         "enabled": false
                     },

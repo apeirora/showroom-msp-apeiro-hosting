@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FlexBox, FlexBoxDirection, MessageStrip } from '@ui5/webcomponents-react';
+import {
+  FlexBox,
+  FlexBoxDirection,
+  MessageStrip,
+} from '@ui5/webcomponents-react';
 
 import { VmList } from './VmList';
 import { CreateVmDialog } from './CreateVmDialog';
@@ -38,16 +42,17 @@ export const VmView = ({ client, namespace, ready }: Props) => {
   const subscriptionActiveRef = useRef(false);
 
   const reload = useCallback(async () => {
-    if (!ready || !namespace) return;
+    if (!ready || client.signal?.aborted) return;
     setLoading(true);
     try {
       const items = await ironCoreVmApi.list(client, namespace);
+      if (client.signal?.aborted) return;
       setVms(items);
       setError(null);
     } catch (err) {
-      setError((err as Error).message);
+      if (!client.signal?.aborted) setError((err as Error).message);
     } finally {
-      setLoading(false);
+      if (!client.signal?.aborted) setLoading(false);
     }
   }, [client, namespace, ready]);
 
@@ -57,13 +62,14 @@ export const VmView = ({ client, namespace, ready }: Props) => {
 
   // Auto-refresh: prefer graphql-sse subscriptions; fall back to polling.
   useEffect(() => {
-    if (!ready || !namespace) return;
+    if (!ready || client.signal?.aborted) return;
 
     let reloadQueued = false;
     const queueReload = () => {
       if (reloadQueued) return;
       reloadQueued = true;
       queueMicrotask(() => {
+        if (client.signal?.aborted) return;
         reloadQueued = false;
         void reload();
       });
@@ -86,45 +92,59 @@ export const VmView = ({ client, namespace, ready }: Props) => {
   }, [client, namespace, ready, reload]);
 
   const handleCreate = async (values: CreateInput) => {
-    if (!namespace) return;
+    if (!namespace || client.signal?.aborted) return;
     setCreateBusy(true);
     try {
       await ironCoreVmApi.create(client, namespace, values);
+      if (client.signal?.aborted) return;
       setCreateOpen(false);
       await reload();
     } catch (err) {
-      setError(`Create failed: ${(err as Error).message}`);
+      if (!client.signal?.aborted)
+        setError(`Create failed: ${(err as Error).message}`);
     } finally {
-      setCreateBusy(false);
+      if (!client.signal?.aborted) setCreateBusy(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!namespace || !deleteTarget) return;
+    if (!deleteTarget?.metadata.namespace || client.signal?.aborted) return;
     setDeleteBusy(true);
     try {
-      await ironCoreVmApi.remove(client, namespace, deleteTarget.metadata.name);
+      await ironCoreVmApi.remove(
+        client,
+        deleteTarget.metadata.namespace,
+        deleteTarget.metadata.name,
+      );
+      if (client.signal?.aborted) return;
       setDeleteTarget(null);
       await reload();
     } catch (err) {
-      setError(`Delete failed: ${(err as Error).message}`);
+      if (!client.signal?.aborted)
+        setError(`Delete failed: ${(err as Error).message}`);
     } finally {
-      setDeleteBusy(false);
+      if (!client.signal?.aborted) setDeleteBusy(false);
     }
   };
 
   const handleDownloadKey = async (vm: IronCoreVM) => {
-    if (!namespace) return;
+    if (!vm.metadata.namespace || client.signal?.aborted) return;
     // The operator falls back to the per-VM Secret `<vm-name>-ssh` when
     // status.sshSecretRef is not yet populated.
-    const secretName = vm.status?.sshSecretRef?.name ?? `${vm.metadata.name}-ssh`;
+    const secretName =
+      vm.status?.sshSecretRef?.name ?? `${vm.metadata.name}-ssh`;
     setKeyVmName(vm.metadata.name);
     setKeyContents(null);
     setKeyOpen(true);
     try {
-      const contents = await fetchSshPrivateKey(client, namespace, secretName);
-      setKeyContents(contents);
+      const contents = await fetchSshPrivateKey(
+        client,
+        vm.metadata.namespace,
+        secretName,
+      );
+      if (!client.signal?.aborted) setKeyContents(contents);
     } catch (err) {
+      if (client.signal?.aborted) return;
       setKeyOpen(false);
       setError(`Fetch SSH key failed: ${(err as Error).message}`);
     }
@@ -133,7 +153,12 @@ export const VmView = ({ client, namespace, ready }: Props) => {
   return (
     <FlexBox
       direction={FlexBoxDirection.Column}
-      style={{ gap: '1rem', maxWidth: 1200, margin: '0 auto', padding: '1.25rem 1rem' }}
+      style={{
+        gap: '1rem',
+        maxWidth: 1200,
+        margin: '0 auto',
+        padding: '1.25rem 1rem',
+      }}
     >
       {error && (
         <MessageStrip design="Negative" onClose={() => setError(null)}>
@@ -141,7 +166,14 @@ export const VmView = ({ client, namespace, ready }: Props) => {
         </MessageStrip>
       )}
 
+      {!namespace && (
+        <MessageStrip design="Information" hideCloseButton>
+          Select a namespace in the portal to create a VM. The list shows all
+          namespaces.
+        </MessageStrip>
+      )}
       <VmList
+        canCreate={Boolean(namespace)}
         vms={vms}
         loading={loading}
         onCreate={() => setCreateOpen(true)}

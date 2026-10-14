@@ -7,7 +7,7 @@ import {
   FlexBoxJustifyContent,
   IllustratedMessage,
   ObjectStatus,
-  Title
+  Title,
 } from '@ui5/webcomponents-react';
 import '@ui5/webcomponents-fiori/dist/illustrations/NoData.js';
 import type { IronCoreVM } from '../types';
@@ -26,7 +26,8 @@ const ageOf = (ts?: string): string => {
   return `${Math.floor(h / 24)}d`;
 };
 
-type StatusState = 'Positive' | 'Negative' | 'Critical' | 'Information' | 'None';
+type StatusState =
+  'Positive' | 'Negative' | 'Critical' | 'Information' | 'None';
 
 const phaseState = (phase?: string): StatusState => {
   switch (phase) {
@@ -45,6 +46,7 @@ const phaseState = (phase?: string): StatusState => {
 };
 
 interface Props {
+  canCreate: boolean;
   vms: IronCoreVM[];
   loading: boolean;
   onCreate: () => void;
@@ -53,10 +55,21 @@ interface Props {
   onDownloadKey: (vm: IronCoreVM) => void;
 }
 
-export const VmList = ({ vms, loading, onCreate, onRefresh, onDelete, onDownloadKey }: Props) => {
+export const VmList = ({
+  canCreate,
+  vms,
+  loading,
+  onCreate,
+  onRefresh,
+  onDelete,
+  onDownloadKey,
+}: Props) => {
   if (loading && vms.length === 0) {
     return (
-      <FlexBox justifyContent={FlexBoxJustifyContent.Center} style={{ padding: '2rem' }}>
+      <FlexBox
+        justifyContent={FlexBoxJustifyContent.Center}
+        style={{ padding: '2rem' }}
+      >
         <BusyIndicator active size="M" />
       </FlexBox>
     );
@@ -69,7 +82,7 @@ export const VmList = ({ vms, loading, onCreate, onRefresh, onDelete, onDownload
         titleText="No virtual machines yet"
         subtitleText="Create an IronCore VM on the SAP Integration cluster."
       >
-        <Button design="Emphasized" onClick={onCreate}>
+        <Button design="Emphasized" onClick={onCreate} disabled={!canCreate}>
           New VM
         </Button>
       </IllustratedMessage>
@@ -80,6 +93,7 @@ export const VmList = ({ vms, loading, onCreate, onRefresh, onDelete, onDownload
     const st = vm.status ?? {};
     return {
       name: vm.metadata.name,
+      namespace: vm.metadata.namespace,
       phase: st.phase || 'Pending',
       phaseStateValue: phaseState(st.phase),
       machineState: st.machineState || '—',
@@ -88,12 +102,13 @@ export const VmList = ({ vms, loading, onCreate, onRefresh, onDelete, onDownload
       external: st.externalAddress || '—',
       age: ageOf(vm.metadata.creationTimestamp),
       _managedBy: simpleClusterOwner(vm),
-      _vm: vm
+      _vm: vm,
     };
   });
 
   const columns = [
     { Header: 'Name', accessor: 'name', minWidth: 150 },
+    { Header: 'Namespace', accessor: 'namespace', minWidth: 130 },
     {
       Header: 'Phase',
       accessor: 'phase',
@@ -102,7 +117,7 @@ export const VmList = ({ vms, loading, onCreate, onRefresh, onDelete, onDownload
         <ObjectStatus state={row.original.phaseStateValue} inverted>
           {row.original.phase}
         </ObjectStatus>
-      )
+      ),
     },
     { Header: 'Machine state', accessor: 'machineState', width: 130 },
     { Header: 'Machine class', accessor: 'machineClass', minWidth: 160 },
@@ -139,24 +154,39 @@ export const VmList = ({ vms, loading, onCreate, onRefresh, onDelete, onDownload
             Delete
           </Button>
         </FlexBox>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <FlexBox direction={FlexBoxDirection.Column} style={{ gap: '0.75rem' }}>
-      <FlexBox justifyContent={FlexBoxJustifyContent.SpaceBetween} style={{ alignItems: 'baseline' }}>
+      <FlexBox
+        justifyContent={FlexBoxJustifyContent.SpaceBetween}
+        style={{ alignItems: 'baseline' }}
+      >
         <Title level="H3">Virtual machines</Title>
         <FlexBox style={{ gap: '0.5rem' }}>
           <Button design="Transparent" icon="refresh" onClick={onRefresh}>
             Refresh
           </Button>
-          <Button design="Emphasized" icon="add" onClick={onCreate}>
+          <Button
+            design="Emphasized"
+            icon="add"
+            onClick={onCreate}
+            disabled={!canCreate}
+          >
             New VM
           </Button>
         </FlexBox>
       </FlexBox>
-      <AnalyticalTable data={rows} columns={columns as any} visibleRows={10} minRows={1} filterable sortable />
+      <AnalyticalTable
+        data={rows}
+        columns={columns as any}
+        visibleRows={10}
+        minRows={1}
+        filterable
+        sortable
+      />
     </FlexBox>
   );
 };
