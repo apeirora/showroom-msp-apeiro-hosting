@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.38.2](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.1...v0.38.2) (2026-10-14)
+
+
+### Bug Fixes
+
+* attach provider views to account and namespace dashboards ([#55](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/55)) ([7f54558](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/7f5455810cb5a3fa41b92b8999c7fc838dd5df19))
+
 ## [0.38.1](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.0...v0.38.1) (2026-10-14)
 
 
