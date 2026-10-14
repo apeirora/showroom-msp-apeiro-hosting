@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.38.0](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.37.1...v0.38.0) (2026-10-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop SAP naming, rename API group to apeiro.eu ([#42](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/42))
+
+### Features
+
+* drop SAP naming, rename API group to apeiro.eu ([#42](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/42)) ([95bc095](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/95bc0957a5e0e87733e1beccfa88fd741152357c))
+
 ## [0.37.1](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.37.0...v0.37.1) (2026-10-14)
 
 
