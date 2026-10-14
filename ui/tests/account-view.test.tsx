@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import {
   act,
   cleanup,
@@ -10,6 +11,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { extractRuntimeContext, type RuntimeContext } from '../src/lib/luigi';
 import type { ProviderShoot as Shoot } from '../src/types';
 const api = vi.hoisted(() => ({
+  initialContext: undefined as RuntimeContext | undefined,
   onContext: undefined as undefined | ((ctx: RuntimeContext) => void),
   list: vi.fn(),
   create: vi.fn(),
@@ -17,10 +19,13 @@ const api = vi.hoisted(() => ({
   stop: vi.fn(),
   navigate: vi.fn(),
 }));
+const sdk = vi.hoisted(() => ({ getCurrentRoute: vi.fn(), navigate: vi.fn() }));
+vi.mock('@luigi-project/client', () => ({ linkManager: () => sdk }));
 vi.mock('../src/lib/luigi', async (original) => ({
   ...(await original<typeof import('../src/lib/luigi')>()),
   subscribeToLuigi: (cb: typeof api.onContext) => {
     api.onContext = cb;
+    if (api.initialContext) cb?.(api.initialContext);
     return () => {};
   },
   navigateToShoot: api.navigate,
@@ -99,7 +104,7 @@ const context = (
 const shoot = (name: string): Shoot => ({ metadata: { name } });
 const change = (next: RuntimeContext) => act(() => api.onContext?.(next));
 beforeEach(() => {
-  vi.clearAllMocks();
+  vi.clearAllMocks(); api.initialContext = undefined;
   api.navigate.mockResolvedValue(undefined);
   api.list.mockResolvedValue([]);
 });
@@ -180,9 +185,14 @@ it('makes no resource requests for an unresolved placeholder and a display accou
 
 it('uses the visible Details control to open the account detail route', async () => {
   api.list.mockResolvedValue([shoot('same-name')]);
-  render(<App />);
-  change(context('a'));
+  const actual = await vi.importActual<typeof import('../src/lib/luigi')>('../src/lib/luigi');
+  api.navigate.mockImplementation(actual.navigateToShoot);
+  sdk.getCurrentRoute.mockResolvedValue('/home/accounts/a/sap_eu/openstack');
+  api.initialContext = context('a');
+  render(<StrictMode><App /></StrictMode>);
   await screen.findByText('same-name');
   fireEvent.click(screen.getByText('View same-name'));
   await waitFor(() => { expect(api.navigate).toHaveBeenCalledWith('same-name', 'openstack', expect.any(AbortSignal)); });
+  expect(sdk.navigate).toHaveBeenCalledWith('/home/accounts/a/sap_eu/openstack/same-name');
+  expect(api.list.mock.calls.at(-1)![0].signal.aborted).toBe(false);
 });

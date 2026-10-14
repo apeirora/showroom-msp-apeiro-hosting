@@ -267,5 +267,5 @@ export const navigateToShoot = async (
   url.searchParams.delete('namespace');
   client
     .linkManager()
-    .navigate(`${url.pathname}${url.search}`, undefined, true);
+    .navigate(`${url.pathname}${url.search}`);
 };
