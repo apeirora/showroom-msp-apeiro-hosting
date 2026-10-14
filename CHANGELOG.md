@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.37.2](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.37.1...v0.37.2) (2026-10-14)
+
+
+### Bug Fixes
+
+* attach SAP Hosting views to accounts ([#46](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/46)) ([5373174](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/53731749885175581b26bc075a444b434d1516c0))
+
 ## [0.37.1](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.37.0...v0.37.1) (2026-10-14)
 
 
