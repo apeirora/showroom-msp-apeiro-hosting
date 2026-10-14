@@ -4,7 +4,8 @@
     ".": {
       "release-type": "go",
       "component": "apeiro-provider",
-      "include-component-in-tag": false
+      "include-component-in-tag": false,
+      "release-as": "0.38.0"
     }
   }
 }
