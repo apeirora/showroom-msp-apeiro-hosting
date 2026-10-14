@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.38.1](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.0...v0.38.1) (2026-10-14)
+
+
+### Bug Fixes
+
+* use ApeiroRA logo for portal and marketplace icons ([#53](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/53)) ([04d7c62](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/04d7c623ab5784ed987cb1a35a647d927dc492c5))
+
 ## [0.38.0](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.37.1...v0.38.0) (2026-10-14)
 
 
