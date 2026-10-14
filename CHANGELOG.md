@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.37.1](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.37.0...v0.37.1) (2026-10-14)
+
+
+### Bug Fixes
+
+* sanitize chart version labels ([#40](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/40)) ([0d26e0f](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/0d26e0f058f12679b4aa441149e466a21ba09a1e))
+
 ## [0.37.0](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.36.0...v0.37.0) (2026-10-13)
 
 
