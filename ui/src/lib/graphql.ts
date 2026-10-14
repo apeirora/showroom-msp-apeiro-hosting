@@ -3,8 +3,6 @@
  * Luigi context. The gateway URL handed to us is typically rooted at
  * ".../root/graphql"; to hit a non-root workspace we swap the path segment
  * before "/graphql".
- *
- * Copied faithfully from showroom-msp-simple-cluster/ui — keep in sync.
  */
 
 import { createClient, type Client as SseClient } from 'graphql-sse';
@@ -31,6 +29,7 @@ export interface GraphqlClientOptions {
   graphqlUrl: string;
   token: string | null;
   workspacePath?: string | null;
+  signal?: AbortSignal;
 }
 
 export const buildWorkspaceUrl = (
@@ -51,11 +50,13 @@ export const graphqlFetch = async <T>(
   opts: GraphqlClientOptions,
   body: { query?: string; mutation?: string; variables?: Record<string, unknown> }
 ): Promise<T> => {
+  opts.signal?.throwIfAborted();
   const url = buildWorkspaceUrl(opts.graphqlUrl, opts.workspacePath);
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (opts.token) headers.Authorization = `Bearer ${opts.token}`;
   const resp = await fetch(url, {
     method: 'POST',
+    signal: opts.signal,
     headers,
     body: JSON.stringify(body)
   });
@@ -63,6 +64,7 @@ export const graphqlFetch = async <T>(
     throw new GraphqlError(`GraphQL HTTP ${resp.status} ${resp.statusText}`, 'http');
   }
   const envelope = (await resp.json()) as GraphqlEnvelope<T>;
+  opts.signal?.throwIfAborted();
   if (envelope.errors?.length) {
     throw new GraphqlError(envelope.errors.map((e) => e.message).join('; '), 'graphql');
   }
@@ -91,8 +93,9 @@ export const subscribe = (
   onEvent: () => void
 ): SubscriptionHandle => {
   try {
+    opts.signal?.throwIfAborted();
     const client = subscriptionClient(opts);
-    return client.subscribe(
+    const dispose = client.subscribe(
       { query, variables },
       {
         next: () => onEvent(),
@@ -100,6 +103,11 @@ export const subscribe = (
         complete: () => undefined
       }
     );
+    opts.signal?.addEventListener('abort', dispose, { once: true });
+    return () => {
+      opts.signal?.removeEventListener('abort', dispose);
+      dispose();
+    };
   } catch (err) {
     console.warn('[apeiroprovider-ui] failed to open subscription, will fall back to polling', err);
     return () => {};
