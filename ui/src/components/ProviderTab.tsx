@@ -27,7 +27,7 @@ interface Props {
   flavor: string;
   // Suggested default resource name for the create dialog.
   defaultName: string;
-  // Ready-to-use default Gardener Shoot manifest pre-filled in the create dialog.
+  // Initial custom manifest. Empty selects the configured provider defaults.
   defaultSpec: string;
 }
 

@@ -1,0 +1,136 @@
+// Copyright 2026 ApeiroRA contributors
+// SPDX-License-Identifier: Apache-2.0
+
+package sync
+
+import (
+	"context"
+	"io"
+	"os"
+	"testing"
+
+	syncagentv1alpha1 "github.com/kcp-dev/api-syncagent/sdk/apis/syncagent/v1alpha1"
+	"github.com/kcp-dev/logicalcluster/v3"
+	"go.uber.org/zap"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+	yamlutil "k8s.io/apimachinery/pkg/util/yaml"
+)
+
+// This file runs through a Go overlay in the pinned upstream package.
+// It tests rendered provider resources with the production v0.7.0 resolver.
+func TestHostedPublishedResourceRelatedNamespace(t *testing.T) {
+	f, err := os.Open(os.Getenv("HOSTED_PUBLISHED_RESOURCES"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+	decoder := yamlutil.NewYAMLOrJSONDecoder(f, 4096)
+	count := 0
+	relatedCount := 0
+	for {
+		var raw unstructured.Unstructured
+		if err := decoder.Decode(&raw); err == io.EOF {
+			break
+		} else if err != nil {
+			t.Fatal(err)
+		}
+		if raw.GetKind() != "PublishedResource" {
+			continue
+		}
+		var pub syncagentv1alpha1.PublishedResource
+		if err := runtime.DefaultUnstructuredConverter.FromUnstructured(raw.Object, &pub); err != nil {
+			t.Fatal(err)
+		}
+		count++
+		for _, rel := range pub.Spec.Related {
+			relatedCount++
+			t.Run(pub.Spec.Resource.Kind+"/"+rel.Identifier, func(t *testing.T) {
+				for _, account := range []string{"account-a", "account-b"} {
+					t.Run(account, func(t *testing.T) {
+						cluster := pub.Spec.Resource.Kind != "IronCoreVM"
+						remoteNS := "team-b"
+						if cluster {
+							remoteNS = ""
+						}
+						remote := &unstructured.Unstructured{Object: map[string]any{"apiVersion": "provider.test/v1", "kind": pub.Spec.Resource.Kind, "metadata": map[string]any{"name": "same-name", "namespace": remoteNS}}}
+						local := remote.DeepCopy()
+						local.SetNamespace(account)
+						parts := []string{"status", "kubeconfigSecretRef", "name"}
+						if !cluster {
+							parts[1] = "sshSecretRef"
+						}
+						unstructured.SetNestedField(remote.Object, "same-secret", parts...)
+						unstructured.SetNestedField(local.Object, "same-secret", parts...)
+						secretName := "same-secret"
+						if rel.Identifier == "client-kubeconfig" {
+							secretName = "sap-gardener-kubeconfig"
+							if os.Getenv("HOSTED_PROVIDER_LINE") == "apeiro" {
+								secretName = "apeiro-gardener-kubeconfig"
+							}
+						}
+						secret := func(ns string) *unstructured.Unstructured {
+							return newUnstructured(&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: secretName, Namespace: ns}}, withKind("Secret"))
+						}
+						kcpSecretNS := "default"
+						if !cluster {
+							kcpSecretNS = remoteNS
+						}
+						localSide := syncSide{object: local, client: buildFakeClient(secret("account-a"), secret("account-b"))}
+						remoteSide := syncSide{object: remote, client: buildFakeClient(secret(kcpSecretNS)), clusterName: logicalcluster.Name(account), workspacePath: logicalcluster.NewPath("root:orgs:acceptance:" + account)}
+						origin, dest := localSide, remoteSide
+						expectedOriginNS, expectedDestNS := account, kcpSecretNS
+						if rel.Origin == syncagentv1alpha1.RelatedResourceOriginKcp {
+							origin, dest = remoteSide, localSide
+							expectedOriginNS, expectedDestNS = kcpSecretNS, account
+						}
+						t.Run("Secret-copy", func(t *testing.T) {
+							resolved, err := resolveRelatedResourceObjects(context.Background(), origin, dest, rel)
+							if err != nil {
+								t.Fatal(err)
+							}
+							if len(resolved) != 1 {
+								t.Fatalf("want one Secret, got %d", len(resolved))
+							}
+							if got := resolved[0].original.GetNamespace(); got != expectedOriginNS {
+								t.Fatalf("origin namespace %q, want %q", got, expectedOriginNS)
+							}
+							if got := resolved[0].destination.Namespace; got != expectedDestNS {
+								t.Fatalf("destination namespace %q, want %q", got, expectedDestNS)
+							}
+						})
+						// A failed Shoot has no kubeconfig reference. This must not block deletion.
+						if rel.Identifier == "kubeconfig-secret" {
+							t.Run("missing-reference", func(t *testing.T) {
+								delete(local.Object, "status")
+								delete(remote.Object, "status")
+								syncer := &ResourceSyncer{pubRes: &pub}
+								single := pub
+								single.Spec.Related = []syncagentv1alpha1.RelatedResourceSpec{rel}
+								syncer.pubRes = &single
+								for _, deleting := range []bool{false, true} {
+									requeue, err := syncer.processRelatedResources(context.Background(), zap.NewNop().Sugar(), nil, remoteSide, localSide, deleting)
+									if err != nil || requeue {
+										t.Errorf("no Secret, deleting=%v: requeue=%v err=%v", deleting, requeue, err)
+									}
+								}
+							})
+						}
+					})
+				}
+			})
+		}
+	}
+	expectedRelated := 3
+	if os.Getenv("HOSTED_CLIENT_SECRET") == "true" {
+		expectedRelated = 5
+	}
+	if relatedCount != expectedRelated {
+		t.Fatalf("want %d related rules, got %d", expectedRelated, relatedCount)
+	}
+	if count != 3 {
+		t.Fatalf("want three rendered PublishedResources, got %d", count)
+	}
+}

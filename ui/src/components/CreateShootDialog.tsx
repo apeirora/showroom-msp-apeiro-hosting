@@ -23,7 +23,7 @@ interface Props {
   flavor: string;
   // Suggested default resource name (also used as the input placeholder).
   defaultName: string;
-  // Ready-to-use default Gardener Shoot manifest to pre-fill the textarea with.
+  // Initial custom manifest. Empty selects the configured provider defaults.
   defaultSpec: string;
   onClose: () => void;
   onSubmit: (values: CreateValues) => void;
@@ -81,9 +81,8 @@ export const CreateShootDialog = ({
     >
       <FlexBox direction={FlexBoxDirection.Column} style={{ gap: '1rem', padding: '0.5rem 0' }}>
         <MessageStrip design="Information" hideCloseButton>
-          A Shoot is an optional Gardener resource provided by Apeiro Integration {flavor}. The manifest
-          below is pre-filled with a ready-to-use default; edit it as needed, or clear it to fall
-          back to the operator's built-in default template.
+          The provider uses its configured default for this {flavor} Shoot. Enter a custom Gardener
+          Shoot manifest only when needed.
         </MessageStrip>
 
         <FlexBox direction={FlexBoxDirection.Column} style={{ gap: '0.35rem' }}>
@@ -102,7 +101,7 @@ export const CreateShootDialog = ({
         </FlexBox>
 
         <FlexBox direction={FlexBoxDirection.Column} style={{ gap: '0.35rem' }}>
-          <Label>Gardener Shoot manifest</Label>
+          <Label>Gardener Shoot manifest (optional)</Label>
           <TextArea
             value={spec}
             rows={12}
