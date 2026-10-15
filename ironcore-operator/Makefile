@@ -1,6 +1,6 @@
 IMG ?= simple-cluster-operator-ironcore:dev
 
-CONTROLLER_GEN ?= /home/marek-sap/SAP/workspace/showroom-msp-dati/operator/bin/controller-gen-v0.19.0
+CONTROLLER_GEN ?= go run sigs.k8s.io/controller-tools/cmd/controller-gen@v0.19.0
 
 .PHONY: build
 build:
