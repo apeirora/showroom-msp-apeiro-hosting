@@ -29,6 +29,11 @@ spec:
       origin: service
       kind: Secret
       object:
+        # Related Secrets live in the physical primary namespace and in the
+        # consuming account's default namespace. Both sides need an explicit map.
+        namespace:
+          template:
+            template: '{{`{{ if eq .Side "service" }}{{ .Object.metadata.namespace }}{{ else }}default{{ end }}`}}'
         reference:
           path: status.kubeconfigSecretRef.name
   {{- if $ck.enabled }}
@@ -39,15 +44,10 @@ spec:
       origin: kcp
       kind: Secret
       object:
-        # The CR is projected cluster-scoped in KCP, so the related object's
-        # namespace must be set explicitly. Destination (service-cluster)
-        # namespace is the CR's namespace (the ClusterName template below).
-        # NOTE: the source-side (KCP) namespace mapping for a cluster-scoped
-        # primary must be validated against a live api-syncagent before relying
-        # on this in production.
+        # Use the same map in reverse for a client Secret from KCP.
         namespace:
           template:
-            template: "{{`{{ .ClusterName }}`}}"
+            template: '{{`{{ if eq .Side "service" }}{{ .Object.metadata.namespace }}{{ else }}default{{ end }}`}}'
         template:
           template: {{ $ck.secretName | quote }}
   {{- end }}
