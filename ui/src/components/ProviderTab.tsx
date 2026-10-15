@@ -3,7 +3,7 @@ import {
   FlexBox,
   FlexBoxDirection,
   MessageStrip,
-  Toast
+  Toast,
 } from '@ui5/webcomponents-react';
 
 import { ShootList, type ShootAction } from './ShootList';
@@ -17,6 +17,8 @@ import type { ProviderShoot } from '../types';
 const POLL_INTERVAL_MS = 5000;
 
 interface Props {
+  detailName: string | null;
+  onView: (name: string | null) => void;
   // GraphQL client resolved from the portal context.
   client: GraphqlClientOptions;
   // Whether the portal has already provided a gateway URL.
@@ -33,7 +35,16 @@ interface Props {
 
 // One self-contained Shoot page (list + create + delete + detail), bound to a
 // single Kind via `api`. Two of these are mounted side by side under the tabs.
-export const ProviderTab = ({ client, ready, api, flavor, defaultName, defaultSpec }: Props) => {
+export const ProviderTab = ({
+  client,
+  ready,
+  api,
+  flavor,
+  defaultName,
+  defaultSpec,
+  detailName,
+  onView,
+}: Props) => {
   const [shoots, setShoots] = useState<ProviderShoot[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,16 +67,17 @@ export const ProviderTab = ({ client, ready, api, flavor, defaultName, defaultSp
   const subscriptionActiveRef = useRef(false);
 
   const reload = useCallback(async () => {
-    if (!ready) return;
+    if (!ready || client.signal?.aborted) return;
     setLoading(true);
     try {
       const items = await api.list(client);
+      if (client.signal?.aborted) return;
       setShoots(items);
       setError(null);
     } catch (err) {
-      setError((err as Error).message);
+      if (!client.signal?.aborted) setError((err as Error).message);
     } finally {
-      setLoading(false);
+      if (!client.signal?.aborted) setLoading(false);
     }
   }, [api, client, ready]);
 
@@ -75,13 +87,14 @@ export const ProviderTab = ({ client, ready, api, flavor, defaultName, defaultSp
 
   // Auto-refresh: prefer graphql-sse subscriptions; fall back to polling.
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || client.signal?.aborted) return;
 
     let reloadQueued = false;
     const queueReload = () => {
       if (reloadQueued) return;
       reloadQueued = true;
       queueMicrotask(() => {
+        if (client.signal?.aborted) return;
         reloadQueued = false;
         void reload();
       });
@@ -104,36 +117,42 @@ export const ProviderTab = ({ client, ready, api, flavor, defaultName, defaultSp
   }, [api, client, ready, reload]);
 
   const handleCreate = async (values: CreateValues) => {
+    if (client.signal?.aborted) return;
     setCreateBusy(true);
     try {
       await api.create(client, { name: values.name, spec: values.spec });
+      if (client.signal?.aborted) return;
       setCreateOpen(false);
       await reload();
     } catch (err) {
-      setError(`Create failed: ${(err as Error).message}`);
+      if (!client.signal?.aborted)
+        setError(`Create failed: ${(err as Error).message}`);
     } finally {
-      setCreateBusy(false);
+      if (!client.signal?.aborted) setCreateBusy(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!deleteTarget) return;
+    if (!deleteTarget || client.signal?.aborted) return;
     setDeleteBusy(true);
     try {
       await api.remove(client, deleteTarget.metadata.name);
+      if (client.signal?.aborted) return;
       setDeleteTarget(null);
       await reload();
     } catch (err) {
-      setError(`Delete failed: ${(err as Error).message}`);
+      if (!client.signal?.aborted)
+        setError(`Delete failed: ${(err as Error).message}`);
     } finally {
-      setDeleteBusy(false);
+      if (!client.signal?.aborted) setDeleteBusy(false);
     }
   };
 
   const handleAction = (action: ShootAction, shoot: ProviderShoot) => {
+    if (client.signal?.aborted) return;
     switch (action) {
       case 'view':
-        setDetailTarget(shoot);
+        onView(shoot.metadata.name);
         break;
       case 'delete':
         flashToast(`Confirm delete for ${shoot.metadata.name}…`);
@@ -142,10 +161,23 @@ export const ProviderTab = ({ client, ready, api, flavor, defaultName, defaultSp
     }
   };
 
+  useEffect(() => {
+    setDetailTarget(
+      detailName
+        ? (shoots.find((s) => s.metadata.name === detailName) ?? null)
+        : null,
+    );
+  }, [detailName, shoots]);
+
   return (
     <FlexBox
       direction={FlexBoxDirection.Column}
-      style={{ gap: '1rem', maxWidth: 1200, margin: '0 auto', padding: '1.25rem 0' }}
+      style={{
+        gap: '1rem',
+        maxWidth: 1200,
+        margin: '0 auto',
+        padding: '1.25rem 0',
+      }}
     >
       {error && (
         <MessageStrip design="Negative" onClose={() => setError(null)}>
@@ -181,10 +213,14 @@ export const ProviderTab = ({ client, ready, api, flavor, defaultName, defaultSp
       <ShootDetail
         open={Boolean(detailTarget)}
         shoot={detailTarget}
-        onClose={() => setDetailTarget(null)}
+        onClose={() => onView(null)}
       />
 
-      <Toast open={toastOpen} duration={3000} onClose={() => setToastOpen(false)}>
+      <Toast
+        open={toastOpen}
+        duration={3000}
+        onClose={() => setToastOpen(false)}
+      >
         {toastText}
       </Toast>
     </FlexBox>

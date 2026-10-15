@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   BusyIndicator,
   FlexBox,
@@ -6,9 +6,10 @@ import {
   FlexBoxDirection,
   FlexBoxJustifyContent,
   IllustratedMessage,
+  MessageStrip,
   ShellBar,
   Tab,
-  TabContainer
+  TabContainer,
 } from '@ui5/webcomponents-react';
 import '@ui5/webcomponents-fiori/dist/illustrations/UnableToLoad.js';
 
@@ -17,7 +18,8 @@ import { VmView } from './components/VmView';
 import {
   emptyRuntimeContext,
   subscribeToLuigi,
-  type RuntimeContext
+  navigateToShoot,
+  type RuntimeContext,
 } from './lib/luigi';
 import type { GraphqlClientOptions } from './lib/graphql';
 import { ironcoreShootApi, openstackShootApi } from './lib/shoot';
@@ -28,7 +30,8 @@ import { ironcoreShootApi, openstackShootApi } from './lib/shoot';
 type Route = 'shoots' | 'vms';
 
 const routeFromHash = (): Route =>
-  typeof window !== 'undefined' && window.location.hash.replace(/^#\/?/, '') === 'vms'
+  typeof window !== 'undefined' &&
+  window.location.hash.replace(/^#\/?/, '') === 'vms'
     ? 'vms'
     : 'shoots';
 
@@ -52,15 +55,30 @@ const App = () => {
   const [ctx, setCtx] = useState<RuntimeContext>(emptyRuntimeContext);
   const route = useRoute();
 
-  useEffect(() => subscribeToLuigi(setCtx), []);
+  const controller = useRef(new AbortController());
+  const [shootKind, setShootKind] = useState('openstack');
+  const [navigationError, setNavigationError] = useState<string | null>(null);
+  useEffect(
+    () =>
+      subscribeToLuigi((next) => {
+        controller.current.abort();
+        controller.current = new AbortController();
+        setNavigationError(null);
+        setCtx(next);
+        if (next.shootKind) setShootKind(next.shootKind);
+      }),
+    [],
+  );
+  useEffect(() => () => controller.current.abort(), []);
 
   const client: GraphqlClientOptions = useMemo(
     () => ({
       graphqlUrl: ctx.graphqlUrl ?? '',
       token: ctx.token,
-      workspacePath: ctx.workspacePath
+      workspacePath: ctx.workspacePath,
+      signal: controller.current.signal,
     }),
-    [ctx.graphqlUrl, ctx.token, ctx.workspacePath]
+    [ctx],
   );
 
   if (ctx.source === 'pending') {
@@ -77,7 +95,7 @@ const App = () => {
     );
   }
 
-  if (!ctx.graphqlUrl) {
+  if (!ctx.graphqlUrl || !ctx.workspacePath) {
     return (
       <IllustratedMessage
         name="UnableToLoad"
@@ -87,17 +105,32 @@ const App = () => {
     );
   }
 
-  const ready = Boolean(ctx.graphqlUrl);
+  const ready = Boolean(ctx.graphqlUrl && ctx.workspacePath);
+  const viewShoot = (name: string | null, kind: string) => {
+    void navigateToShoot(name, kind, client.signal).catch((error: Error) => {
+      if (!client.signal?.aborted) setNavigationError(error.message);
+    });
+  };
 
   if (route === 'vms') {
     return (
       <FlexBox direction={FlexBoxDirection.Column} style={{ height: '100vh' }}>
-        <ShellBar primaryTitle="IronCore VMs" secondaryTitle="Apeiro Integration" />
-        <div style={{ flex: 1, overflow: 'auto', background: 'var(--sapBackgroundColor)' }}>
+        <ShellBar
+          primaryTitle="IronCore VMs"
+          secondaryTitle="Apeiro Integration"
+        />
+        <div
+          style={{
+            flex: 1,
+            overflow: 'auto',
+            background: 'var(--sapBackgroundColor)',
+          }}
+        >
           <VmView
+            key={`${ctx.workspacePath}:${ctx.namespace}`}
             client={client}
             namespace={ctx.namespace}
-            ready={Boolean(ctx.graphqlUrl && ctx.namespace)}
+            ready={ready}
           />
         </div>
       </FlexBox>
@@ -111,12 +144,29 @@ const App = () => {
         style={{
           flex: 1,
           overflow: 'auto',
-          background: 'var(--sapBackgroundColor)'
+          background: 'var(--sapBackgroundColor)',
         }}
       >
-        <TabContainer contentBackgroundDesign="Transparent">
-          <Tab text="OpenStack" selected>
+        {navigationError && (
+          <MessageStrip design="Negative" hideCloseButton>
+            {navigationError}
+          </MessageStrip>
+        )}
+        <TabContainer
+          contentBackgroundDesign="Transparent"
+          onTabSelect={(event) =>
+            setShootKind(
+              event.detail.tab.text === 'IronCore' ? 'ironcore' : 'openstack',
+            )
+          }
+        >
+          <Tab text="OpenStack" selected={shootKind === 'openstack'}>
             <ProviderTab
+              key={`${ctx.workspacePath}:openstack`}
+              detailName={ctx.shootKind === 'ironcore' ? null : ctx.shootName}
+              onView={(name) => {
+                viewShoot(name, 'openstack');
+              }}
               client={client}
               ready={ready}
               api={openstackShootApi}
@@ -125,8 +175,13 @@ const App = () => {
               defaultSpec={OPENSTACK_DEFAULT_SPEC}
             />
           </Tab>
-          <Tab text="IronCore">
+          <Tab text="IronCore" selected={shootKind === 'ironcore'}>
             <ProviderTab
+              key={`${ctx.workspacePath}:ironcore`}
+              detailName={ctx.shootKind === 'ironcore' ? ctx.shootName : null}
+              onView={(name) => {
+                viewShoot(name, 'ironcore');
+              }}
               client={client}
               ready={ready}
               api={ironcoreShootApi}
