@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.38.3](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.2...v0.38.3) (2026-10-15)
+
+
+### Bug Fixes
+
+* use configured Shoot defaults and map related Secret namespaces ([#52](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/52)) ([9068462](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/90684626123e8dbab3a3170eb129ac557087215c))
+
 ## [0.38.2](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.1...v0.38.2) (2026-10-14)
 
 
