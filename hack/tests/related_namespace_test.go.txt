@@ -66,10 +66,7 @@ func TestHostedPublishedResourceRelatedNamespace(t *testing.T) {
 						unstructured.SetNestedField(local.Object, "same-secret", parts...)
 						secretName := "same-secret"
 						if rel.Identifier == "client-kubeconfig" {
-							secretName = "sap-gardener-kubeconfig"
-							if os.Getenv("HOSTED_PROVIDER_LINE") == "apeiro" {
-								secretName = "apeiro-gardener-kubeconfig"
-							}
+							secretName = "apeiro-gardener-kubeconfig"
 						}
 						secret := func(ns string) *unstructured.Unstructured {
 							return newUnstructured(&corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: secretName, Namespace: ns}}, withKind("Secret"))
