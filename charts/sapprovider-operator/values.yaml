@@ -20,6 +20,8 @@ namespaceScpc:
   sapExportName: sap.eu
 
 scpc:
+  # Enable only after the SimpleCluster account target and SAP claim are ready.
+  ironCoreKCPAccount: false
   # Required landscape configuration. See examples/garden-dev.yaml.
   ironcore:
     shootAnnotations: {}

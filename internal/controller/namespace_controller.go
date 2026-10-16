@@ -57,6 +57,8 @@ type NamespaceReconciler struct {
 	client.Client
 	Scheme           *runtime.Scheme
 	IronCoreManifest []byte
+	// IronCoreKCPAccount selects the SimpleCluster account target for IronCore only.
+	IronCoreKCPAccount bool
 	// KubeconfigSource is the source for the Gardener kubeconfig the SCPCs
 	// target: "global" (shared admin Secret) or "kcp" (per-account Secret in
 	// the account namespace).
@@ -99,7 +101,7 @@ func (r *NamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		if f.scpcName == ironcoreSCPCName && len(r.IronCoreManifest) > 0 {
 			f.manifest = r.IronCoreManifest
 		}
-		scpc, err := renderSCPC(f, ns.Name)
+		scpc, err := renderSCPC(f, ns.Name, r.IronCoreKCPAccount)
 		if err != nil {
 			return ctrl.Result{RequeueAfter: providerRequeue}, err
 		}
