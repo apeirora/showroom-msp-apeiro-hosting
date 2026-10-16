@@ -231,3 +231,18 @@ is [REUSE](https://reuse.software/) compliant; see [REUSE.toml](REUSE.toml) and
     <img src="docs/assets/eu-funded.svg" alt="Funded by the European Union -- NextGenerationEU. Supported by the Federal Ministry for Economic Affairs and Energy on the basis of a decision by the German Bundestag." width="400" />
   </a>
 </p>
+
+### IronCore account target for SimpleCluster
+
+The SAP `0.37` line supports the optional value `scpc.ironCoreKCPAccount: true`.
+It sets `spec.target.kcpAccount: true` on the namespace-owned IronCore SimpleClusterProviderConfig.
+The child is cluster-scoped in the account. Its kubeconfig Secret uses account namespace `default`.
+The operator continues to own the provider configuration. Do not add another GitOps owner for it.
+
+The value defaults to `false`. OpenStack and the default local target keep their current behavior.
+Enable it only after the SimpleCluster account client, provider credential, SAP permission claim, and account acceptance are ready.
+Existing local children need the reviewed legacy parent UID exception until their separate recreation is complete.
+This switch does not adopt an existing child.
+
+The related Secret namespace mapping is already present in `0.37.4` (PR #51).
+The `apeiro.eu` migration on `main` is separate. This option retains `sap.eu`.

@@ -35,6 +35,7 @@ spec:
             - /manager
           args:
             - {{ printf "--secret-reference-allowlist=%s" (include "sapprovider-operator.secretReferenceAllowlist" .) | quote }}
+            - --ironcore-kcp-account={{ .Values.scpc.ironCoreKCPAccount }}
             - --ironcore-config=/etc/sap-provider/ironcore.yaml
             - --metrics-bind-address=:8443
             - --health-probe-bind-address=:8081

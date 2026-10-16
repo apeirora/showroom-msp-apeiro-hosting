@@ -94,7 +94,9 @@ func main() {
 	var ironcoreConfigPath string
 	flag.StringVar(&ironcoreConfigPath, "ironcore-config", "",
 		"Required path to the IronCore landscape configuration (chart scpc.ironcore).")
-	var enableNamespaceSCPC bool
+	var enableNamespaceSCPC, ironCoreKCPAccount bool
+	flag.BoolVar(&ironCoreKCPAccount, "ironcore-kcp-account", false,
+		"Use the SimpleCluster KCP account target for IronCoreShoot.")
 	var simpleClusterExportName, sapExportName string
 	flag.BoolVar(&enableNamespaceSCPC, "enable-namespace-scpc", true,
 		"Enable the NamespaceReconciler that creates both SAP Integration SCPCs on bind (account namespace annotated "+
@@ -277,6 +279,7 @@ func main() {
 			GlobalKubeconfigSecretNamespace: globalKubeconfigSecretNamespace,
 			ClientKubeconfigSecretName:      clientKubeconfigSecretName,
 			IronCoreManifest:                ironcoreManifest,
+			IronCoreKCPAccount:              ironCoreKCPAccount,
 			SimpleClusterExportName:         simpleClusterExportName,
 			SapExportName:                   sapExportName,
 		}).SetupWithManager(mgr); err != nil {

@@ -124,7 +124,7 @@ func checkGardenDevManifest(t *testing.T, data []byte) {
 	if len(zones) != 3 {
 		t.Fatal(zones)
 	}
-	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account")
+	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account", false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -152,6 +152,14 @@ func TestIronCoreChartRender(t *testing.T) {
 	output, err = exec.Command("helm", "template", "test", chart, "-f", chart+"/examples/garden-dev.yaml").CombinedOutput()
 	if err != nil {
 		t.Fatalf("%s: %v", output, err)
+	}
+	if !strings.Contains(string(output), "--ironcore-kcp-account=false") {
+		t.Fatal("account target must remain disabled by default")
+	}
+	accountOutput, err := exec.Command("helm", "template", "test", chart, "-f", chart+"/examples/garden-dev.yaml",
+		"--set", "scpc.ironCoreKCPAccount=true").CombinedOutput()
+	if err != nil || !strings.Contains(string(accountOutput), "--ironcore-kcp-account=true") {
+		t.Fatalf("account target flag is absent: %s (%v)", accountOutput, err)
 	}
 	var configData string
 	for _, doc := range strings.Split(string(output), "\n---") {
@@ -238,7 +246,7 @@ func TestIronCoreExplicitMachineAndExtraSettings(t *testing.T) {
 			t.Fatalf("%s = %q (%v)", path, got, err)
 		}
 	}
-	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account")
+	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account", false)
 	if err != nil {
 		t.Fatal(err)
 	}
