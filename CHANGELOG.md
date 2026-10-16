@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.37.5](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.37.4...v0.37.5) (2026-10-16)
+
+
+### Bug Fixes
+
+* **hosting:** Add optional IronCore account target ([#60](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/60)) ([afe0257](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/afe0257078a25b13426bf46424a5625922a74eff))
+
 ## [0.37.4](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.37.3...v0.37.4) (2026-10-15)
 
 
