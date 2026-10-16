@@ -17,8 +17,8 @@ build-time tooling and are not part of any shipped artefact.
 
 ## Summary
 
-- **165** distinct third-party dependencies across **3** published components.
-- Licences in use: `Apache-2.0` (67), `MIT` (38), `BSD-3-Clause` (31), `Apache-2.0 AND BSD-3-Clause` (18), `Apache-2.0 AND MIT` (4), `Apache-2.0 AND BSD-3-Clause AND MIT` (3), `ISC` (2), `BSD-2-Clause` (1), `Unlicense OR Apache-2.0` (1).
+- **161** distinct third-party dependencies across **3** published components.
+- Licences in use: `Apache-2.0` (65), `MIT` (36), `BSD-3-Clause` (31), `Apache-2.0 AND BSD-3-Clause` (18), `Apache-2.0 AND MIT` (4), `Apache-2.0 AND BSD-3-Clause AND MIT` (3), `ISC` (2), `BSD-2-Clause` (1), `Unlicense OR Apache-2.0` (1).
 - **No copyleft dependencies.** Every licence above is permissive (Apache-2.0, BSD, MIT, ISC), so redistribution under Apache-2.0 carries no source-disclosure obligation.
 
 ## Obligations
@@ -54,7 +54,7 @@ in the Go module cache and is recorded in `OVERRIDES` in
 
 ## Full inventory
 
-### Apache-2.0 (67)
+### Apache-2.0 (65)
 
 | Dependency | Version | Used by |
 |---|---|---|
@@ -75,23 +75,21 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `github.com/go-logr/logr` | `v1.4.4` | apeiro-provider-operator |
 | `github.com/go-logr/stdr` | `v1.2.2` | apeiro-provider-operator |
 | `github.com/go-logr/zapr` | `v1.3.0` | apeiro-provider-operator, ironcore-operator |
-| `github.com/go-openapi/jsonpointer` | `v0.21.0` | apeiro-provider-operator |
-| `github.com/go-openapi/jsonpointer` | `v0.22.1` | ironcore-operator |
+| `github.com/go-openapi/jsonpointer` | `v1.0.1` | apeiro-provider-operator, ironcore-operator |
 | `github.com/go-openapi/jsonreference` | `v0.20.2` | apeiro-provider-operator |
 | `github.com/go-openapi/jsonreference` | `v0.21.2` | ironcore-operator |
-| `github.com/go-openapi/swag` | `v0.23.0` | apeiro-provider-operator |
-| `github.com/go-openapi/swag` | `v0.25.1` | ironcore-operator |
-| `github.com/go-openapi/swag/cmdutils` | `v0.25.1` | ironcore-operator |
-| `github.com/go-openapi/swag/conv` | `v0.25.1` | ironcore-operator |
-| `github.com/go-openapi/swag/fileutils` | `v0.25.1` | ironcore-operator |
-| `github.com/go-openapi/swag/jsonname` | `v0.25.1` | ironcore-operator |
-| `github.com/go-openapi/swag/jsonutils` | `v0.25.1` | ironcore-operator |
-| `github.com/go-openapi/swag/loading` | `v0.25.1` | ironcore-operator |
-| `github.com/go-openapi/swag/mangling` | `v0.25.1` | ironcore-operator |
-| `github.com/go-openapi/swag/netutils` | `v0.25.1` | ironcore-operator |
-| `github.com/go-openapi/swag/stringutils` | `v0.25.1` | ironcore-operator |
-| `github.com/go-openapi/swag/typeutils` | `v0.25.1` | ironcore-operator |
-| `github.com/go-openapi/swag/yamlutils` | `v0.25.1` | ironcore-operator |
+| `github.com/go-openapi/swag` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-openapi/swag/cmdutils` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-openapi/swag/conv` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-openapi/swag/fileutils` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-openapi/swag/jsonutils` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-openapi/swag/loading` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-openapi/swag/mangling` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-openapi/swag/netutils` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-openapi/swag/pools` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-openapi/swag/stringutils` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-openapi/swag/typeutils` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-openapi/swag/yamlutils` | `v0.29.2` | apeiro-provider-operator, ironcore-operator |
 | `github.com/google/btree` | `v1.1.3` | apeiro-provider-operator, ironcore-operator |
 | `github.com/google/gnostic-models` | `v0.7.0` | apeiro-provider-operator, ironcore-operator |
 | `github.com/inconshreveable/mousetrap` | `v1.1.0` | apeiro-provider-operator |
@@ -126,7 +124,7 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `sigs.k8s.io/randfill` | `v1.0.0` | apeiro-provider-operator, ironcore-operator |
 | `sigs.k8s.io/structured-merge-diff/v6` | `v6.3.0` | apeiro-provider-operator, ironcore-operator |
 
-### MIT (38)
+### MIT (36)
 
 | Dependency | Version | Used by |
 |---|---|---|
@@ -152,9 +150,7 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `github.com/felixge/httpsnoop` | `v1.0.4` | apeiro-provider-operator |
 | `github.com/fxamacker/cbor/v2` | `v2.9.0` | apeiro-provider-operator, ironcore-operator |
 | `github.com/go-task/slim-sprig/v3` | `v3.0.0` | apeiro-provider-operator |
-| `github.com/josharian/intern` | `v1.0.0` | apeiro-provider-operator |
 | `github.com/json-iterator/go` | `v1.1.12` | apeiro-provider-operator, ironcore-operator |
-| `github.com/mailru/easyjson` | `v0.7.7` | apeiro-provider-operator |
 | `github.com/onsi/ginkgo/v2` | `v2.22.0` | apeiro-provider-operator |
 | `github.com/onsi/gomega` | `v1.36.1` | apeiro-provider-operator |
 | `github.com/x448/float16` | `v0.8.4` | apeiro-provider-operator, ironcore-operator |
@@ -234,7 +230,7 @@ in the Go module cache and is recorded in `OVERRIDES` in
 |---|---|---|
 | `go.yaml.in/yaml/v2` | `v2.4.2` | apeiro-provider-operator |
 | `go.yaml.in/yaml/v2` | `v2.4.3` | ironcore-operator |
-| `go.yaml.in/yaml/v3` | `v3.0.4` | apeiro-provider-operator, ironcore-operator |
+| `go.yaml.in/yaml/v3` | `v3.0.5` | apeiro-provider-operator, ironcore-operator |
 | `gopkg.in/yaml.v3` | `v3.0.1` | apeiro-provider-operator |
 
 ### Apache-2.0 AND BSD-3-Clause AND MIT (3)
