@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.38.4](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.3...v0.38.4) (2026-10-22)
+
+
+### Bug Fixes
+
+* bump vulnerable dependencies (swag, vitest, nanoid, postcss, source-map-js) ([#62](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/62)) ([004c46e](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/004c46e883a0a477e4dbe3cca6e920b8e8f18d36))
+* **controller:** restore account mode and adopt existing Shoots ([#65](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/65)) ([e1dc88c](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/e1dc88ccf76386dd4389b3e200836a85496d5901))
+* **controller:** use account children for both hosting flavors ([#66](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/66)) ([0809964](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/080996472edf8206a8b488bda89fd3cdc875174c))
+
 ## [0.38.3](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.2...v0.38.3) (2026-10-15)
 
 
