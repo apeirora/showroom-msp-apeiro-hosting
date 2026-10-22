@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -146,6 +147,10 @@ func (r *ShootReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	shootName := gardenShootName(r.KindName, sh.GetNamespace(), sh.GetName())
 	live, err := g.GetShoot(ctx, shootName)
 	if apierrors.IsNotFound(err) {
+		if sh.GetAnnotations()[AdoptShootUIDAnnotation] != "" {
+			adoptionErr := fmt.Errorf("adoption requires the existing Gardener Shoot: %w", err)
+			return ctrl.Result{}, errors.Join(adoptionErr, r.patchStatus(ctx, sh, scpcPresent, phaseFailed, "ShootAdoptionFailed", adoptionErr.Error()))
+		}
 		if err := r.createShoot(ctx, g, sh, shootName); err != nil {
 			return ctrl.Result{RequeueAfter: providerRequeue},
 				r.patchStatus(ctx, sh, scpcPresent, phaseFailed, "ShootCreateFailed", err.Error())
@@ -157,6 +162,10 @@ func (r *ShootReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	}
 	if err != nil {
 		return ctrl.Result{}, err
+	}
+
+	if err := r.adoptShoot(ctx, g, sh, live); err != nil {
+		return ctrl.Result{}, errors.Join(err, r.patchStatus(ctx, sh, scpcPresent, phaseFailed, "ShootAdoptionFailed", err.Error()))
 	}
 
 	phase, message := shootPhase(live)
@@ -303,7 +312,18 @@ func (r *ShootReconciler) reconcileDelete(ctx context.Context, sh FlavorShoot) (
 	}
 
 	shootName := gardenShootName(r.KindName, sh.GetNamespace(), sh.GetName())
-	gone, err := g.DeleteShoot(ctx, shootName)
+	var gone bool
+	if uid := sh.GetAnnotations()[AdoptShootUIDAnnotation]; uid != "" {
+		guarded, ok := g.(interface {
+			DeleteShootWithUID(context.Context, string, string) (bool, error)
+		})
+		if !ok {
+			return ctrl.Result{}, fmt.Errorf("Gardener client does not support adopted Shoot deletion")
+		}
+		gone, err = guarded.DeleteShootWithUID(ctx, shootName, uid)
+	} else {
+		gone, err = g.DeleteShoot(ctx, shootName)
+	}
 	if err != nil {
 		return ctrl.Result{}, err
 	}

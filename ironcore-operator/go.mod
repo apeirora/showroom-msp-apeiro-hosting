@@ -1,6 +1,6 @@
 module github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator
 
-go 1.26.9
+go 1.26.10
 
 require (
 	github.com/ironcore-dev/ironcore v0.3.0

@@ -231,3 +231,5 @@ is [REUSE](https://reuse.software/) compliant; see [REUSE.toml](REUSE.toml) and
     <img src="docs/assets/eu-funded.svg" alt="Funded by the European Union -- NextGenerationEU. Supported by the Federal Ministry for Economic Affairs and Energy on the basis of a decision by the German Bundestag." width="400" />
   </a>
 </p>
+
+Account mode and migration: [Account mode and Shoot adoption](docs/account-mode-and-adoption.md).
