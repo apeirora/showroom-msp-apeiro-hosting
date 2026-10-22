@@ -26,8 +26,8 @@ func (r *ShootReconciler) validateAdoption(sh FlavorShoot, live *unstructured.Un
 	if expected == "" {
 		return nil
 	}
-	if r.KindName != "IronCoreShoot" {
-		return fmt.Errorf("shoot adoption supports only IronCoreShoot")
+	if r.KindName != "IronCoreShoot" && r.KindName != "OpenStackShoot" {
+		return fmt.Errorf("shoot adoption supports only IronCoreShoot and OpenStackShoot")
 	}
 	if string(live.GetUID()) != expected || live.GetNamespace() != r.defaults.targetNamespace ||
 		live.GetName() != gardenShootName(r.KindName, sh.GetNamespace(), sh.GetName()) ||

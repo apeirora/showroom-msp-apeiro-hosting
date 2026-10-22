@@ -20,8 +20,6 @@ namespaceScpc:
   apeiroExportName: apeiro.eu
 
 scpc:
-  # Create cluster-scoped IronCoreShoot children in each KCP account.
-  ironCoreKCPAccount: false
   # Required landscape configuration. See examples/garden-dev.yaml.
   ironcore:
     shootAnnotations: {}

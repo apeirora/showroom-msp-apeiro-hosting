@@ -34,7 +34,6 @@ spec:
           command:
             - /manager
           args:
-            - --ironcore-kcp-account={{ .Values.scpc.ironCoreKCPAccount }}
             - {{ printf "--secret-reference-allowlist=%s" (include "apeiroprovider-operator.secretReferenceAllowlist" .) | quote }}
             - --ironcore-config=/etc/apeiro-provider/ironcore.yaml
             - --metrics-bind-address=:8443

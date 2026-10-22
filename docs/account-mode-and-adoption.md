@@ -1,17 +1,15 @@
-# Account mode and Shoot adoption
+# Account children and Shoot adoption
 
-Set `scpc.ironCoreKCPAccount: true` to create IronCoreShoot children in the KCP account workspace.
-The chart passes `--ironcore-kcp-account=true` to the controller.
-The default is false.
-OpenStack SCPCs keep their local target.
+Both IronCore and OpenStack SCPCs create children in the account workspace.
+SimpleCluster uses the account as its only destination. No SCPC destination flag is required.
 
-Account mode requires a SimpleCluster release that accepts `apeiro.eu/v1alpha1` children.
+This configuration requires a SimpleCluster release with the universal account destination.
 The account must bind the SimpleCluster and Apeiro exports.
 The sync agent projects the account child into the account namespace on the service cluster.
 The kubeconfig Secret returns to namespace `default` in the account.
-Do not change an existing SimpleCluster from account mode to local mode.
+Existing SimpleClusters need a reviewed account handoff before the new core controller resumes.
 
-For a migration, set `apeiro.eu/adopt-shoot-uid` on the new IronCoreShoot.
+For a migration, set `apeiro.eu/adopt-shoot-uid` on the new IronCoreShoot or OpenStackShoot.
 Use the UID of the real Gardener Shoot, not the UID of either IronCoreShoot object.
 Keep the same physical namespace and CR name.
 The controller derives the Shoot name from the kind, physical namespace, and CR name.

@@ -124,12 +124,12 @@ func checkGardenDevManifest(t *testing.T, data []byte) {
 	if len(zones) != 3 {
 		t.Fatal(zones)
 	}
-	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account", false)
+	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account")
 	if err != nil {
 		t.Fatal(err)
 	}
 	target, _, _ := unstructured.NestedString(scpc.Object, "spec", "target", "namespace")
-	if target != "{{ .SC.namespace }}" {
+	if target != "" {
 		t.Fatal(target)
 	}
 	resources, _, _ := unstructured.NestedSlice(scpc.Object, "spec", "resources")
@@ -238,7 +238,7 @@ func TestIronCoreExplicitMachineAndExtraSettings(t *testing.T) {
 			t.Fatalf("%s = %q (%v)", path, got, err)
 		}
 	}
-	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account", false)
+	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account")
 	if err != nil {
 		t.Fatal(err)
 	}
