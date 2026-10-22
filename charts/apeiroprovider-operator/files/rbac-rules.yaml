@@ -73,3 +73,16 @@
     - namespaces/finalizers
   verbs:
     - update
+
+- apiGroups: [""]
+  resources: ["namespaces/status"]
+  verbs: ["get", "patch", "update"]
+- apiGroups: ["apiextensions.k8s.io"]
+  resources: ["customresourcedefinitions"]
+  verbs: ["get"]
+- apiGroups: ["apis.kcp.io"]
+  resources: ["apibindings"]
+  verbs: ["get", "list"]
+- apiGroups: ["apis.kcp.io"]
+  resources: ["apiresourceschemas"]
+  verbs: ["get"]

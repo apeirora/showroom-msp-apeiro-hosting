@@ -42,3 +42,18 @@ Restore the old provider selection, secret owner references, and Shoot ownership
 Restore the old controller and sync path only after the new path stops.
 Orphan-delete the new objects with their provider controllers stopped.
 Rehearse the handoff and rollback on disposable resources before a live migration.
+
+## Release order and API contract gate
+
+Deploy the universal SimpleCluster core release before the hosting release.
+The SimpleClusterProviderConfig CRD must advertise `showroom.apeirora.eu/account-resource-contract: "1"` or a higher integer.
+For a KCP-bound SCPC API, the annotation must exist on the exact bound APIResourceSchema.
+The schema UID must match the binding's schema UID.
+Hosting reads this metadata from the API server that receives its SCPC writes.
+It does not read a SimpleCluster Deployment or depend on its cluster location.
+
+Hosting refuses all SCPC writes when the contract is absent, unreadable or below 1.
+It sets the namespace condition `HostingAccountContractReady=False` with reason `AccountContractRequired`.
+It retries without a local destination fallback.
+After the API upgrade, the condition becomes True and hosting writes account SCPCs.
+The provider credential needs read access to this API metadata and patch access to namespace status.

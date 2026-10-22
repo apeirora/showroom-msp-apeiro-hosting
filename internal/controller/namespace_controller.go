@@ -76,6 +76,10 @@ type NamespaceReconciler struct {
 
 // +kubebuilder:rbac:groups="",resources=namespaces,verbs=get;list;watch
 // +kubebuilder:rbac:groups="",resources=namespaces/finalizers,verbs=update
+// +kubebuilder:rbac:groups="",resources=namespaces/status,verbs=get;patch;update
+// +kubebuilder:rbac:groups=apiextensions.k8s.io,resources=customresourcedefinitions,verbs=get
+// +kubebuilder:rbac:groups=apis.kcp.io,resources=apibindings,verbs=get;list
+// +kubebuilder:rbac:groups=apis.kcp.io,resources=apiresourceschemas,verbs=get
 
 func (r *NamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := logf.FromContext(ctx)
@@ -87,6 +91,14 @@ func (r *NamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if !ns.DeletionTimestamp.IsZero() {
 		// The SCPCs are owned by the namespace and garbage-collected with it.
 		return ctrl.Result{}, nil
+	}
+
+	contractErr := r.accountContract(ctx)
+	if err := r.accountContractStatus(ctx, ns, contractErr); err != nil {
+		return ctrl.Result{}, err
+	}
+	if contractErr != nil {
+		return ctrl.Result{RequeueAfter: providerRequeue}, nil
 	}
 
 	exports := parseBindExports(ns.Annotations[bindExportsAnnotation])
