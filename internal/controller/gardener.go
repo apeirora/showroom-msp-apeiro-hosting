@@ -102,6 +102,15 @@ func (g *gardenerClient) CreateShoot(ctx context.Context, shoot *unstructured.Un
 }
 
 func (g *gardenerClient) DeleteShoot(ctx context.Context, name string) (bool, error) {
+	return g.deleteShoot(ctx, name, "")
+}
+
+// DeleteShootWithUID prevents deletion of a replacement after adoption.
+func (g *gardenerClient) DeleteShootWithUID(ctx context.Context, name, uid string) (bool, error) {
+	return g.deleteShoot(ctx, name, uid)
+}
+
+func (g *gardenerClient) deleteShoot(ctx context.Context, name, expectedUID string) (bool, error) {
 	live, err := g.GetShoot(ctx, name)
 	if apierrors.IsNotFound(err) {
 		return true, nil
@@ -109,15 +118,24 @@ func (g *gardenerClient) DeleteShoot(ctx context.Context, name string) (bool, er
 	if err != nil {
 		return false, err
 	}
+	if expectedUID != "" && string(live.GetUID()) != expectedUID {
+		return false, fmt.Errorf("Gardener Shoot UID differs from adopted identity")
+	}
 	if live.GetAnnotations()[shootDeletionConfirmation] != "true" {
-		patch := []byte(fmt.Sprintf(`{"metadata":{"annotations":{%q:"true"}}}`, shootDeletionConfirmation))
+		patch, err := json.Marshal(map[string]any{"metadata": map[string]any{
+			"uid": string(live.GetUID()), "resourceVersion": live.GetResourceVersion(),
+			"annotations": map[string]string{shootDeletionConfirmation: "true"},
+		}})
+		if err != nil {
+			return false, err
+		}
 		if _, err := g.dyn.Resource(shootGVR).Namespace(g.namespace).Patch(
 			ctx, name, types.MergePatchType, patch, metav1.PatchOptions{}); err != nil {
 			return false, err
 		}
 	}
 	if live.GetDeletionTimestamp().IsZero() {
-		if err := g.dyn.Resource(shootGVR).Namespace(g.namespace).Delete(ctx, name, metav1.DeleteOptions{}); err != nil && !apierrors.IsNotFound(err) {
+		if err := g.dyn.Resource(shootGVR).Namespace(g.namespace).Delete(ctx, name, metav1.DeleteOptions{Preconditions: &metav1.Preconditions{UID: ptrUID(live.GetUID())}}); err != nil && !apierrors.IsNotFound(err) {
 			return false, err
 		}
 	}
@@ -330,3 +348,5 @@ func decodeShootManifest(manifest []byte) (*unstructured.Unstructured, error) {
 	}
 	return shoot, nil
 }
+
+func ptrUID(uid types.UID) *types.UID { return &uid }

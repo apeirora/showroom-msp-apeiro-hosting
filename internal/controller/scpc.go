@@ -133,7 +133,7 @@ func resolveKubeconfigSecretRef(
 // in the skeleton's spec.target.namespace is consumed only by the Shoot
 // reconciler (parseFlavorDefaults); the operator reaches the garden itself, so
 // the ensured SCPC needs no kubeconfigSecretRef.
-func renderSCPC(f flavor, namespace string) (*unstructured.Unstructured, error) {
+func renderSCPC(f flavor, namespace string, ironCoreKCPAccount bool) (*unstructured.Unstructured, error) {
 	var obj map[string]interface{}
 	if err := yaml.Unmarshal(f.manifest, &obj); err != nil {
 		return nil, fmt.Errorf("unmarshal embedded SCPC manifest for %q: %w", f.scpcName, err)
@@ -154,5 +154,14 @@ func renderSCPC(f flavor, namespace string) (*unstructured.Unstructured, error) 
 	}
 	unstructured.RemoveNestedField(scpc.Object, "spec", "target", "kubeconfigSecretRef")
 
+	if ironCoreKCPAccount && f.scpcName == ironcoreSCPCName {
+		if err := unstructured.SetNestedField(scpc.Object, true, "spec", "target", "kcpAccount"); err != nil {
+			return nil, err
+		}
+		unstructured.RemoveNestedField(scpc.Object, "spec", "target", "namespace")
+		if err := unstructured.SetNestedField(scpc.Object, corev1.NamespaceDefault, "spec", "kubeconfigSource", "secretRef", "namespace"); err != nil {
+			return nil, err
+		}
+	}
 	return scpc, nil
 }

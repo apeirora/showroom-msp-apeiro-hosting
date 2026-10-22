@@ -91,6 +91,9 @@ func main() {
 		"'global' mode: namespace of the shared admin-managed Gardener kubeconfig Secret.")
 	flag.StringVar(&clientKubeconfigSecretName, "client-kubeconfig-secret-name", "apeiro-gardener-kubeconfig",
 		"'kcp' mode: name of the per-client kubeconfig Secret, looked up in the account's own namespace.")
+	var ironCoreKCPAccount bool
+	flag.BoolVar(&ironCoreKCPAccount, "ironcore-kcp-account", false,
+		"Create IronCoreShoot children in the KCP account workspace.")
 	var ironcoreConfigPath string
 	flag.StringVar(&ironcoreConfigPath, "ironcore-config", "",
 		"Required path to the IronCore landscape configuration (chart scpc.ironcore).")
@@ -277,6 +280,7 @@ func main() {
 			GlobalKubeconfigSecretNamespace: globalKubeconfigSecretNamespace,
 			ClientKubeconfigSecretName:      clientKubeconfigSecretName,
 			IronCoreManifest:                ironcoreManifest,
+			IronCoreKCPAccount:              ironCoreKCPAccount,
 			SimpleClusterExportName:         simpleClusterExportName,
 			ApeiroExportName:                apeiroExportName,
 		}).SetupWithManager(mgr); err != nil {
