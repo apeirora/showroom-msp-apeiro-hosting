@@ -57,8 +57,6 @@ type NamespaceReconciler struct {
 	client.Client
 	Scheme           *runtime.Scheme
 	IronCoreManifest []byte
-	// IronCoreKCPAccount selects cluster-scoped account children for IronCore.
-	IronCoreKCPAccount bool
 	// KubeconfigSource is the source for the Gardener kubeconfig the SCPCs
 	// target: "global" (shared admin Secret) or "kcp" (per-account Secret in
 	// the account namespace).
@@ -78,6 +76,10 @@ type NamespaceReconciler struct {
 
 // +kubebuilder:rbac:groups="",resources=namespaces,verbs=get;list;watch
 // +kubebuilder:rbac:groups="",resources=namespaces/finalizers,verbs=update
+// +kubebuilder:rbac:groups="",resources=namespaces/status,verbs=get;patch;update
+// +kubebuilder:rbac:groups=apiextensions.k8s.io,resources=customresourcedefinitions,verbs=get
+// +kubebuilder:rbac:groups=apis.kcp.io,resources=apibindings,verbs=get;list
+// +kubebuilder:rbac:groups=apis.kcp.io,resources=apiresourceschemas,verbs=get
 
 func (r *NamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := logf.FromContext(ctx)
@@ -91,6 +93,14 @@ func (r *NamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return ctrl.Result{}, nil
 	}
 
+	contractErr := r.accountContract(ctx)
+	if err := r.accountContractStatus(ctx, ns, contractErr); err != nil {
+		return ctrl.Result{}, err
+	}
+	if contractErr != nil {
+		return ctrl.Result{RequeueAfter: providerRequeue}, nil
+	}
+
 	exports := parseBindExports(ns.Annotations[bindExportsAnnotation])
 	bound := slices.Contains(exports, r.SimpleClusterExportName) && slices.Contains(exports, r.ApeiroExportName)
 	if !bound {
@@ -101,7 +111,7 @@ func (r *NamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		if f.scpcName == ironcoreSCPCName && len(r.IronCoreManifest) > 0 {
 			f.manifest = r.IronCoreManifest
 		}
-		scpc, err := renderSCPC(f, ns.Name, r.IronCoreKCPAccount)
+		scpc, err := renderSCPC(f, ns.Name)
 		if err != nil {
 			return ctrl.Result{RequeueAfter: providerRequeue}, err
 		}

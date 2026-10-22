@@ -23,6 +23,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/types"
@@ -99,6 +100,59 @@ var _ = Describe("Namespace Controller", func() {
 		Expect(err).NotTo(HaveOccurred())
 	}
 
+	It("blocks SCPC writes on an old API contract and reports readiness after the API upgrade", func() {
+		crd := &unstructured.Unstructured{}
+		crd.SetAPIVersion("apiextensions.k8s.io/v1")
+		crd.SetKind("CustomResourceDefinition")
+		key := types.NamespacedName{Name: "simpleclusterproviderconfigs.showroom.apeirora.eu"}
+		Expect(k8sClient.Get(ctx, key, crd)).To(Succeed())
+		annotations := crd.GetAnnotations()
+		original := annotations[accountContractAnnotation]
+		delete(annotations, accountContractAnnotation)
+		crd.SetAnnotations(annotations)
+		Expect(k8sClient.Update(ctx, crd)).To(Succeed())
+		DeferCleanup(func() {
+			Expect(k8sClient.Get(ctx, key, crd)).To(Succeed())
+			values := crd.GetAnnotations()
+			values[accountContractAnnotation] = original
+			crd.SetAnnotations(values)
+			Expect(k8sClient.Update(ctx, crd)).To(Succeed())
+		})
+		name := newNamespace(bothExports)
+		reconcileNS(name)
+		for _, scpcName := range allSCPCNames() {
+			_, err := getSCPC(name, scpcName)
+			Expect(apierrors.IsNotFound(err)).To(BeTrue())
+		}
+		ns := &corev1.Namespace{}
+		Expect(k8sClient.Get(ctx, types.NamespacedName{Name: name}, ns)).To(Succeed())
+		found := false
+		for _, condition := range ns.Status.Conditions {
+			if condition.Type == accountContractCondition {
+				found = true
+				Expect(condition.Status).To(Equal(corev1.ConditionFalse))
+				Expect(condition.Reason).To(Equal("AccountContractRequired"))
+			}
+		}
+		Expect(found).To(BeTrue())
+		Expect(k8sClient.Get(ctx, key, crd)).To(Succeed())
+		annotations = crd.GetAnnotations()
+		annotations[accountContractAnnotation] = "2"
+		crd.SetAnnotations(annotations)
+		Expect(k8sClient.Update(ctx, crd)).To(Succeed())
+		reconcileNS(name)
+		for _, scpcName := range allSCPCNames() {
+			_, err := getSCPC(name, scpcName)
+			Expect(err).NotTo(HaveOccurred())
+		}
+		Expect(k8sClient.Get(ctx, types.NamespacedName{Name: name}, ns)).To(Succeed())
+		for _, condition := range ns.Status.Conditions {
+			if condition.Type == accountContractCondition {
+				Expect(condition.Status).To(Equal(corev1.ConditionTrue))
+			}
+		}
+	})
+
 	It("creates both namespace-owned SCPCs when both exports are bound", func() {
 		name := newNamespace(bothExports)
 		reconcileNS(name)
@@ -118,7 +172,7 @@ var _ = Describe("Namespace Controller", func() {
 			// namespace; the operator reaches the garden itself, so the ensured
 			// SCPC carries no garden kubeconfig ref.
 			targetNS, _, _ := unstructured.NestedString(scpc.Object, "spec", "target", "namespace")
-			Expect(targetNS).To(Equal("{{ .SC.namespace }}"))
+			Expect(targetNS).To(BeEmpty())
 			_, hasRef, _ := unstructured.NestedMap(scpc.Object, "spec", "target", "kubeconfigSecretRef")
 			Expect(hasRef).To(BeFalse())
 
@@ -179,30 +233,22 @@ var _ = Describe("Namespace Controller", func() {
 		Expect(scpcShootTemplate(ic)).To(ContainSubstring("ironcore-infra"))
 		Expect(scpcShootTemplate(ic)).NotTo(ContainSubstring("wdf4-ora-dev"))
 	})
-	It("creates account SCPCs through the namespace caller and restores local mode", func() {
+	It("creates account SCPCs for both flavors without a destination flag", func() {
 		name := newNamespace(bothExports)
 		r := newReconciler()
-		r.IronCoreKCPAccount = true
 		_, err := r.Reconcile(ctx, reconcile.Request{NamespacedName: types.NamespacedName{Name: name}})
 		Expect(err).NotTo(HaveOccurred())
-		ic, err := getSCPC(name, ironcoreSCPCName)
-		Expect(err).NotTo(HaveOccurred())
-		account, _, err := unstructured.NestedBool(ic.Object, "spec", "target", "kcpAccount")
-		Expect(err).NotTo(HaveOccurred())
-		Expect(account).To(BeTrue())
-		os, err := getSCPC(name, openstackSCPCName)
-		Expect(err).NotTo(HaveOccurred())
-		_, found, err := unstructured.NestedFieldNoCopy(os.Object, "spec", "target", "kcpAccount")
-		Expect(err).NotTo(HaveOccurred())
-		Expect(found).To(BeFalse())
-		r.IronCoreKCPAccount = false
-		_, err = r.Reconcile(ctx, reconcile.Request{NamespacedName: types.NamespacedName{Name: name}})
-		Expect(err).NotTo(HaveOccurred())
-		ic, err = getSCPC(name, ironcoreSCPCName)
-		Expect(err).NotTo(HaveOccurred())
-		_, found, err = unstructured.NestedFieldNoCopy(ic.Object, "spec", "target", "kcpAccount")
-		Expect(err).NotTo(HaveOccurred())
-		Expect(found).To(BeFalse())
+		for _, flavor := range flavors {
+			scpc, err := getSCPC(name, flavor.scpcName)
+			Expect(err).NotTo(HaveOccurred())
+			for _, field := range []string{"namespace", "kcpAccount", "kubeconfigSecretRef"} {
+				_, found, err := unstructured.NestedFieldNoCopy(scpc.Object, "spec", "target", field)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(found).To(BeFalse())
+			}
+			namespace, _, err := unstructured.NestedString(scpc.Object, "spec", "kubeconfigSource", "secretRef", "namespace")
+			Expect(err).NotTo(HaveOccurred())
+			Expect(namespace).To(Equal("default"))
+		}
 	})
-
 })

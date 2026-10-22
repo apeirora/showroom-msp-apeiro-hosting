@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestAccountModeFlag(t *testing.T) {
+func TestAccountDestinationNeedsNoFlag(t *testing.T) {
 	if _, err := exec.LookPath("helm"); err != nil {
 		t.Skip("Helm is required; CI installs Helm")
 	}
@@ -16,8 +16,8 @@ func TestAccountModeFlag(t *testing.T) {
 		if err != nil {
 			t.Fatalf("helm: %v\n%s", err, output)
 		}
-		if !strings.Contains(string(output), "--ironcore-kcp-account="+mode) {
-			t.Fatalf("chart did not pass account mode %s", mode)
+		if strings.Contains(string(output), "--ironcore-kcp-account") {
+			t.Fatalf("chart still exposes a destination mode flag %s", mode)
 		}
 	}
 }

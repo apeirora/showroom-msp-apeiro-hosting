@@ -1,17 +1,15 @@
-# Account mode and Shoot adoption
+# Account children and Shoot adoption
 
-Set `scpc.ironCoreKCPAccount: true` to create IronCoreShoot children in the KCP account workspace.
-The chart passes `--ironcore-kcp-account=true` to the controller.
-The default is false.
-OpenStack SCPCs keep their local target.
+Both IronCore and OpenStack SCPCs create children in the account workspace.
+SimpleCluster uses the account as its only destination. No SCPC destination flag is required.
 
-Account mode requires a SimpleCluster release that accepts `apeiro.eu/v1alpha1` children.
+This configuration requires a SimpleCluster release with the universal account destination.
 The account must bind the SimpleCluster and Apeiro exports.
 The sync agent projects the account child into the account namespace on the service cluster.
 The kubeconfig Secret returns to namespace `default` in the account.
-Do not change an existing SimpleCluster from account mode to local mode.
+Existing SimpleClusters need a reviewed account handoff before the new core controller resumes.
 
-For a migration, set `apeiro.eu/adopt-shoot-uid` on the new IronCoreShoot.
+For a migration, set `apeiro.eu/adopt-shoot-uid` on the new IronCoreShoot or OpenStackShoot.
 Use the UID of the real Gardener Shoot, not the UID of either IronCoreShoot object.
 Keep the same physical namespace and CR name.
 The controller derives the Shoot name from the kind, physical namespace, and CR name.
@@ -44,3 +42,18 @@ Restore the old provider selection, secret owner references, and Shoot ownership
 Restore the old controller and sync path only after the new path stops.
 Orphan-delete the new objects with their provider controllers stopped.
 Rehearse the handoff and rollback on disposable resources before a live migration.
+
+## Release order and API contract gate
+
+Deploy the universal SimpleCluster core release before the hosting release.
+The SimpleClusterProviderConfig CRD must advertise `showroom.apeirora.eu/account-resource-contract: "1"` or a higher integer.
+For a KCP-bound SCPC API, the annotation must exist on the exact bound APIResourceSchema.
+The schema UID must match the binding's schema UID.
+Hosting reads this metadata from the API server that receives its SCPC writes.
+It does not read a SimpleCluster Deployment or depend on its cluster location.
+
+Hosting refuses all SCPC writes when the contract is absent, unreadable or below 1.
+It sets the namespace condition `HostingAccountContractReady=False` with reason `AccountContractRequired`.
+It retries without a local destination fallback.
+After the API upgrade, the condition becomes True and hosting writes account SCPCs.
+The provider credential needs read access to this API metadata and patch access to namespace status.

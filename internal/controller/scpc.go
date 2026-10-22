@@ -126,14 +126,9 @@ func resolveKubeconfigSecretRef(
 	}
 }
 
-// renderSCPC materialises one flavor's SCPC for an account namespace: it sets
-// the name/namespace, the managed-by label and points the SimpleCluster at the
-// account namespace so the flavor's provider CR (OpenStackShoot/IronCoreShoot)
-// is created locally on the service cluster. The garden project namespace kept
-// in the skeleton's spec.target.namespace is consumed only by the Shoot
-// reconciler (parseFlavorDefaults); the operator reaches the garden itself, so
-// the ensured SCPC needs no kubeconfigSecretRef.
-func renderSCPC(f flavor, namespace string, ironCoreKCPAccount bool) (*unstructured.Unstructured, error) {
+// renderSCPC creates the per-account provider configuration for either hosting flavor.
+// The Shoot controller consumes the Gardener project settings from its own flavor defaults.
+func renderSCPC(f flavor, namespace string) (*unstructured.Unstructured, error) {
 	var obj map[string]interface{}
 	if err := yaml.Unmarshal(f.manifest, &obj); err != nil {
 		return nil, fmt.Errorf("unmarshal embedded SCPC manifest for %q: %w", f.scpcName, err)
@@ -149,19 +144,12 @@ func renderSCPC(f flavor, namespace string, ironCoreKCPAccount bool) (*unstructu
 	labels[managedByLabelKey] = managedByNamespaceBind
 	scpc.SetLabels(labels)
 
-	if err := unstructured.SetNestedField(scpc.Object, "{{ .SC.namespace }}", "spec", "target", "namespace"); err != nil {
-		return nil, err
-	}
+	// Account is the only child destination. The provider still owns the physical projection.
 	unstructured.RemoveNestedField(scpc.Object, "spec", "target", "kubeconfigSecretRef")
-
-	if ironCoreKCPAccount && f.scpcName == ironcoreSCPCName {
-		if err := unstructured.SetNestedField(scpc.Object, true, "spec", "target", "kcpAccount"); err != nil {
-			return nil, err
-		}
-		unstructured.RemoveNestedField(scpc.Object, "spec", "target", "namespace")
-		if err := unstructured.SetNestedField(scpc.Object, corev1.NamespaceDefault, "spec", "kubeconfigSource", "secretRef", "namespace"); err != nil {
-			return nil, err
-		}
+	unstructured.RemoveNestedField(scpc.Object, "spec", "target", "namespace")
+	unstructured.RemoveNestedField(scpc.Object, "spec", "target", "kcpAccount")
+	if err := unstructured.SetNestedField(scpc.Object, corev1.NamespaceDefault, "spec", "kubeconfigSource", "secretRef", "namespace"); err != nil {
+		return nil, err
 	}
 	return scpc, nil
 }

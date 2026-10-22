@@ -7,36 +7,23 @@ import (
 )
 
 func TestAccountSCPCRendering(t *testing.T) {
-	for _, enabled := range []bool{false, true} {
-		for _, f := range flavors {
-			scpc, err := renderSCPC(f, "account", enabled)
-			if err != nil {
-				t.Fatal(err)
+	for _, f := range flavors {
+		scpc, err := renderSCPC(f, "account")
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, field := range []string{"namespace", "kubeconfigSecretRef", "kcpAccount"} {
+			if _, found, _ := unstructured.NestedFieldNoCopy(scpc.Object, "spec", "target", field); found {
+				t.Fatalf("%s has destination selector %s", f.scpcName, field)
 			}
-			account, _, _ := unstructured.NestedBool(scpc.Object, "spec", "target", "kcpAccount")
-			want := enabled && f.scpcName == ironcoreSCPCName
-			if account != want {
-				t.Fatalf("%s enabled=%v account=%v", f.scpcName, enabled, account)
-			}
-			ns, _, _ := unstructured.NestedString(scpc.Object, "spec", "target", "namespace")
-			if want {
-				if ns != "" {
-					t.Fatal("account target has namespace")
-				}
-				secretNS, _, _ := unstructured.NestedString(scpc.Object, "spec", "kubeconfigSource", "secretRef", "namespace")
-				if secretNS != "default" {
-					t.Fatal("account secret is not in default")
-				}
-				resources, _, _ := unstructured.NestedSlice(scpc.Object, "spec", "resources")
-				if resources[0].(map[string]any)["apiVersion"] != "apeiro.eu/v1alpha1" {
-					t.Fatal("account child has wrong group")
-				}
-			} else if ns != "{{ .SC.namespace }}" {
-				t.Fatal("local target changed")
-			}
-			if _, found, _ := unstructured.NestedFieldNoCopy(scpc.Object, "spec", "target", "kubeconfigSecretRef"); found {
-				t.Fatal("unexpected target kubeconfig")
-			}
+		}
+		secretNS, _, _ := unstructured.NestedString(scpc.Object, "spec", "kubeconfigSource", "secretRef", "namespace")
+		if secretNS != "default" {
+			t.Fatal("exported kubeconfig Secret is not in the account default namespace")
+		}
+		resources, _, _ := unstructured.NestedSlice(scpc.Object, "spec", "resources")
+		if resources[0].(map[string]any)["apiVersion"] != "apeiro.eu/v1alpha1" {
+			t.Fatal("wrong child group")
 		}
 	}
 }
