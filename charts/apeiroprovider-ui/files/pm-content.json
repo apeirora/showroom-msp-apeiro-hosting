@@ -21,8 +21,8 @@
                     "entityType": "main.core_platform-mesh_io_account",
                     "context": { "resourceDefinition": { "apiGroup": "apeiro_eu", "version": "v1alpha1", "entityCollection": "OpenStackShoots", "entity": "OpenStackShoot", "scope": "Cluster" } },
                     "children": [
-                      { "pathSegment": "openstack", "hideFromNav": true, "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "openstack" }, "url": "{{ $host }}/index.html" }] },
-                      { "pathSegment": "ironcore", "hideFromNav": true, "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "ironcore" }, "url": "{{ $host }}/index.html" }] }
+                      { "pathSegment": "openstack", "hideFromNav": true, "context": { "shootKind": "openstack" }, "url": "{{ $host }}/index.html", "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "openstack" }, "url": "{{ $host }}/index.html" }] },
+                      { "pathSegment": "ironcore", "hideFromNav": true, "context": { "shootKind": "ironcore" }, "url": "{{ $host }}/index.html", "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "ironcore" }, "url": "{{ $host }}/index.html" }] }
                     ],
                     "loadingIndicator": {
                         "enabled": false
@@ -63,8 +63,8 @@
                     "entityType": "main.core_platform-mesh_io_account.namespace",
                     "context": { "resourceDefinition": { "apiGroup": "apeiro_eu", "version": "v1alpha1", "entityCollection": "OpenStackShoots", "entity": "OpenStackShoot", "scope": "Cluster" } },
                     "children": [
-                      { "pathSegment": "openstack", "hideFromNav": true, "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "openstack" }, "url": "{{ $host }}/index.html" }] },
-                      { "pathSegment": "ironcore", "hideFromNav": true, "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "ironcore" }, "url": "{{ $host }}/index.html" }] }
+                      { "pathSegment": "openstack", "hideFromNav": true, "context": { "shootKind": "openstack" }, "url": "{{ $host }}/index.html", "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "openstack" }, "url": "{{ $host }}/index.html" }] },
+                      { "pathSegment": "ironcore", "hideFromNav": true, "context": { "shootKind": "ironcore" }, "url": "{{ $host }}/index.html", "children": [{ "pathSegment": ":shootName", "hideFromNav": true, "context": { "shootKind": "ironcore" }, "url": "{{ $host }}/index.html" }] }
                     ],
                     "loadingIndicator": {
                         "enabled": false
