@@ -4,6 +4,7 @@ Both IronCore and OpenStack SCPCs create children in the account workspace.
 SimpleCluster uses the account as its only destination. No SCPC destination flag is required.
 
 This configuration requires a SimpleCluster release with the universal account destination.
+Older releases keep the legacy local SCPCs, see the contract gate below.
 The account must bind the SimpleCluster and Apeiro exports.
 The sync agent projects the account child into the account namespace on the service cluster.
 The kubeconfig Secret returns to namespace `default` in the account.
@@ -52,8 +53,11 @@ The schema UID must match the binding's schema UID.
 Hosting reads this metadata from the API server that receives its SCPC writes.
 It does not read a SimpleCluster Deployment or depend on its cluster location.
 
-Hosting refuses all SCPC writes when the contract is absent, unreadable or below 1.
+Without the annotation the API predates the contract (SimpleCluster < 1.0).
+Hosting then writes the legacy SCPCs that create the provider CR locally in the account namespace.
+It sets `HostingAccountContractReady=True` with reason `LegacyContract`.
+Hosting refuses all SCPC writes when the contract is unreadable, ambiguous, invalid or below 1.
 It sets the namespace condition `HostingAccountContractReady=False` with reason `AccountContractRequired`.
 It retries without a local destination fallback.
-After the API upgrade, the condition becomes True and hosting writes account SCPCs.
+After the API upgrade, the condition becomes True and hosting rewrites the SCPCs as account SCPCs.
 The provider credential needs read access to this API metadata and patch access to namespace status.
