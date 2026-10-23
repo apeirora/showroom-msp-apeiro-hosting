@@ -93,8 +93,8 @@ func (r *NamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return ctrl.Result{}, nil
 	}
 
-	account, contractErr := r.accountContract(ctx)
-	if err := r.accountContractStatus(ctx, ns, account, contractErr); err != nil {
+	contractErr := r.accountContract(ctx)
+	if err := r.accountContractStatus(ctx, ns, contractErr); err != nil {
 		return ctrl.Result{}, err
 	}
 	if contractErr != nil {
@@ -111,7 +111,7 @@ func (r *NamespaceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		if f.scpcName == ironcoreSCPCName && len(r.IronCoreManifest) > 0 {
 			f.manifest = r.IronCoreManifest
 		}
-		scpc, err := renderSCPC(f, ns.Name, account)
+		scpc, err := renderSCPC(f, ns.Name)
 		if err != nil {
 			return ctrl.Result{RequeueAfter: providerRequeue}, err
 		}

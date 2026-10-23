@@ -124,7 +124,7 @@ func checkGardenDevManifest(t *testing.T, data []byte) {
 	if len(zones) != 3 {
 		t.Fatal(zones)
 	}
-	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account", true)
+	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -238,7 +238,7 @@ func TestIronCoreExplicitMachineAndExtraSettings(t *testing.T) {
 			t.Fatalf("%s = %q (%v)", path, got, err)
 		}
 	}
-	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account", true)
+	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account")
 	if err != nil {
 		t.Fatal(err)
 	}

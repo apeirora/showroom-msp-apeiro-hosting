@@ -128,9 +128,7 @@ func resolveKubeconfigSecretRef(
 
 // renderSCPC creates the per-account provider configuration for either hosting flavor.
 // The Shoot controller consumes the Gardener project settings from its own flavor defaults.
-// Without the account contract, the SimpleCluster creates the provider CR locally in the
-// account namespace, as before the account destination existed.
-func renderSCPC(f flavor, namespace string, account bool) (*unstructured.Unstructured, error) {
+func renderSCPC(f flavor, namespace string) (*unstructured.Unstructured, error) {
 	var obj map[string]interface{}
 	if err := yaml.Unmarshal(f.manifest, &obj); err != nil {
 		return nil, fmt.Errorf("unmarshal embedded SCPC manifest for %q: %w", f.scpcName, err)
@@ -146,15 +144,8 @@ func renderSCPC(f flavor, namespace string, account bool) (*unstructured.Unstruc
 	labels[managedByLabelKey] = managedByNamespaceBind
 	scpc.SetLabels(labels)
 
+	// Account is the only child destination. The provider still owns the physical projection.
 	unstructured.RemoveNestedField(scpc.Object, "spec", "target", "kubeconfigSecretRef")
-	if !account {
-		if err := unstructured.SetNestedField(scpc.Object, "{{ .SC.namespace }}", "spec", "target", "namespace"); err != nil {
-			return nil, err
-		}
-		return scpc, nil
-	}
-
-	// With the contract, the account is the only child destination. The provider still owns the physical projection.
 	unstructured.RemoveNestedField(scpc.Object, "spec", "target", "namespace")
 	unstructured.RemoveNestedField(scpc.Object, "spec", "target", "kcpAccount")
 	if err := unstructured.SetNestedField(scpc.Object, corev1.NamespaceDefault, "spec", "kubeconfigSource", "secretRef", "namespace"); err != nil {
