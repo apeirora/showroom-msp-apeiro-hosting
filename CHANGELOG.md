@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.38.5](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.4...v0.38.5) (2026-10-23)
+
+
+### Bug Fixes
+
+* **ui:** make openstack/ironcore shoot nodes navigable ([#67](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/67)) ([dfb6d69](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/dfb6d69b4696be92e645b943bfa69237078f3f9a))
+
 ## [0.38.4](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.3...v0.38.4) (2026-10-22)
 
 
