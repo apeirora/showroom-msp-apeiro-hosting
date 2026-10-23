@@ -100,57 +100,80 @@ var _ = Describe("Namespace Controller", func() {
 		Expect(err).NotTo(HaveOccurred())
 	}
 
-	It("blocks SCPC writes on an old API contract and reports readiness after the API upgrade", func() {
+	It("keeps legacy SCPCs without a contract, blocks an invalid one and switches to account SCPCs", func() {
 		crd := &unstructured.Unstructured{}
 		crd.SetAPIVersion("apiextensions.k8s.io/v1")
 		crd.SetKind("CustomResourceDefinition")
 		key := types.NamespacedName{Name: "simpleclusterproviderconfigs.showroom.apeirora.eu"}
-		Expect(k8sClient.Get(ctx, key, crd)).To(Succeed())
-		annotations := crd.GetAnnotations()
-		original := annotations[accountContractAnnotation]
-		delete(annotations, accountContractAnnotation)
-		crd.SetAnnotations(annotations)
-		Expect(k8sClient.Update(ctx, crd)).To(Succeed())
-		DeferCleanup(func() {
+		setContract := func(value *string) {
 			Expect(k8sClient.Get(ctx, key, crd)).To(Succeed())
-			values := crd.GetAnnotations()
-			values[accountContractAnnotation] = original
-			crd.SetAnnotations(values)
+			annotations := crd.GetAnnotations()
+			if value == nil {
+				delete(annotations, accountContractAnnotation)
+			} else {
+				annotations[accountContractAnnotation] = *value
+			}
+			crd.SetAnnotations(annotations)
 			Expect(k8sClient.Update(ctx, crd)).To(Succeed())
-		})
+		}
+		contractCondition := func(name string) corev1.NamespaceCondition {
+			ns := &corev1.Namespace{}
+			Expect(k8sClient.Get(ctx, types.NamespacedName{Name: name}, ns)).To(Succeed())
+			for _, condition := range ns.Status.Conditions {
+				if condition.Type == accountContractCondition {
+					return condition
+				}
+			}
+			Fail("namespace has no " + string(accountContractCondition) + " condition")
+			return corev1.NamespaceCondition{}
+		}
+		Expect(k8sClient.Get(ctx, key, crd)).To(Succeed())
+		original := crd.GetAnnotations()[accountContractAnnotation]
+		DeferCleanup(setContract, &original)
+
+		setContract(nil)
 		name := newNamespace(bothExports)
 		reconcileNS(name)
 		for _, scpcName := range allSCPCNames() {
-			_, err := getSCPC(name, scpcName)
+			scpc, err := getSCPC(name, scpcName)
+			Expect(err).NotTo(HaveOccurred())
+			targetNS, _, _ := unstructured.NestedString(scpc.Object, "spec", "target", "namespace")
+			Expect(targetNS).To(Equal("{{ .SC.namespace }}"))
+			_, hasRef, _ := unstructured.NestedFieldNoCopy(scpc.Object, "spec", "target", "kubeconfigSecretRef")
+			Expect(hasRef).To(BeFalse())
+			_, hasSecretNS, _ := unstructured.NestedFieldNoCopy(scpc.Object, "spec", "kubeconfigSource", "secretRef", "namespace")
+			Expect(hasSecretNS).To(BeFalse())
+		}
+		condition := contractCondition(name)
+		Expect(condition.Status).To(Equal(corev1.ConditionTrue))
+		Expect(condition.Reason).To(Equal("LegacyContract"))
+
+		invalid := "0"
+		setContract(&invalid)
+		blocked := newNamespace(bothExports)
+		reconcileNS(blocked)
+		for _, scpcName := range allSCPCNames() {
+			_, err := getSCPC(blocked, scpcName)
 			Expect(apierrors.IsNotFound(err)).To(BeTrue())
 		}
-		ns := &corev1.Namespace{}
-		Expect(k8sClient.Get(ctx, types.NamespacedName{Name: name}, ns)).To(Succeed())
-		found := false
-		for _, condition := range ns.Status.Conditions {
-			if condition.Type == accountContractCondition {
-				found = true
-				Expect(condition.Status).To(Equal(corev1.ConditionFalse))
-				Expect(condition.Reason).To(Equal("AccountContractRequired"))
-			}
-		}
-		Expect(found).To(BeTrue())
-		Expect(k8sClient.Get(ctx, key, crd)).To(Succeed())
-		annotations = crd.GetAnnotations()
-		annotations[accountContractAnnotation] = "2"
-		crd.SetAnnotations(annotations)
-		Expect(k8sClient.Update(ctx, crd)).To(Succeed())
+		condition = contractCondition(blocked)
+		Expect(condition.Status).To(Equal(corev1.ConditionFalse))
+		Expect(condition.Reason).To(Equal("AccountContractRequired"))
+
+		upgraded := "2"
+		setContract(&upgraded)
 		reconcileNS(name)
 		for _, scpcName := range allSCPCNames() {
-			_, err := getSCPC(name, scpcName)
+			scpc, err := getSCPC(name, scpcName)
 			Expect(err).NotTo(HaveOccurred())
+			_, hasTarget, _ := unstructured.NestedFieldNoCopy(scpc.Object, "spec", "target", "namespace")
+			Expect(hasTarget).To(BeFalse())
+			secretNS, _, _ := unstructured.NestedString(scpc.Object, "spec", "kubeconfigSource", "secretRef", "namespace")
+			Expect(secretNS).To(Equal("default"))
 		}
-		Expect(k8sClient.Get(ctx, types.NamespacedName{Name: name}, ns)).To(Succeed())
-		for _, condition := range ns.Status.Conditions {
-			if condition.Type == accountContractCondition {
-				Expect(condition.Status).To(Equal(corev1.ConditionTrue))
-			}
-		}
+		condition = contractCondition(name)
+		Expect(condition.Status).To(Equal(corev1.ConditionTrue))
+		Expect(condition.Reason).To(Equal("AccountContractAvailable"))
 	})
 
 	It("creates both namespace-owned SCPCs when both exports are bound", func() {
