@@ -29,5 +29,5 @@ jobs:
       - name: Run linter
         uses: golangci/golangci-lint-action@v8
         with:
-          version: v2.9.0
+          version: v2.15.0
           working-directory: ${{ matrix.module }}
