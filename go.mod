@@ -1,6 +1,6 @@
 module github.com/apeirora/showroom-msp-apeiro-hosting
 
-go 1.26.10
+go 1.26.11
 
 require (
 	github.com/onsi/ginkgo/v2 v2.22.0
