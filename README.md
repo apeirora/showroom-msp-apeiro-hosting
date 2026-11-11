@@ -148,7 +148,7 @@ For a direct operator start, supply the same configuration file with that flag.
 All other Shoot settings, including addons, DNS, extensions, maintenance,
 provider configuration and worker settings, pass through `shootSpec`.
 CloudProfile, region, Kubernetes version and image name remain SimpleCluster inputs.
-A single configured zone remains the `zone` input. Multiple zones pass through as a list.
+A single configured zone remains the `zone` input. Multiple zones render as a list that keeps the first `min(zones, workers.max)` entries, because Gardener rejects a worker pool whose maximum is lower than its zone count.
 `GARDEN_PROJECT_NAMESPACE` applies only to OpenStack. IronCore uses `projectNamespace`.
 The operator supports one worker pool. SimpleCluster controls its minimum and
 maximum worker counts. A standalone Shoot with an empty spec uses one worker.
