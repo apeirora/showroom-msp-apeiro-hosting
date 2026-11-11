@@ -296,6 +296,12 @@ func smallestProfile(scpc *unstructured.Unstructured) string {
 // (OpenStackShoot/IronCoreShoot) whose spec is the plain Gardener Shoot
 // manifest; the Shoot manifest is that inner spec.
 func renderDefaultShootManifest(defaults *flavorDefaults, namespace, name string) (*unstructured.Unstructured, error) {
+	return renderShootManifest(defaults, namespace, name, 1, 1)
+}
+
+// renderShootManifest renders the flavor's Shoot template for a worker pool
+// with the given minimum and maximum node counts.
+func renderShootManifest(defaults *flavorDefaults, namespace, name string, minNodes, maxNodes int) (*unstructured.Unstructured, error) {
 	tmpl, err := template.New("shoot").Option("missingkey=error").Parse(defaults.template)
 	if err != nil {
 		return nil, fmt.Errorf("parse default shoot template: %w", err)
@@ -305,7 +311,7 @@ func renderDefaultShootManifest(defaults *flavorDefaults, namespace, name string
 		"SC": map[string]interface{}{
 			"namespace": namespace,
 			"name":      name,
-			"workers":   map[string]interface{}{"min": 1, "max": 1},
+			"workers":   map[string]interface{}{"min": minNodes, "max": maxNodes},
 		},
 	}
 	var buf bytes.Buffer

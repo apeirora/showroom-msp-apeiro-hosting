@@ -121,7 +121,7 @@ func checkGardenDevManifest(t *testing.T, data []byte) {
 		t.Fatal(volume)
 	}
 	zones, _, _ := unstructured.NestedStringSlice(worker, "zones")
-	if len(zones) != 3 {
+	if len(zones) != 1 || zones[0] != "wdf4a" {
 		t.Fatal(zones)
 	}
 	scpc, err := renderSCPC(flavor{scpcName: ironcoreSCPCName, manifest: manifest}, "account")
@@ -139,6 +139,41 @@ func checkGardenDevManifest(t *testing.T, data []byte) {
 }
 
 func TestGardenDevConfiguration(t *testing.T) { checkGardenDevManifest(t, gardenDevConfig(t)) }
+
+func TestIronCoreZonesFollowWorkerMaximum(t *testing.T) {
+	manifest, err := ConfigureIronCoreManifest(gardenDevConfig(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defaults, err := parseFlavorDefaults(manifest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		maxNodes int
+		want     []string
+	}{
+		{1, []string{"wdf4a"}},
+		{2, []string{"wdf4a", "wdf4b"}},
+		{3, []string{"wdf4a", "wdf4b", "wdf4c"}},
+		{4, []string{"wdf4a", "wdf4b", "wdf4c"}},
+	} {
+		shoot, err := renderShootManifest(defaults, "account", "shoot", 1, tc.maxNodes)
+		if err != nil {
+			t.Fatal(err)
+		}
+		workers, _, _ := unstructured.NestedSlice(shoot.Object, "spec", "provider", "workers")
+		worker := workers[0].(map[string]interface{})
+		zones, _, _ := unstructured.NestedStringSlice(worker, "zones")
+		if strings.Join(zones, ",") != strings.Join(tc.want, ",") {
+			t.Fatalf("maximum %d: zones %v, want %v", tc.maxNodes, zones, tc.want)
+		}
+		maximum, _, _ := unstructured.NestedInt64(worker, "maximum")
+		if maximum < int64(len(zones)) {
+			t.Fatalf("maximum %d is lower than zone count %d", maximum, len(zones))
+		}
+	}
+}
 
 func TestIronCoreChartRender(t *testing.T) {
 	if _, err := exec.LookPath("helm"); err != nil {

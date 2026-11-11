@@ -36,6 +36,9 @@ func ConfigureIronCoreManifest(data []byte) ([]byte, error) {
 	}
 	worker["minimum"] = "{{ .SC.workers.min }}"
 	worker["maximum"] = "{{ .SC.workers.max }}"
+	if len(zones) > 1 {
+		worker["zones"] = ironcoreZonesToken
+	}
 	if err := unstructured.SetNestedSlice(cfg.ShootSpec, []interface{}{worker}, "provider", "workers"); err != nil {
 		return nil, err
 	}
@@ -48,6 +51,7 @@ func ConfigureIronCoreManifest(data []byte) ([]byte, error) {
 		token := "{{ .SC.workers." + key + " }}"
 		shootText = strings.ReplaceAll(shootText, fmt.Sprintf("%q", token), token)
 	}
+	shootText = strings.ReplaceAll(shootText, fmt.Sprintf("%q", ironcoreZonesToken), zonesTemplate(zones))
 	var obj map[string]interface{}
 	if err := yaml.Unmarshal(ironcoreSCPCManifest, &obj); err != nil {
 		return nil, err
@@ -98,6 +102,30 @@ func ConfigureIronCoreManifest(data []byte) ([]byte, error) {
 		return nil, fmt.Errorf("scpc.ironcore template: %w", err)
 	}
 	return manifest, nil
+}
+
+// ironcoreZonesToken marks the worker zones in the Shoot JSON until
+// zonesTemplate replaces it with a template expression.
+const ironcoreZonesToken = "{{ ironcore.zones }}"
+
+// zonesTemplate renders the worker pool zones as a JSON list that keeps the
+// first min(len(zones), .SC.workers.max) zones. Gardener rejects a pool whose
+// maximum is lower than its zone count, so a one-node cluster gets one zone.
+// A pool with maximum >= len(zones) keeps all zones in their configured order,
+// which keeps existing Shoots unchanged (Gardener forbids removing zones).
+func zonesTemplate(zones []string) string {
+	var b strings.Builder
+	b.WriteString("[")
+	for i, zone := range zones {
+		quoted, _ := json.Marshal(zone)
+		if i == 0 {
+			b.Write(quoted)
+			continue
+		}
+		fmt.Fprintf(&b, "{{ if ge .SC.workers.max %d }},%s{{ end }}", i+1, quoted)
+	}
+	b.WriteString("]")
+	return b.String()
 }
 
 func (cfg *IronCoreConfig) validate() (map[string]interface{}, []string, error) {
