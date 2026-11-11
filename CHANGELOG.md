@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.38.6](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.5...v0.38.6) (2026-11-11)
+
+
+### Bug Fixes
+
+* **controller:** keep legacy SCPCs without account contract ([#69](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/69)) ([ef7ac59](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/ef7ac593fa0adde4c270d2c1ef4f35f715d995d8))
+* **deps:** build with Go 1.26.11 ([#87](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/87)) ([099cbee](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/099cbeede92232a670dc74867f220ac155f731e7))
+* **ironcore:** limit worker zones to the worker maximum ([c048258](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/c0482587f27e6f789770dc82e837ad36db44976d))
+* **ui:** bump vite to 8.3.5 ([#72](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/72)) ([ad6629b](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/ad6629b99eeb9abe6bf1fa4bd3906810d6121131))
+
 ## [0.38.5](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.4...v0.38.5) (2026-10-23)
 
 
