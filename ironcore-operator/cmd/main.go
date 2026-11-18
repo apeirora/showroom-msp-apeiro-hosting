@@ -75,7 +75,7 @@ func main() {
 		SecretPolicy: secretPolicy,
 		Client:       mgr.GetClient(),
 		Scheme:       mgr.GetScheme(),
-		Recorder:     mgr.GetEventRecorderFor("ironcorevm"),
+		Recorder:     mgr.GetEventRecorder("ironcorevm"),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "IronCoreVM")
 		os.Exit(1)

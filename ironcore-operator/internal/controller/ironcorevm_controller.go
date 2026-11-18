@@ -24,11 +24,11 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
+	crrecorder "sigs.k8s.io/controller-runtime/pkg/recorder"
 
 	ironcorev1alpha1 "github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/api/v1alpha1"
 	"github.com/apeirora/showroom-msp-apeiro-hosting/ironcore-operator/internal/ironcore"
@@ -48,7 +48,7 @@ type IronCoreVMReconciler struct {
 	client.Client
 	SecretPolicy secretpolicy.Policy
 	Scheme       *runtime.Scheme
-	Recorder     record.EventRecorder
+	Recorder     crrecorder.EventRecorder
 }
 
 // +kubebuilder:rbac:groups=apeiro.eu,resources=ironcorevms,verbs=get;list;watch;create;update;patch;delete
@@ -304,7 +304,9 @@ func (r *IronCoreVMReconciler) eventf(vm *ironcorev1alpha1.IronCoreVM, eventType
 	if r.Recorder == nil {
 		return
 	}
-	r.Recorder.Eventf(vm, eventType, reason, format, args...)
+	// The events.k8s.io/v1 API (GetEventRecorder) takes the object the event
+	// is about separately and adds an action field; we do not set an action.
+	r.Recorder.Eventf(vm, nil, eventType, reason, "", format, args...)
 }
 
 func (r *IronCoreVMReconciler) ironcoreClients(ctx context.Context, vm *ironcorev1alpha1.IronCoreVM) (*ironcore.Clients, error) {
