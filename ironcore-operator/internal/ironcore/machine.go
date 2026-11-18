@@ -136,7 +136,6 @@ func CreateMachine(
 									Resources: corev1alpha1.ResourceList{
 										corev1alpha1.ResourceStorage: resource.MustParse(bootDiskSize),
 									},
-									Image: image,
 									DataSource: storagev1alpha1.VolumeDataSource{
 										OSImage: &storagev1alpha1.OSDataSource{Image: image},
 									},

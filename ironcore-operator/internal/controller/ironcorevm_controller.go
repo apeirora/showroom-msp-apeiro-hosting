@@ -134,7 +134,7 @@ func (r *IronCoreVMReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	}
 	if err != nil {
 		_ = r.setCloudProfileCondition(ctx, &vm, metav1.ConditionFalse, "Unresolved", err.Error())
-		r.eventf(&vm, corev1.EventTypeWarning, "CloudProfileError", err.Error())
+		r.eventf(&vm, corev1.EventTypeWarning, "CloudProfileError", "%s", err.Error())
 		return r.fail(ctx, &vm, "MachineClassError", err.Error())
 	}
 	if err := r.setCloudProfileCondition(ctx, &vm, metav1.ConditionTrue, "Resolved",
