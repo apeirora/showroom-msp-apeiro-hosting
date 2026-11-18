@@ -235,7 +235,3 @@ type IronCoreVMList struct {
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []IronCoreVM `json:"items"`
 }
-
-func init() {
-	SchemeBuilder.Register(&IronCoreVM{}, &IronCoreVMList{})
-}
