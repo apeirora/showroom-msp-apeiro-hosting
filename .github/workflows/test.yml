@@ -23,7 +23,7 @@ jobs:
             cmd: go build ./... && go vet ./...
     steps:
       - name: Clone the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -47,7 +47,7 @@ jobs:
         working-directory: ui
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -79,7 +79,7 @@ jobs:
           - apeiroprovider-ui
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Helm
         uses: azure/setup-helm@v4

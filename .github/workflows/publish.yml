@@ -43,7 +43,7 @@ jobs:
             platforms: linux/amd64
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -75,7 +75,7 @@ jobs:
       VERSION: ${{ inputs.version }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Helm
         uses: azure/setup-helm@v4
@@ -115,7 +115,7 @@ jobs:
       OCM_REPOSITORY: oci://ghcr.io/${{ github.repository_owner }}/ocm
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
