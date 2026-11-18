@@ -14,12 +14,24 @@ You may obtain a copy of the License at
 package v1alpha1
 
 import (
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"sigs.k8s.io/controller-runtime/pkg/scheme"
 )
 
 var (
 	GroupVersion  = schema.GroupVersion{Group: "apeiro.eu", Version: "v1alpha1"}
-	SchemeBuilder = &scheme.Builder{GroupVersion: GroupVersion}
+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
 	AddToScheme   = SchemeBuilder.AddToScheme
 )
+
+// addKnownTypes registers the API types of this group-version with the scheme.
+// It uses the apimachinery builder because controller-runtime's
+// scheme.Builder is deprecated (SA1019).
+func addKnownTypes(s *runtime.Scheme) error {
+	s.AddKnownTypes(GroupVersion,
+		&IronCoreVM{}, &IronCoreVMList{},
+	)
+	metav1.AddToGroupVersion(s, GroupVersion)
+	return nil
+}

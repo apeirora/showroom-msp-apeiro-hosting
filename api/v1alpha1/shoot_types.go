@@ -138,10 +138,3 @@ func (s *OpenStackShoot) GetSpecText() string          { return s.Spec }
 func (s *OpenStackShoot) GetShootStatus() *ShootStatus { return &s.Status }
 func (s *IronCoreShoot) GetSpecText() string           { return s.Spec }
 func (s *IronCoreShoot) GetShootStatus() *ShootStatus  { return &s.Status }
-
-func init() {
-	SchemeBuilder.Register(
-		&OpenStackShoot{}, &OpenStackShootList{},
-		&IronCoreShoot{}, &IronCoreShootList{},
-	)
-}
