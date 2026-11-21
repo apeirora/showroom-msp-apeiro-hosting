@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.38.7](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.6...v0.38.7) (2026-11-21)
+
+
+### Bug Fixes
+
+* **ci:** repair Compliance, Lint and Tests gates on main ([#108](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/108)) ([d668a2d](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/d668a2d0e123781e000af52c12df86b412fd6f14))
+* **deps:** update kubernetes monorepo to v0.37.2 ([#95](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/95)) ([dd5ad0b](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/dd5ad0b6339460d3677d09a5cef2dc206fe2d578))
+* **deps:** update module github.com/ironcore-dev/ironcore to v0.9.0 ([#96](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/96)) ([be2b213](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/be2b2131c9905d649a2c3d0704b865d429f2bd70))
+* **deps:** update module github.com/onsi/ginkgo/v2 to v2.34.0 ([#97](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/97)) ([64493fc](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/64493fc20f29333d008a2fbbffeee21356abfa10))
+* **deps:** update module github.com/onsi/gomega to v1.44.0 ([#98](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/98)) ([cf77b7f](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/cf77b7f003a7a06642b6e05b1e6f40bf459fa186))
+* **deps:** update module golang.org/x/crypto to v0.59.0 ([#100](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/100)) ([d662e2f](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/d662e2f601375793b6accbc16a8dd38e52dcdf83))
+* **deps:** update module sigs.k8s.io/controller-runtime to v0.25.3 ([#101](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/101)) ([1317205](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/1317205d7aa8fbdc2f0d98d8a485962978008250))
+* **deps:** update react monorepo to v19 ([#122](https://github.com/apeirora/showroom-msp-apeiro-hosting/issues/122)) ([ebeb285](https://github.com/apeirora/showroom-msp-apeiro-hosting/commit/ebeb28564e84eeca2e21322b42457d7134be9646))
+
 ## [0.38.6](https://github.com/apeirora/showroom-msp-apeiro-hosting/compare/v0.38.5...v0.38.6) (2026-11-11)
 
 
