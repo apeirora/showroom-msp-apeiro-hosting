@@ -17,8 +17,8 @@ build-time tooling and are not part of any shipped artefact.
 
 ## Summary
 
-- **147** distinct third-party dependencies across **3** published components.
-- Licences in use: `Apache-2.0` (57), `MIT` (36), `BSD-3-Clause` (33), `Apache-2.0 AND BSD-3-Clause` (14), `Apache-2.0 AND BSD-3-Clause AND MIT` (3), `Apache-2.0 AND MIT` (2), `ISC` (1), `Unlicense OR Apache-2.0` (1).
+- **144** distinct third-party dependencies across **3** published components.
+- Licences in use: `Apache-2.0` (57), `MIT` (33), `BSD-3-Clause` (33), `Apache-2.0 AND BSD-3-Clause` (14), `Apache-2.0 AND BSD-3-Clause AND MIT` (3), `Apache-2.0 AND MIT` (2), `ISC` (1), `Unlicense OR Apache-2.0` (1).
 - **No copyleft dependencies.** Every licence above is permissive (Apache-2.0, BSD, MIT, ISC), so redistribution under Apache-2.0 carries no source-disclosure obligation.
 
 ## Obligations
@@ -55,16 +55,16 @@ in the Go module cache and is recorded in `OVERRIDES` in
 |---|---|---|
 | `@luigi-project/client` | `2.33.0` | ui |
 | `@sap-theming/theming-base-content` | `11.36.4` | ui |
-| `@ui5/webcomponents` | `2.24.0` | ui |
-| `@ui5/webcomponents-base` | `2.24.0` | ui |
-| `@ui5/webcomponents-fiori` | `2.24.0` | ui |
-| `@ui5/webcomponents-icons` | `2.24.0` | ui |
-| `@ui5/webcomponents-icons-business-suite` | `2.24.0` | ui |
-| `@ui5/webcomponents-icons-tnt` | `2.24.0` | ui |
-| `@ui5/webcomponents-localization` | `2.24.0` | ui |
-| `@ui5/webcomponents-react` | `2.24.1` | ui |
-| `@ui5/webcomponents-react-base` | `2.24.1` | ui |
-| `@ui5/webcomponents-theming` | `2.24.0` | ui |
+| `@ui5/webcomponents` | `2.29.0` | ui |
+| `@ui5/webcomponents-base` | `2.29.0` | ui |
+| `@ui5/webcomponents-fiori` | `2.29.0` | ui |
+| `@ui5/webcomponents-icons` | `2.29.0` | ui |
+| `@ui5/webcomponents-icons-business-suite` | `2.29.0` | ui |
+| `@ui5/webcomponents-icons-tnt` | `2.29.0` | ui |
+| `@ui5/webcomponents-localization` | `2.29.0` | ui |
+| `@ui5/webcomponents-react` | `2.29.0` | ui |
+| `@ui5/webcomponents-react-base` | `2.29.0` | ui |
+| `@ui5/webcomponents-theming` | `2.29.0` | ui |
 | `cel.dev/expr` | `v0.25.2` | apeiro-provider-operator |
 | `github.com/go-logr/logr` | `v1.4.4` | apeiro-provider-operator, ironcore-operator |
 | `github.com/go-logr/stdr` | `v1.2.2` | apeiro-provider-operator |
@@ -111,47 +111,6 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `sigs.k8s.io/randfill` | `v1.0.0` | apeiro-provider-operator, ironcore-operator |
 | `sigs.k8s.io/structured-merge-diff/v6` | `v6.4.2` | apeiro-provider-operator, ironcore-operator |
 
-### MIT (36)
-
-| Dependency | Version | Used by |
-|---|---|---|
-| `@tanstack/react-virtual` | `3.14.5` | ui |
-| `@tanstack/virtual-core` | `3.17.3` | ui |
-| `@types/jquery` | `3.5.34` | ui |
-| `@types/openui5` | `1.150.0` | ui |
-| `@types/prop-types` | `15.7.15` | ui |
-| `@types/qunit` | `2.19.14` | ui |
-| `@types/react` | `18.3.31` | ui |
-| `@types/react-dom` | `18.3.7` | ui |
-| `@types/sizzle` | `2.3.10` | ui |
-| `@types/trusted-types` | `2.0.7` | ui |
-| `@zxing/library` | `0.21.3` | ui |
-| `clsx` | `2.1.1` | ui |
-| `csstype` | `3.2.3` | ui |
-| `github.com/Masterminds/semver/v3` | `v3.4.0` | apeiro-provider-operator |
-| `github.com/beorn7/perks` | `v1.0.1` | apeiro-provider-operator, ironcore-operator |
-| `github.com/blang/semver/v4` | `v4.0.0` | apeiro-provider-operator |
-| `github.com/cenkalti/backoff/v5` | `v5.0.3` | apeiro-provider-operator |
-| `github.com/cespare/xxhash/v2` | `v2.3.0` | apeiro-provider-operator, ironcore-operator |
-| `github.com/emicklei/go-restful/v3` | `v3.13.0` | apeiro-provider-operator, ironcore-operator |
-| `github.com/felixge/httpsnoop` | `v1.0.4` | apeiro-provider-operator |
-| `github.com/fxamacker/cbor/v2` | `v2.9.1` | apeiro-provider-operator, ironcore-operator |
-| `github.com/go-task/slim-sprig/v3` | `v3.0.0` | apeiro-provider-operator |
-| `github.com/json-iterator/go` | `v1.1.12` | apeiro-provider-operator, ironcore-operator |
-| `github.com/onsi/ginkgo/v2` | `v2.34.0` | apeiro-provider-operator |
-| `github.com/onsi/gomega` | `v1.44.0` | apeiro-provider-operator |
-| `github.com/x448/float16` | `v0.8.4` | apeiro-provider-operator, ironcore-operator |
-| `go.uber.org/multierr` | `v1.11.0` | apeiro-provider-operator, ironcore-operator |
-| `go.uber.org/zap` | `v1.27.1` | apeiro-provider-operator, ironcore-operator |
-| `graphql` | `16.14.2` | ui |
-| `graphql-sse` | `2.6.3` | ui |
-| `js-tokens` | `4.0.0` | ui |
-| `loose-envify` | `1.4.0` | ui |
-| `react` | `18.3.1` | ui |
-| `react-dom` | `18.3.1` | ui |
-| `scheduler` | `0.23.2` | ui |
-| `ts-custom-error` | `3.3.1` | ui |
-
 ### BSD-3-Clause (33)
 
 | Dependency | Version | Used by |
@@ -189,6 +148,44 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `gopkg.in/evanphx/json-patch.v4` | `v4.13.0` | apeiro-provider-operator, ironcore-operator |
 | `gopkg.in/inf.v0` | `v0.9.1` | apeiro-provider-operator, ironcore-operator |
 | `lit-html` | `2.8.0` | ui |
+
+### MIT (33)
+
+| Dependency | Version | Used by |
+|---|---|---|
+| `@tanstack/react-virtual` | `3.14.26` | ui |
+| `@tanstack/virtual-core` | `3.19.11` | ui |
+| `@types/jquery` | `3.5.34` | ui |
+| `@types/openui5` | `1.154.0` | ui |
+| `@types/qunit` | `2.19.14` | ui |
+| `@types/react` | `19.3.1` | ui |
+| `@types/react-dom` | `19.3.0` | ui |
+| `@types/sizzle` | `2.3.10` | ui |
+| `@types/trusted-types` | `2.0.7` | ui |
+| `@zxing/library` | `0.21.3` | ui |
+| `clsx` | `2.1.1` | ui |
+| `csstype` | `3.2.3` | ui |
+| `github.com/Masterminds/semver/v3` | `v3.4.0` | apeiro-provider-operator |
+| `github.com/beorn7/perks` | `v1.0.1` | apeiro-provider-operator, ironcore-operator |
+| `github.com/blang/semver/v4` | `v4.0.0` | apeiro-provider-operator |
+| `github.com/cenkalti/backoff/v5` | `v5.0.3` | apeiro-provider-operator |
+| `github.com/cespare/xxhash/v2` | `v2.3.0` | apeiro-provider-operator, ironcore-operator |
+| `github.com/emicklei/go-restful/v3` | `v3.13.0` | apeiro-provider-operator, ironcore-operator |
+| `github.com/felixge/httpsnoop` | `v1.0.4` | apeiro-provider-operator |
+| `github.com/fxamacker/cbor/v2` | `v2.9.1` | apeiro-provider-operator, ironcore-operator |
+| `github.com/go-task/slim-sprig/v3` | `v3.0.0` | apeiro-provider-operator |
+| `github.com/json-iterator/go` | `v1.1.12` | apeiro-provider-operator, ironcore-operator |
+| `github.com/onsi/ginkgo/v2` | `v2.34.0` | apeiro-provider-operator |
+| `github.com/onsi/gomega` | `v1.44.0` | apeiro-provider-operator |
+| `github.com/x448/float16` | `v0.8.4` | apeiro-provider-operator, ironcore-operator |
+| `go.uber.org/multierr` | `v1.11.0` | apeiro-provider-operator, ironcore-operator |
+| `go.uber.org/zap` | `v1.27.1` | apeiro-provider-operator, ironcore-operator |
+| `graphql` | `16.14.2` | ui |
+| `graphql-sse` | `2.6.4` | ui |
+| `react` | `19.3.1` | ui |
+| `react-dom` | `19.3.1` | ui |
+| `scheduler` | `0.28.0` | ui |
+| `ts-custom-error` | `3.3.1` | ui |
 
 ### Apache-2.0 AND BSD-3-Clause (14)
 
