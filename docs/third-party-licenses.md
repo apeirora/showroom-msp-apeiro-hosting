@@ -158,7 +158,7 @@ in the Go module cache and is recorded in `OVERRIDES` in
 | `@types/jquery` | `3.5.34` | ui |
 | `@types/openui5` | `1.154.0` | ui |
 | `@types/qunit` | `2.19.14` | ui |
-| `@types/react` | `19.3.1` | ui |
+| `@types/react` | `19.3.3` | ui |
 | `@types/react-dom` | `19.3.0` | ui |
 | `@types/sizzle` | `2.3.10` | ui |
 | `@types/trusted-types` | `2.0.7` | ui |
