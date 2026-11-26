@@ -5,9 +5,9 @@ go 1.26.11
 require (
 	github.com/ironcore-dev/ironcore v0.9.0
 	golang.org/x/crypto v0.59.0
-	k8s.io/api v0.37.2
-	k8s.io/apimachinery v0.37.2
-	k8s.io/client-go v0.37.2
+	k8s.io/api v0.37.3
+	k8s.io/apimachinery v0.37.3
+	k8s.io/client-go v0.37.3
 	sigs.k8s.io/controller-runtime v0.25.3
 )
 
